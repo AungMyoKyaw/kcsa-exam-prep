@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
-import { motion } from 'framer-motion'
 import {
   ArrowLeft,
   ArrowRight,
@@ -24,7 +23,6 @@ import CodeBlock from './components/CodeBlock'
 import QuizCard from './components/QuizCard'
 import type { QuizQuestion } from './components/QuizCard'
 
-const easeOutExpo = [0.16, 1, 0.3, 1] as [number, number, number, number]
 
 const fadeUp = {
   initial: { opacity: 0, y: 30 },
@@ -301,16 +299,15 @@ export default function Domain6Page() {
         className="fixed top-[60px] left-0 right-0 h-[3px] z-30"
         style={{ backgroundColor: 'var(--border-subtle)' }}
       >
-        <motion.div
+        <div
           className="h-full"
           style={{ background: 'var(--accent-gradient)' }}
           animate={{ width: `${scrollProgress}%` }}
-          transition={{ duration: 0.1 }}
         />
       </div>
 
       {/* Breadcrumb */}
-      <motion.nav
+      <nav
         {...fadeUp}
         className="flex items-center gap-2 mb-6 text-sm"
       >
@@ -323,10 +320,10 @@ export default function Domain6Page() {
         </Link>
         <span style={{ color: 'var(--text-tertiary)' }}>/</span>
         <span style={{ color: 'var(--text-secondary)' }}>Domain 6</span>
-      </motion.nav>
+      </nav>
 
       {/* Chapter Header */}
-      <motion.header {...fadeUp} className="mb-10">
+      <header {...fadeUp} className="mb-10">
         <div
           className="mb-2 text-xs font-semibold uppercase tracking-[0.06em]"
           style={{ color: 'var(--text-tertiary)' }}
@@ -374,10 +371,10 @@ export default function Domain6Page() {
           MITRE ATT&CK for containers are the most frequently tested topics in this domain. Know the
           NIST CSF 2.0 six functions cold — especially the new <strong>GOVERN</strong> function.
         </CalloutBox>
-      </motion.header>
+      </header>
 
       {/* Section 6.1 — Compliance Frameworks */}
-      <motion.section {...fadeUp} className="mb-12">
+      <section {...fadeUp} className="mb-12">
         <div className="flex items-center gap-3 mb-4">
           <div
             className="w-10 h-10 rounded-lg flex items-center justify-center"
@@ -454,10 +451,9 @@ export default function Domain6Page() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1.5 mb-6">
           {cisSafeguards.map((sg, i) => (
-            <motion.div
+            <div
               key={i}
               {...staggerChild}
-              transition={{ duration: 0.3, delay: i * 0.03 }}
               className="flex items-center gap-3 py-1.5"
             >
               <span
@@ -472,7 +468,7 @@ export default function Domain6Page() {
               <span className="text-xs" style={{ color: 'var(--text-secondary)' }}>
                 {sg}
               </span>
-            </motion.div>
+            </div>
           ))}
         </div>
 
@@ -553,7 +549,7 @@ export default function Domain6Page() {
               items: ['Data subject rights (access, erasure)', 'Data Protection by Design', 'DPIAs for high-risk processing', '72-hour breach notification'],
             },
           ].map((card) => (
-            <motion.div
+            <div
               key={card.title}
               whileHover={{ y: -2 }}
               className="p-4 rounded-xl"
@@ -574,13 +570,13 @@ export default function Domain6Page() {
                   </li>
                 ))}
               </ul>
-            </motion.div>
+            </div>
           ))}
         </div>
-      </motion.section>
+      </section>
 
       {/* Section 6.2 — CIS Kubernetes Benchmarks */}
-      <motion.section {...fadeUp} className="mb-12">
+      <section {...fadeUp} className="mb-12">
         <div className="flex items-center gap-3 mb-4">
           <div
             className="w-10 h-10 rounded-lg flex items-center justify-center"
@@ -776,10 +772,9 @@ kube-bench run --json > kube-bench-results.json`}
             'Kubelet: --read-only-port=0 (disable read-only port)',
             'Policies: RBAC enabled, PSS enforced, NetworkPolicies restrict traffic',
           ].map((check, i) => (
-            <motion.div
+            <div
               key={i}
               {...staggerChild}
-              transition={{ duration: 0.3, delay: i * 0.05 }}
               className="flex items-start gap-3 p-3 rounded-lg"
               style={{ backgroundColor: 'var(--surface-base)', border: '1px solid var(--border-subtle)' }}
             >
@@ -787,13 +782,13 @@ kube-bench run --json > kube-bench-results.json`}
               <code className="text-xs leading-relaxed" style={{ color: 'var(--text-primary)' }}>
                 {check}
               </code>
-            </motion.div>
+            </div>
           ))}
         </div>
-      </motion.section>
+      </section>
 
       {/* Section 6.3 — Threat Modeling */}
-      <motion.section {...fadeUp} className="mb-12">
+      <section {...fadeUp} className="mb-12">
         <div className="flex items-center gap-3 mb-4">
           <div
             className="w-10 h-10 rounded-lg flex items-center justify-center"
@@ -1018,10 +1013,10 @@ kube-bench run --json > kube-bench-results.json`}
         <p className="text-xs leading-relaxed mb-6" style={{ color: 'var(--text-secondary)' }}>
           Score each factor 0-10. Final score = average of all five. Low: 0-3, Medium: 4-7, High: 8-10.
         </p>
-      </motion.section>
+      </section>
 
       {/* Section 6.4 — Supply Chain Compliance */}
-      <motion.section {...fadeUp} className="mb-12">
+      <section {...fadeUp} className="mb-12">
         <div className="flex items-center gap-3 mb-4">
           <div
             className="w-10 h-10 rounded-lg flex items-center justify-center"
@@ -1068,7 +1063,7 @@ kube-bench run --json > kube-bench-results.json`}
               desc: 'Documenting every transformation from source to runtime. Required by regulations like US EO 14028 for government software procurement.',
             },
           ].map((card) => (
-            <motion.div
+            <div
               key={card.title}
               whileHover={{ y: -2 }}
               className="p-4 rounded-xl"
@@ -1081,13 +1076,13 @@ kube-bench run --json > kube-bench-results.json`}
               <p className="text-xs leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
                 {card.desc}
               </p>
-            </motion.div>
+            </div>
           ))}
         </div>
-      </motion.section>
+      </section>
 
       {/* Section 6.5 — Security Automation Tools */}
-      <motion.section {...fadeUp} className="mb-12">
+      <section {...fadeUp} className="mb-12">
         <div className="flex items-center gap-3 mb-4">
           <div
             className="w-10 h-10 rounded-lg flex items-center justify-center"
@@ -1194,10 +1189,10 @@ jobs:
           exit 1
         fi`}
         />
-      </motion.section>
+      </section>
 
       {/* Section 6.6 — Exam Preparation Strategy */}
-      <motion.section {...fadeUp} className="mb-12">
+      <section {...fadeUp} className="mb-12">
         <div className="flex items-center gap-3 mb-4">
           <div
             className="w-10 h-10 rounded-lg flex items-center justify-center"
@@ -1229,10 +1224,9 @@ jobs:
         </h3>
         <div className="space-y-2 mb-6">
           {studyChecklist.map((item, i) => (
-            <motion.div
+            <div
               key={i}
               {...staggerChild}
-              transition={{ duration: 0.3, delay: i * 0.04 }}
               className="flex items-start gap-3 p-3 rounded-lg"
               style={{ backgroundColor: 'var(--surface-base)', border: '1px solid var(--border-subtle)' }}
             >
@@ -1253,7 +1247,7 @@ jobs:
                   High Yield
                 </span>
               )}
-            </motion.div>
+            </div>
           ))}
         </div>
 
@@ -1292,10 +1286,10 @@ jobs:
           Domain 3 (22%), Domain 4 (16%), Domain 5 (16%), Domain 6 (10%). Focus your study time
           proportionally — Domains 2 and 3 together account for nearly half the exam.
         </CalloutBox>
-      </motion.section>
+      </section>
 
       {/* Quiz */}
-      <motion.section {...fadeUp} className="mb-12">
+      <section {...fadeUp} className="mb-12">
         <h2
           className="text-2xl font-normal mb-6"
           style={{
@@ -1306,10 +1300,10 @@ jobs:
           Chapter Quiz
         </h2>
         <QuizCard questions={quizQuestions} domainId="6" />
-      </motion.section>
+      </section>
 
       {/* Chapter Footer */}
-      <motion.footer
+      <footer
         {...fadeUp}
         className="flex items-center justify-between py-6"
         style={{ borderTop: '1px solid var(--border-subtle)' }}
@@ -1330,7 +1324,7 @@ jobs:
           <span>Practice Exam</span>
           <ArrowRight size={16} />
         </Link>
-      </motion.footer>
+      </footer>
     </div>
   )
 }

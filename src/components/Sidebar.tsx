@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { Link, useLocation } from 'react-router'
-import { motion, AnimatePresence } from 'framer-motion'
 import {
   ChevronRight,
   FlaskConical,
@@ -17,9 +16,6 @@ interface SidebarProps {
   onClose: () => void
 }
 
-const easeOutExpo = [0.16, 1, 0.3, 1] as [number, number, number, number]
-
-// Demo read chapters for visual feedback
 const readChapters: Record<string, boolean> = {
   'd1-c1': true,
   'd1-c2': true,
@@ -70,137 +66,98 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
           const readCount = domain.chapters.filter((ch) => readChapters[ch.id]).length
 
           return (
-            <div key={domain.id} className="mb-1">
+            <div key={domain.id} className="mb-0.5">
               {/* Domain Header */}
               <button
                 onClick={() => toggleDomain(domain.id)}
-                className="w-full flex items-center gap-2 px-3 py-2.5 rounded-lg text-left transition-all duration-200 group"
+                className="w-full flex items-center gap-2 px-3 py-2 rounded-md text-left transition-colors duration-150 hover:bg-[var(--surface-elevated)]"
                 style={{
-                  backgroundColor: isDomainActive
-                    ? 'rgba(4, 80, 54, 0.1)'
-                    : 'transparent',
-                  borderLeft: isDomainActive ? '3px solid var(--accent-primary)' : '3px solid transparent',
-                }}
-                onMouseEnter={(e: React.MouseEvent<HTMLButtonElement>) => {
-                  if (!isDomainActive) {
-                    (e.currentTarget as HTMLElement).style.backgroundColor = 'var(--surface-elevated)'
-                  }
-                }}
-                onMouseLeave={(e: React.MouseEvent<HTMLButtonElement>) => {
-                  if (!isDomainActive) {
-                    (e.currentTarget as HTMLElement).style.backgroundColor = 'transparent'
-                  }
+                  backgroundColor: isDomainActive ? 'var(--surface-elevated)' : 'transparent',
+                  color: isDomainActive ? 'var(--accent-primary)' : 'var(--text-primary)',
                 }}
               >
-                <motion.div
-                  animate={{ rotate: isExpanded ? 90 : 0 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <ChevronRight
-                    size={14}
-                    style={{ color: 'var(--text-tertiary)' }}
-                  />
-                </motion.div>
-
+                <ChevronRight
+                  size={14}
+                  style={{
+                    color: 'var(--text-tertiary)',
+                    transform: isExpanded ? 'rotate(90deg)' : 'rotate(0deg)',
+                    transition: 'transform 0.15s ease',
+                  }}
+                />
                 <Link
                   to={domainPath}
-                  onClick={(e: React.MouseEvent<HTMLAnchorElement>) => e.stopPropagation()}
+                  onClick={(e) => e.stopPropagation()}
                   className="flex-1 flex items-center justify-between min-w-0 no-underline"
                   onClickCapture={onClose}
                 >
-                  <span
-                    className="text-sm font-medium truncate"
-                    style={{
-                      color: isDomainActive ? 'var(--accent-primary)' : 'var(--text-primary)',
-                      fontFamily: 'var(--font-body)',
-                    }}
-                  >
+                  <span className="text-sm font-medium truncate">
                     {domain.number}
                   </span>
                 </Link>
-
                 <span
-                  className="flex-shrink-0 text-[11px] font-semibold px-1.5 py-0.5 rounded-full ml-2"
+                  className="flex-shrink-0 text-[11px] font-semibold px-1.5 py-0.5 rounded-full"
                   style={{
-                    backgroundColor: 'rgba(242, 196, 77, 0.15)',
-                    color: 'var(--accent-amber)',
+                    backgroundColor: 'var(--surface-elevated)',
+                    color: 'var(--text-tertiary)',
                   }}
                 >
                   {domain.weight}%
                 </span>
               </button>
 
-              {/* Sub-chapters */}
-              <AnimatePresence initial={false}>
-                {isExpanded && (
-                  <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: 'auto', opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.3, ease: easeOutExpo }}
-                    className="overflow-hidden"
-                  >
-                    <div className="pl-8 pr-2 py-1">
-                      {domain.chapters.map((chapter) => {
-                        const chapterPath = `${domainPath}/${chapter.id}`
-                        const isRead = readChapters[chapter.id]
-                        return (
-                          <Link
-                            key={chapter.id}
-                            to={chapterPath}
-                            onClick={onClose}
-                            className="flex items-center gap-2 px-3 py-2 rounded-md text-sm transition-all duration-200 no-underline group/item"
-                            style={{ color: 'var(--text-secondary)' }}
-                            onMouseEnter={(e: React.MouseEvent<HTMLAnchorElement>) => {
-                              (e.currentTarget as HTMLElement).style.backgroundColor = 'var(--surface-elevated)'
-                              ;(e.currentTarget as HTMLElement).style.color = 'var(--text-primary)'
-                            }}
-                            onMouseLeave={(e: React.MouseEvent<HTMLAnchorElement>) => {
-                              (e.currentTarget as HTMLElement).style.backgroundColor = 'transparent'
-                              ;(e.currentTarget as HTMLElement).style.color = 'var(--text-secondary)'
-                            }}
-                          >
-                            {isRead ? (
-                              <CheckCircle2
-                                size={14}
-                                style={{ color: 'var(--accent-sage)' }}
-                                className="flex-shrink-0"
-                              />
-                            ) : (
-                              <Circle
-                                size={14}
-                                style={{ color: 'var(--text-tertiary)' }}
-                                className="flex-shrink-0"
-                              />
-                            )}
-                            <span className="truncate">{chapter.title}</span>
-                          </Link>
-                        )
-                      })}
-                      <div className="flex items-center gap-1.5 px-3 py-1.5 mt-1">
-                        <div
-                          className="flex-1 h-1 rounded-full overflow-hidden"
-                          style={{ backgroundColor: 'var(--border-subtle)' }}
-                        >
-                          <div
-                            className="h-full rounded-full transition-all duration-500"
-                            style={{
-                              width: `${(readCount / totalChapters) * 100}%`,
-                              backgroundColor: 'var(--accent-primary)',
-                            }}
+              {/* Sub-chapters — no animation, instant toggle */}
+              {isExpanded && (
+                <div className="pl-8 pr-2 py-1">
+                  {domain.chapters.map((chapter) => {
+                    const chapterPath = `${domainPath}/${chapter.id}`
+                    const isRead = readChapters[chapter.id]
+                    return (
+                      <Link
+                        key={chapter.id}
+                        to={chapterPath}
+                        onClick={onClose}
+                        className="flex items-center gap-2 px-3 py-2 rounded-md text-sm transition-colors duration-150 no-underline hover:bg-[var(--surface-elevated)]"
+                        style={{ color: 'var(--text-secondary)' }}
+                      >
+                        {isRead ? (
+                          <CheckCircle2
+                            size={14}
+                            style={{ color: 'var(--accent-sage)' }}
+                            className="flex-shrink-0"
                           />
-                        </div>
-                        <span
-                          className="text-[10px] font-medium"
-                          style={{ color: 'var(--text-tertiary)' }}
-                        >
-                          {readCount}/{totalChapters}
-                        </span>
-                      </div>
+                        ) : (
+                          <Circle
+                            size={14}
+                            style={{ color: 'var(--text-tertiary)' }}
+                            className="flex-shrink-0"
+                          />
+                        )}
+                        <span className="truncate">{chapter.title}</span>
+                      </Link>
+                    )
+                  })}
+                  <div className="flex items-center gap-1.5 px-3 py-1.5 mt-1">
+                    <div
+                      className="flex-1 h-1 rounded-full overflow-hidden"
+                      style={{ backgroundColor: 'var(--border-subtle)' }}
+                    >
+                      <div
+                        className="h-full rounded-full"
+                        style={{
+                          width: `${(readCount / totalChapters) * 100}%`,
+                          backgroundColor: 'var(--accent-primary)',
+                        }}
+                      />
                     </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+                    <span
+                      className="text-[10px] font-medium"
+                      style={{ color: 'var(--text-tertiary)' }}
+                    >
+                      {readCount}/{totalChapters}
+                    </span>
+                  </div>
+                </div>
+              )}
             </div>
           )
         })}
@@ -221,27 +178,14 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
             key={item.to}
             to={item.to}
             onClick={onClose}
-            className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 no-underline"
+            className="flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium transition-colors duration-150 no-underline hover:bg-[var(--surface-elevated)]"
             style={{
               color: isActive(item.to) ? 'var(--accent-primary)' : 'var(--text-secondary)',
-              backgroundColor: isActive(item.to) ? 'rgba(4, 80, 54, 0.08)' : 'transparent',
-              borderLeft: isActive(item.to) ? '3px solid var(--accent-primary)' : '3px solid transparent',
-            }}
-            onMouseEnter={(e: React.MouseEvent<HTMLAnchorElement>) => {
-              if (!isActive(item.to)) {
-                (e.currentTarget as HTMLElement).style.backgroundColor = 'var(--surface-elevated)'
-                ;(e.currentTarget as HTMLElement).style.color = 'var(--text-primary)'
-              }
-            }}
-            onMouseLeave={(e: React.MouseEvent<HTMLAnchorElement>) => {
-              if (!isActive(item.to)) {
-                (e.currentTarget as HTMLElement).style.backgroundColor = 'transparent'
-                ;(e.currentTarget as HTMLElement).style.color = 'var(--text-secondary)'
-              }
+              backgroundColor: isActive(item.to) ? 'var(--surface-elevated)' : 'transparent',
             }}
           >
             <item.icon size={16} />
-            <span style={{ fontFamily: 'var(--font-body)' }}>{item.label}</span>
+            <span>{item.label}</span>
           </Link>
         ))}
       </div>
@@ -252,7 +196,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
     <>
       {/* Desktop Sidebar */}
       <aside
-        className="hidden lg:block fixed left-0 top-[60px] bottom-0 z-30 transition-all duration-300"
+        className="hidden lg:block fixed left-0 top-[56px] bottom-0 z-30 transition-all duration-200"
         style={{
           width: isOpen ? '280px' : '0px',
           borderRight: isOpen ? '1px solid var(--border-subtle)' : 'none',
@@ -264,36 +208,24 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
       </aside>
 
       {/* Mobile/Tablet Sidebar Overlay */}
-      <AnimatePresence>
-        {isOpen && (
-          <>
-            {/* Backdrop */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 0.5 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              className="fixed inset-0 z-40 lg:hidden"
-              style={{ backgroundColor: '#000' }}
-              onClick={onClose}
-            />
-
-            {/* Mobile Sidebar Drawer */}
-            <motion.aside
-              initial={{ x: '-100%' }}
-              animate={{ x: 0 }}
-              exit={{ x: '-100%' }}
-              transition={{ duration: 0.35, ease: easeOutExpo }}
-              className="fixed left-0 top-[60px] bottom-0 z-40 w-[280px] lg:hidden overflow-hidden"
-              style={{
-                borderRight: '1px solid var(--border-subtle)',
-              }}
-            >
-              {sidebarContent}
-            </motion.aside>
-          </>
-        )}
-      </AnimatePresence>
+      {isOpen && (
+        <>
+          <div
+            className="fixed inset-0 z-40 lg:hidden"
+            style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
+            onClick={onClose}
+          />
+          <aside
+            className="fixed left-0 top-[56px] bottom-0 z-40 w-[280px] lg:hidden overflow-hidden"
+            style={{
+              borderRight: '1px solid var(--border-subtle)',
+              animation: 'sidebarSlideIn 0.2s ease',
+            }}
+          >
+            {sidebarContent}
+          </aside>
+        </>
+      )}
     </>
   )
 }

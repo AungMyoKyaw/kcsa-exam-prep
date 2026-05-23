@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
-import { motion } from 'framer-motion'
 import {
   BookOpen,
   Shield,
@@ -23,7 +22,6 @@ import CodeBlock from './components/CodeBlock'
 import QuizCard from './components/QuizCard'
 import type { QuizQuestion } from './components/QuizCard'
 
-const easeOutExpo = [0.16, 1, 0.3, 1] as [number, number, number, number]
 
 const fadeUp = {
   initial: { opacity: 0, y: 30 },
@@ -207,16 +205,15 @@ export default function Domain5Page() {
         className="fixed top-[60px] left-0 right-0 h-[3px] z-30"
         style={{ backgroundColor: 'var(--border-subtle)' }}
       >
-        <motion.div
+        <div
           className="h-full"
           style={{ background: 'var(--accent-gradient)' }}
           animate={{ width: `${scrollProgress}%` }}
-          transition={{ duration: 0.1 }}
         />
       </div>
 
       {/* Breadcrumb */}
-      <motion.nav
+      <nav
         {...fadeUp}
         className="flex items-center gap-2 mb-6 text-sm"
       >
@@ -229,10 +226,10 @@ export default function Domain5Page() {
         </Link>
         <span style={{ color: 'var(--text-tertiary)' }}>/</span>
         <span style={{ color: 'var(--text-secondary)' }}>Domain 5</span>
-      </motion.nav>
+      </nav>
 
       {/* Chapter Header */}
-      <motion.header {...fadeUp} className="mb-10">
+      <header {...fadeUp} className="mb-10">
         <div
           className="mb-2 text-xs font-semibold uppercase tracking-[0.06em]"
           style={{ color: 'var(--text-tertiary)' }}
@@ -280,10 +277,10 @@ export default function Domain5Page() {
           (OPA vs Kyverno vs built-in), and PKI/cert-manager concepts are frequently tested. Pay
           special attention to the mutating vs. validating admission controller distinction.
         </CalloutBox>
-      </motion.header>
+      </header>
 
       {/* Section 5.1 — Supply Chain Security */}
-      <motion.section {...fadeUp} className="mb-12">
+      <section {...fadeUp} className="mb-12">
         <div className="flex items-center gap-3 mb-4">
           <div
             className="w-10 h-10 rounded-lg flex items-center justify-center"
@@ -323,7 +320,7 @@ export default function Domain5Page() {
         {/* SLSA Levels */}
         <div className="space-y-3 mb-6">
           {slsaLevels.map((l) => (
-            <motion.div
+            <div
               key={l.level}
               {...staggerChild}
               className="flex items-start gap-4 p-4 rounded-xl"
@@ -346,7 +343,7 @@ export default function Domain5Page() {
                   {l.desc}
                 </div>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
 
@@ -398,10 +395,10 @@ export default function Domain5Page() {
             </li>
           ))}
         </ul>
-      </motion.section>
+      </section>
 
       {/* Section 5.2 — Image Repository Security */}
-      <motion.section {...fadeUp} className="mb-12">
+      <section {...fadeUp} className="mb-12">
         <div className="flex items-center gap-3 mb-4">
           <div
             className="w-10 h-10 rounded-lg flex items-center justify-center"
@@ -439,7 +436,7 @@ export default function Domain5Page() {
             { tool: 'Snyk', vendor: 'Snyk', scope: 'Commercial platform with K8s API integration' },
             { tool: 'Clair', vendor: 'Red Hat', scope: 'Container images only (PostgreSQL required)' },
           ].map((scanner) => (
-            <motion.div
+            <div
               key={scanner.tool}
               whileHover={{ y: -2 }}
               className="p-4 rounded-xl"
@@ -457,7 +454,7 @@ export default function Domain5Page() {
               <div className="text-xs" style={{ color: 'var(--text-secondary)' }}>
                 {scanner.scope}
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
 
@@ -523,10 +520,10 @@ trivy image --format spdx-json --output sbom.json myregistry.io/app:v1.0.0`}
           <code>imagePullSecrets</code>, node-level <code>dockercfg</code>, or cloud-native
           mechanisms like IRSA/EKS IAM roles.
         </p>
-      </motion.section>
+      </section>
 
       {/* Section 5.3 — Observability */}
-      <motion.section {...fadeUp} className="mb-12">
+      <section {...fadeUp} className="mb-12">
         <div className="flex items-center gap-3 mb-4">
           <div
             className="w-10 h-10 rounded-lg flex items-center justify-center"
@@ -557,7 +554,7 @@ trivy image --format spdx-json --output sbom.json myregistry.io/app:v1.0.0`}
             { name: 'Logs', icon: BookOpen, desc: 'Text records of events — application, audit, and system logs' },
             { name: 'Traces', icon: Network, desc: 'Request flow across services — distributed tracing' },
           ].map((pillar) => (
-            <motion.div
+            <div
               key={pillar.name}
               whileHover={{ y: -2 }}
               className="p-4 rounded-xl text-center"
@@ -573,7 +570,7 @@ trivy image --format spdx-json --output sbom.json myregistry.io/app:v1.0.0`}
               <div className="text-xs leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
                 {pillar.desc}
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
 
@@ -648,10 +645,10 @@ trivy image --format spdx-json --output sbom.json myregistry.io/app:v1.0.0`}
             </li>
           ))}
         </ul>
-      </motion.section>
+      </section>
 
       {/* Section 5.4 — Service Mesh */}
-      <motion.section {...fadeUp} className="mb-12">
+      <section {...fadeUp} className="mb-12">
         <div className="flex items-center gap-3 mb-4">
           <div
             className="w-10 h-10 rounded-lg flex items-center justify-center"
@@ -678,7 +675,7 @@ trivy image --format spdx-json --output sbom.json myregistry.io/app:v1.0.0`}
 
         {/* Istio vs Linkerd */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-          <motion.div
+          <div
             whileHover={{ y: -2 }}
             className="p-5 rounded-xl"
             style={{
@@ -704,8 +701,8 @@ trivy image --format spdx-json --output sbom.json myregistry.io/app:v1.0.0`}
                 </li>
               ))}
             </ul>
-          </motion.div>
-          <motion.div
+          </div>
+          <div
             whileHover={{ y: -2 }}
             className="p-5 rounded-xl"
             style={{
@@ -731,7 +728,7 @@ trivy image --format spdx-json --output sbom.json myregistry.io/app:v1.0.0`}
                 </li>
               ))}
             </ul>
-          </motion.div>
+          </div>
         </div>
 
         <h3
@@ -803,10 +800,10 @@ spec:
         methods: ["GET"]
         ports: ["8080"]`}
         />
-      </motion.section>
+      </section>
 
       {/* Section 5.5 — PKI */}
-      <motion.section {...fadeUp} className="mb-12">
+      <section {...fadeUp} className="mb-12">
         <div className="flex items-center gap-3 mb-4">
           <div
             className="w-10 h-10 rounded-lg flex items-center justify-center"
@@ -832,7 +829,7 @@ spec:
 
         <div className="space-y-3 mb-6">
           {pkiComponents.map((comp) => (
-            <motion.div
+            <div
               key={comp.name}
               whileHover={{ x: 4 }}
               className="flex items-start gap-4 p-4 rounded-xl"
@@ -850,7 +847,7 @@ spec:
                   {comp.desc}
                 </div>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
 
@@ -924,10 +921,10 @@ spec:
   dnsNames:
   - app.company.com`}
         />
-      </motion.section>
+      </section>
 
       {/* Section 5.6 — Connectivity */}
-      <motion.section {...fadeUp} className="mb-12">
+      <section {...fadeUp} className="mb-12">
         <div className="flex items-center gap-3 mb-4">
           <div
             className="w-10 h-10 rounded-lg flex items-center justify-center"
@@ -976,7 +973,7 @@ spec:
               ],
             },
           ].map((card) => (
-            <motion.div
+            <div
               key={card.title}
               whileHover={{ y: -2 }}
               className="p-5 rounded-xl"
@@ -997,13 +994,13 @@ spec:
                   </li>
                 ))}
               </ul>
-            </motion.div>
+            </div>
           ))}
         </div>
-      </motion.section>
+      </section>
 
       {/* Section 5.7 — Admission Control */}
-      <motion.section {...fadeUp} className="mb-12">
+      <section {...fadeUp} className="mb-12">
         <div className="flex items-center gap-3 mb-4">
           <div
             className="w-10 h-10 rounded-lg flex items-center justify-center"
@@ -1101,7 +1098,7 @@ spec:
           OPA Gatekeeper vs. Kyverno
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-          <motion.div
+          <div
             whileHover={{ y: -2 }}
             className="p-5 rounded-xl"
             style={{
@@ -1128,8 +1125,8 @@ spec:
                 </li>
               ))}
             </ul>
-          </motion.div>
-          <motion.div
+          </div>
+          <div
             whileHover={{ y: -2 }}
             className="p-5 rounded-xl"
             style={{
@@ -1156,7 +1153,7 @@ spec:
                 </li>
               ))}
             </ul>
-          </motion.div>
+          </div>
         </div>
 
         <CalloutBox variant="exam-focus">
@@ -1211,10 +1208,10 @@ spec:
           securityContext:
             runAsNonRoot: true`}
         />
-      </motion.section>
+      </section>
 
       {/* Quiz */}
-      <motion.section {...fadeUp} className="mb-12">
+      <section {...fadeUp} className="mb-12">
         <h2
           className="text-2xl font-normal mb-6"
           style={{
@@ -1225,10 +1222,10 @@ spec:
           Chapter Quiz
         </h2>
         <QuizCard questions={quizQuestions} domainId="5" />
-      </motion.section>
+      </section>
 
       {/* Chapter Footer */}
-      <motion.footer
+      <footer
         {...fadeUp}
         className="flex items-center justify-between py-6"
         style={{ borderTop: '1px solid var(--border-subtle)' }}
@@ -1249,7 +1246,7 @@ spec:
           <span>Domain 6: Compliance</span>
           <ArrowRight size={16} />
         </Link>
-      </motion.footer>
+      </footer>
     </div>
   )
 }

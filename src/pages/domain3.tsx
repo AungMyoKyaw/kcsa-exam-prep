@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
 import { Link } from 'react-router';
 import { ChevronRight, BookOpen } from 'lucide-react';
 import { useProgress } from '@/hooks/useProgress';
@@ -12,7 +11,6 @@ import ComparisonTable from '@/components/ComparisonTable';
 
 const DOMAIN_ID = 'domain3';
 
-const easeOutExpo = [0.16, 1, 0.3, 1] as [number, number, number, number];
 
 /* ─── Quiz Data ─── */
 const quizQuestions: QuizQuestion[] = [
@@ -220,23 +218,17 @@ export default function Domain3Page() {
   return (
     <div className="max-w-[900px] mx-auto px-6 py-8 md:py-12">
       {/* Breadcrumb */}
-      <motion.nav
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, ease: easeOutExpo }}
+      <nav
         className="flex items-center gap-2 text-xs mb-6"
         style={{ color: 'var(--text-tertiary)' }}
       >
         <Link to="/" className="hover:underline" style={{ color: 'var(--accent-primary)' }}>Home</Link>
         <ChevronRight size={12} />
         <span>Domain 3</span>
-      </motion.nav>
+      </nav>
 
       {/* Chapter Header */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, ease: easeOutExpo, delay: 0.1 }}
+      <div
         className="mb-10"
       >
         <div className="mb-3 flex items-center gap-3 flex-wrap">
@@ -291,28 +283,20 @@ export default function Domain3Page() {
           Network Policy behavior are HIGH-YIELD topics. Memorize the PSS Baseline vs Restricted
           differences and all 11 RBAC verbs.
         </Callout>
-      </motion.div>
+      </div>
 
       {/* ─── Section 3.1: Pod Security Standards ─── */}
       <section id="pss">
         <SectionHeader number="3.1" title="Pod Security Standards (PSS)" />
 
-        <motion.p
-          initial={{ opacity: 0, y: 15 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, ease: easeOutExpo }}
+        <p
           className="mb-4 text-base leading-relaxed"
           style={{ color: 'var(--text-primary)', maxWidth: '680px' }}
         >
           PSS defines three progressively more restrictive security levels for pods:
-        </motion.p>
+        </p>
 
-        <motion.div
-          initial={{ opacity: 0, y: 15 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, ease: easeOutExpo }}
+        <div
           className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6"
         >
           {[
@@ -348,23 +332,19 @@ export default function Domain3Page() {
               </p>
             </div>
           ))}
-        </motion.div>
+        </div>
 
         <Callout variant="info">
           The policies are <strong>cumulative</strong> — Restricted INHERITS all Baseline restrictions,
           and Baseline is a subset of what Restricted enforces. Privileged has NO restrictions (entirely open).
         </Callout>
 
-        <motion.h3
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.4, ease: easeOutExpo }}
+        <h3
           className="text-lg font-bold mb-3"
           style={{ color: 'var(--text-primary)' }}
         >
           PSS Comparison: Baseline vs Restricted
-        </motion.h3>
+        </h3>
 
         <p className="text-sm mb-4" style={{ color: 'var(--text-secondary)' }}>
           This is the most exam-critical table in this domain. Memorize it.
@@ -379,16 +359,12 @@ export default function Domain3Page() {
           <strong>seccompProfile=RuntimeDefault/Localhost</strong>, and only <strong>8 volume types</strong> allowed.
         </Callout>
 
-        <motion.h3
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.4, ease: easeOutExpo }}
+        <h3
           className="text-lg font-bold mb-3"
           style={{ color: 'var(--text-primary)' }}
         >
           Restricted PSS Compliant Pod Example
-        </motion.h3>
+        </h3>
 
         <CodeBlock
           code={`apiVersion: v1
@@ -432,11 +408,7 @@ spec:
       <section id="psa">
         <SectionHeader number="3.2" title="Pod Security Admission (PSA)" />
 
-        <motion.p
-          initial={{ opacity: 0, y: 15 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, ease: easeOutExpo }}
+        <p
           className="mb-4 text-base leading-relaxed"
           style={{ color: 'var(--text-primary)', maxWidth: '680px' }}
         >
@@ -444,18 +416,14 @@ spec:
           PodSecurityPolicy (PSP) in Kubernetes v1.25. PSA is a <strong>validating</strong> admission
           controller (does not mutate objects) that runs in the validating phase after all mutating
           controllers have completed.
-        </motion.p>
+        </p>
 
-        <motion.h3
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.4, ease: easeOutExpo }}
+        <h3
           className="text-lg font-bold mb-3"
           style={{ color: 'var(--text-primary)' }}
         >
           Three Enforcement Modes
-        </motion.h3>
+        </h3>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           {[
@@ -463,12 +431,8 @@ spec:
             { mode: 'warn', desc: 'Policy violations trigger a warning', detail: 'Warning returned but pod is allowed' },
             { mode: 'audit', desc: 'Policy violations trigger an annotation', detail: 'Annotation in audit log, pod allowed' },
           ].map((m) => (
-            <motion.div
+            <div
               key={m.mode}
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.4, ease: easeOutExpo }}
               className="p-4 rounded-xl"
               style={{ backgroundColor: 'var(--surface-base)', border: '1px solid var(--border-subtle)' }}
             >
@@ -477,20 +441,16 @@ spec:
               </h4>
               <p className="text-sm" style={{ color: 'var(--text-primary)' }}>{m.desc}</p>
               <p className="text-xs mt-1" style={{ color: 'var(--text-secondary)' }}>{m.detail}</p>
-            </motion.div>
+            </div>
           ))}
         </div>
 
-        <motion.h3
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.4, ease: easeOutExpo }}
+        <h3
           className="text-lg font-bold mb-3"
           style={{ color: 'var(--text-primary)' }}
         >
           Namespace Labels
-        </motion.h3>
+        </h3>
 
         <CodeBlock
           code={`apiVersion: v1
@@ -538,16 +498,12 @@ kubectl label --dry-run=server --overwrite ns --all \\
         </Callout>
 
         {/* PSA Timeline */}
-        <motion.h3
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.4, ease: easeOutExpo }}
+        <h3
           className="text-lg font-bold mb-3"
           style={{ color: 'var(--text-primary)' }}
         >
           PSA Timeline
-        </motion.h3>
+        </h3>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
           {[
@@ -556,18 +512,14 @@ kubectl label --dry-run=server --overwrite ns --all \\
             { ver: 'v1.25', event: 'PSA GA; PSP removed' },
             { ver: 'v1.30+', event: 'AppArmor in securityContext' },
           ].map((item) => (
-            <motion.div
+            <div
               key={item.ver}
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.3, ease: easeOutExpo }}
               className="p-3 rounded-lg text-center"
               style={{ backgroundColor: 'var(--surface-base)', border: '1px solid var(--border-subtle)' }}
             >
               <div className="text-xs font-bold" style={{ color: 'var(--accent-primary)' }}>{item.ver}</div>
               <div className="text-xs mt-1" style={{ color: 'var(--text-secondary)' }}>{item.event}</div>
-            </motion.div>
+            </div>
           ))}
         </div>
       </section>
@@ -576,34 +528,26 @@ kubectl label --dry-run=server --overwrite ns --all \\
       <section id="authentication">
         <SectionHeader number="3.3" title="Authentication Methods" />
 
-        <motion.p
-          initial={{ opacity: 0, y: 15 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, ease: easeOutExpo }}
+        <p
           className="mb-4 text-base leading-relaxed"
           style={{ color: 'var(--text-primary)', maxWidth: '680px' }}
         >
           Authentication determines <strong>WHO you are</strong>. The API server passes credentials
           through a chain of authenticators — the first one that can verify the credential wins. If none
           can, the request is treated as anonymous. Kubernetes supports multiple auth methods simultaneously.
-        </motion.p>
+        </p>
 
         <Callout variant="info">
           Kubernetes has <strong>NO User object</strong>. There is no{' '}<code>kubectl create user</code>{' '}
           command. Users are ephemeral identities extracted from credentials by external systems.
         </Callout>
 
-        <motion.h3
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.4, ease: easeOutExpo }}
+        <h3
           className="text-lg font-bold mb-3"
           style={{ color: 'var(--text-primary)' }}
         >
           Authentication Methods
-        </motion.h3>
+        </h3>
 
         <div className="space-y-4 mb-6">
           {[
@@ -638,12 +582,8 @@ kubectl label --dry-run=server --overwrite ns --all \\
               recommended: false,
             },
           ].map((method) => (
-            <motion.div
+            <div
               key={method.name}
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.4, ease: easeOutExpo }}
               className="p-4 rounded-xl"
               style={{
                 backgroundColor: 'var(--surface-base)',
@@ -678,20 +618,16 @@ kubectl label --dry-run=server --overwrite ns --all \\
                 )}
               </div>
               <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>{method.desc}</p>
-            </motion.div>
+            </div>
           ))}
         </div>
 
-        <motion.h3
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.4, ease: easeOutExpo }}
+        <h3
           className="text-lg font-bold mb-3"
           style={{ color: 'var(--text-primary)' }}
         >
           Authentication Flow
-        </motion.h3>
+        </h3>
 
         <CodeBlock
           code={`User/Pod → Presents credentials → API Server → Authentication module → 
@@ -712,11 +648,7 @@ Identity established → Pass to Authorization → RBAC check`}
       <section id="authorization">
         <SectionHeader number="3.4" title="Authorization (RBAC, ABAC, Node, Webhook)" />
 
-        <motion.p
-          initial={{ opacity: 0, y: 15 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, ease: easeOutExpo }}
+        <p
           className="mb-4 text-base leading-relaxed"
           style={{ color: 'var(--text-primary)', maxWidth: '680px' }}
         >
@@ -724,18 +656,14 @@ Identity established → Pass to Authorization → RBAC check`}
           authorization happens as a separate step from authentication. Multiple authorization modes can
           be configured simultaneously using <code>--authorization-mode=Node,RBAC,Webhook</code>. The
           order specified matters — earlier modules have higher priority.
-        </motion.p>
+        </p>
 
-        <motion.h3
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.4, ease: easeOutExpo }}
+        <h3
           className="text-lg font-bold mb-3"
           style={{ color: 'var(--text-primary)' }}
         >
           Four Authorization Modes
-        </motion.h3>
+        </h3>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
           {[
@@ -760,12 +688,8 @@ Identity established → Pass to Authorization → RBAC check`}
               highlight: false,
             },
           ].map((mode) => (
-            <motion.div
+            <div
               key={mode.name}
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.4, ease: easeOutExpo }}
               className="p-4 rounded-xl"
               style={{
                 backgroundColor: mode.highlight ? 'rgba(4, 80, 54, 0.04)' : 'var(--surface-base)',
@@ -776,20 +700,16 @@ Identity established → Pass to Authorization → RBAC check`}
                 {mode.name}
               </h4>
               <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>{mode.desc}</p>
-            </motion.div>
+            </div>
           ))}
         </div>
 
-        <motion.h3
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.4, ease: easeOutExpo }}
+        <h3
           className="text-lg font-bold mb-3"
           style={{ color: 'var(--text-primary)' }}
         >
           RBAC Verbs — Memorize All 11
-        </motion.h3>
+        </h3>
 
         <ComparisonTable columns={rbacVerbsColumns} rows={rbacVerbsRows} />
 
@@ -799,16 +719,12 @@ Identity established → Pass to Authorization → RBAC check`}
           <code>impersonate</code> (can act as another user) — all can lead to privilege escalation.
         </Callout>
 
-        <motion.h3
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.4, ease: easeOutExpo }}
+        <h3
           className="text-lg font-bold mb-3"
           style={{ color: 'var(--text-primary)' }}
         >
           Role vs ClusterRole
-        </motion.h3>
+        </h3>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
           <div className="p-4 rounded-xl" style={{ backgroundColor: 'var(--surface-base)', border: '1px solid var(--border-subtle)' }}>
@@ -835,16 +751,12 @@ Identity established → Pass to Authorization → RBAC check`}
           reusing role definitions across namespaces.
         </Callout>
 
-        <motion.h3
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.4, ease: easeOutExpo }}
+        <h3
           className="text-lg font-bold mb-3"
           style={{ color: 'var(--text-primary)' }}
         >
           RBAC Configuration Example
-        </motion.h3>
+        </h3>
 
         <CodeBlock
           code={`# Least-privilege Role for a developer
@@ -901,29 +813,21 @@ kubectl auth can-i create secrets --all-namespaces`}
       <section id="secrets">
         <SectionHeader number="3.5" title="Secrets Management" />
 
-        <motion.p
-          initial={{ opacity: 0, y: 15 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, ease: easeOutExpo }}
+        <p
           className="mb-4 text-base leading-relaxed"
           style={{ color: 'var(--text-primary)', maxWidth: '680px' }}
         >
           Kubernetes Secrets are designed to store sensitive data (passwords, tokens, keys). However,
           by default they are stored as base64-encoded (NOT encrypted) in etcd. Proper secrets management
           is critical for cluster security.
-        </motion.p>
+        </p>
 
-        <motion.h3
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.4, ease: easeOutExpo }}
+        <h3
           className="text-lg font-bold mb-3"
           style={{ color: 'var(--text-primary)' }}
         >
           Built-in Secret Types
-        </motion.h3>
+        </h3>
 
         <ComparisonTable columns={secretTypesColumns} rows={secretTypesRows} />
 
@@ -932,16 +836,12 @@ kubectl auth can-i create secrets --all-namespaces`}
           must enable encryption at rest via <code>--encryption-provider-config</code>.
         </Callout>
 
-        <motion.h3
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.4, ease: easeOutExpo }}
+        <h3
           className="text-lg font-bold mb-3"
           style={{ color: 'var(--text-primary)' }}
         >
           Encryption Providers
-        </motion.h3>
+        </h3>
 
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6">
           {[
@@ -952,12 +852,8 @@ kubectl auth can-i create secrets --all-namespaces`}
             { name: 'kms v1', desc: 'Envelope encryption', status: 'Deprecated since v1.28' },
             { name: 'kms v2', desc: 'Envelope encryption', status: 'Recommended (v1.29+)' },
           ].map((p) => (
-            <motion.div
+            <div
               key={p.name}
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.3, ease: easeOutExpo }}
               className="p-3 rounded-lg"
               style={{
                 backgroundColor: 'var(--surface-base)',
@@ -974,7 +870,7 @@ kubectl auth can-i create secrets --all-namespaces`}
               >
                 {p.status}
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
 
@@ -1017,16 +913,12 @@ ETCDCTL_API=3 etcdctl \\
           filename="re-encrypt.sh"
         />
 
-        <motion.h3
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.4, ease: easeOutExpo }}
+        <h3
           className="text-lg font-bold mb-3"
           style={{ color: 'var(--text-primary)' }}
         >
           Best Practices
-        </motion.h3>
+        </h3>
 
         <div className="space-y-3 mb-6">
           {[
@@ -1038,12 +930,8 @@ ETCDCTL_API=3 etcdctl \\
             'Rotate secrets regularly and update pods',
             'Use short-lived ServiceAccount tokens (projected volumes)',
           ].map((practice, idx) => (
-            <motion.div
+            <div
               key={idx}
-              initial={{ opacity: 0, x: -10 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.3, ease: easeOutExpo, delay: idx * 0.05 }}
               className="flex items-start gap-3 text-sm"
               style={{ color: 'var(--text-primary)' }}
             >
@@ -1051,7 +939,7 @@ ETCDCTL_API=3 etcdctl \\
                 {idx + 1}
               </span>
               <span style={{ color: 'var(--text-primary)' }}>{practice}</span>
-            </motion.div>
+            </div>
           ))}
         </div>
 
@@ -1087,28 +975,20 @@ spec:
       <section id="isolation">
         <SectionHeader number="3.6" title="Isolation and Segmentation" />
 
-        <motion.p
-          initial={{ opacity: 0, y: 15 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, ease: easeOutExpo }}
+        <p
           className="mb-4 text-base leading-relaxed"
           style={{ color: 'var(--text-primary)', maxWidth: '680px' }}
         >
           Multi-tenancy in Kubernetes requires multiple layers of isolation — network, access control,
           resource, and runtime isolation. No single mechanism provides complete isolation.
-        </motion.p>
+        </p>
 
-        <motion.h3
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.4, ease: easeOutExpo }}
+        <h3
           className="text-lg font-bold mb-3"
           style={{ color: 'var(--text-primary)' }}
         >
           Multi-Tenancy Strategies
-        </motion.h3>
+        </h3>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
           {[
@@ -1117,12 +997,8 @@ spec:
             { name: 'Virtual Clusters', desc: 'Full isolated clusters within a cluster (vcluster). Stronger isolation than namespaces.', level: 'Stronger' },
             { name: 'Cluster-per-tenant', desc: 'Physical isolation. Most secure but most expensive.', level: 'Physical' },
           ].map((s) => (
-            <motion.div
+            <div
               key={s.name}
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.4, ease: easeOutExpo }}
               className="p-4 rounded-xl"
               style={{ backgroundColor: 'var(--surface-base)', border: '1px solid var(--border-subtle)' }}
             >
@@ -1133,20 +1009,16 @@ spec:
                 </span>
               </div>
               <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>{s.desc}</p>
-            </motion.div>
+            </div>
           ))}
         </div>
 
-        <motion.h3
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.4, ease: easeOutExpo }}
+        <h3
           className="text-lg font-bold mb-3"
           style={{ color: 'var(--text-primary)' }}
         >
           Segmentation Controls
-        </motion.h3>
+        </h3>
 
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6">
           {[
@@ -1157,18 +1029,14 @@ spec:
             { name: 'Pod Security Admission', desc: 'Security profile enforcement' },
             { name: 'Service Mesh mTLS', desc: 'Service-to-service auth' },
           ].map((ctrl) => (
-            <motion.div
+            <div
               key={ctrl.name}
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.3, ease: easeOutExpo }}
               className="p-3 rounded-lg text-center"
               style={{ backgroundColor: 'var(--surface-base)', border: '1px solid var(--border-subtle)' }}
             >
               <div className="text-xs font-bold" style={{ color: 'var(--accent-primary)' }}>{ctrl.name}</div>
               <div className="text-[11px] mt-1" style={{ color: 'var(--text-secondary)' }}>{ctrl.desc}</div>
-            </motion.div>
+            </div>
           ))}
         </div>
       </section>
@@ -1177,41 +1045,29 @@ spec:
       <section id="audit">
         <SectionHeader number="3.7" title="Audit Logging" />
 
-        <motion.p
-          initial={{ opacity: 0, y: 15 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, ease: easeOutExpo }}
+        <p
           className="mb-4 text-base leading-relaxed"
           style={{ color: 'var(--text-primary)', maxWidth: '680px' }}
         >
           Audit logging records API server requests for security analysis, compliance, and forensics.
           The AuditPolicy defines what should be logged and at what level.
-        </motion.p>
+        </p>
 
-        <motion.h3
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.4, ease: easeOutExpo }}
+        <h3
           className="text-lg font-bold mb-3"
           style={{ color: 'var(--text-primary)' }}
         >
           Audit Levels
-        </motion.h3>
+        </h3>
 
         <ComparisonTable columns={auditColumns} rows={auditRows} />
 
-        <motion.h3
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.4, ease: easeOutExpo }}
+        <h3
           className="text-lg font-bold mb-3"
           style={{ color: 'var(--text-primary)' }}
         >
           Audit Backends
-        </motion.h3>
+        </h3>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
           {[
@@ -1224,18 +1080,14 @@ spec:
               desc: 'Send audit events to an external HTTP service. Configure with --audit-webhook-config-file. Useful for SIEM integration.',
             },
           ].map((backend) => (
-            <motion.div
+            <div
               key={backend.name}
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.4, ease: easeOutExpo }}
               className="p-4 rounded-xl"
               style={{ backgroundColor: 'var(--surface-base)', border: '1px solid var(--border-subtle)' }}
             >
               <h4 className="text-sm font-bold mb-1" style={{ color: 'var(--accent-primary)' }}>{backend.name}</h4>
               <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>{backend.desc}</p>
-            </motion.div>
+            </div>
           ))}
         </div>
 
@@ -1273,17 +1125,13 @@ rules:
       <section id="network-policies">
         <SectionHeader number="3.8" title="Network Policies (Deep Dive)" />
 
-        <motion.p
-          initial={{ opacity: 0, y: 15 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, ease: easeOutExpo }}
+        <p
           className="mb-4 text-base leading-relaxed"
           style={{ color: 'var(--text-primary)', maxWidth: '680px' }}
         >
           NetworkPolicy is the native Kubernetes mechanism for controlling pod-to-pod network traffic.
           It operates at L3/L4 only (IP/Port) — not L7 (HTTP path/method).
-        </motion.p>
+        </p>
 
         <Callout variant="exam">
           <strong>Key exam rules:</strong> Default = allow ALL. First policy on a pod = isolation for
@@ -1291,16 +1139,12 @@ rules:
           does NOT do L7 — use service mesh for that.
         </Callout>
 
-        <motion.h3
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.4, ease: easeOutExpo }}
+        <h3
           className="text-lg font-bold mb-3"
           style={{ color: 'var(--text-primary)' }}
         >
           NetworkPolicy Rules to Remember
-        </motion.h3>
+        </h3>
 
         <div className="space-y-3 mb-6">
           {[
@@ -1313,32 +1157,24 @@ rules:
             'Both source egress AND destination ingress policies must allow the connection',
             'Default deny egress also blocks DNS — must add explicit DNS allow policy',
           ].map((rule, idx) => (
-            <motion.div
+            <div
               key={idx}
-              initial={{ opacity: 0, x: -10 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.3, ease: easeOutExpo, delay: idx * 0.05 }}
               className="flex items-start gap-3"
             >
               <span className="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold" style={{ backgroundColor: 'rgba(4, 80, 54, 0.1)', color: 'var(--accent-primary)' }}>
                 {idx + 1}
               </span>
               <p className="text-sm leading-relaxed" style={{ color: 'var(--text-primary)' }}>{rule}</p>
-            </motion.div>
+            </div>
           ))}
         </div>
 
-        <motion.h3
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.4, ease: easeOutExpo }}
+        <h3
           className="text-lg font-bold mb-3"
           style={{ color: 'var(--text-primary)' }}
         >
           Complete NetworkPolicy Examples
-        </motion.h3>
+        </h3>
 
         <CodeBlock
           code={`# 1. Default deny all ingress and egress
@@ -1435,16 +1271,12 @@ spec:
           <code>namespaceSelector: matchLabels: kubernetes.io/metadata.name: production</code>
         </Callout>
 
-        <motion.h3
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.4, ease: easeOutExpo }}
+        <h3
           className="text-lg font-bold mb-3"
           style={{ color: 'var(--text-primary)' }}
         >
           What NetworkPolicy CANNOT Do
-        </motion.h3>
+        </h3>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
           {[
@@ -1457,18 +1289,14 @@ spec:
             'Layer 7 (HTTP path, method) filtering',
             'Explicitly deny — only allow rules exist',
           ].map((limit, idx) => (
-            <motion.div
+            <div
               key={idx}
-              initial={{ opacity: 0, x: -5 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.3, ease: easeOutExpo, delay: idx * 0.04 }}
               className="flex items-center gap-2 px-3 py-2 rounded-lg"
               style={{ backgroundColor: 'var(--surface-base)', border: '1px solid var(--border-subtle)' }}
             >
               <span style={{ color: 'var(--accent-coral)' }}>✕</span>
               <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>{limit}</span>
-            </motion.div>
+            </div>
           ))}
         </div>
 
@@ -1481,11 +1309,7 @@ spec:
 
       {/* ─── Quiz Section ─── */}
       <section id="quiz" className="mt-16 mb-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.2 }}
-          transition={{ duration: 0.6, ease: easeOutExpo }}
+        <div
           className="text-center mb-8"
         >
           <h2
@@ -1502,7 +1326,7 @@ spec:
               Previous score: {progress.quizScore}/{quizQuestions.length}
             </p>
           )}
-        </motion.div>
+        </div>
 
         <Quiz
           questions={quizQuestions}
@@ -1512,11 +1336,7 @@ spec:
       </section>
 
       {/* ─── Footer Navigation ─── */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.5, ease: easeOutExpo }}
+      <div
         className="flex items-center justify-between mt-12 pt-6"
         style={{ borderTop: '1px solid var(--border-subtle)' }}
       >
@@ -1536,7 +1356,7 @@ spec:
           Next: Domain 4
           <ChevronRight size={14} />
         </Link>
-      </motion.div>
+      </div>
     </div>
   );
 }

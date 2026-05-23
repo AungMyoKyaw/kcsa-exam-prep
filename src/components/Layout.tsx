@@ -10,28 +10,19 @@ interface LayoutProps {
 export default function Layout({ children }: LayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const [theme, setTheme] = useState<'light' | 'dark' | 'system'>('dark')
-  const [scrollProgress, setScrollProgress] = useState(0)
 
-  // Load theme from localStorage on mount
   useEffect(() => {
     const saved = localStorage.getItem('kcsa-theme') as 'light' | 'dark' | 'system' | null
-    if (saved) {
-      setTheme(saved)
-    }
+    if (saved) setTheme(saved)
   }, [])
 
-  // Apply theme class to html
   useEffect(() => {
     const root = document.documentElement
     root.classList.remove('light', 'dark')
 
     if (theme === 'system') {
       const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-      if (prefersDark) {
-        root.classList.add('dark')
-      } else {
-        root.classList.add('light')
-      }
+      root.classList.add(prefersDark ? 'dark' : 'light')
     } else {
       root.classList.add(theme)
     }
@@ -39,7 +30,6 @@ export default function Layout({ children }: LayoutProps) {
     localStorage.setItem('kcsa-theme', theme)
   }, [theme])
 
-  // Handle theme toggle: cycles through dark → light → system
   const handleThemeToggle = useCallback(() => {
     setTheme((prev) => {
       if (prev === 'dark') return 'light'
@@ -48,21 +38,6 @@ export default function Layout({ children }: LayoutProps) {
     })
   }, [])
 
-  // Scroll progress tracking
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrollTop = window.scrollY
-      const docHeight = document.documentElement.scrollHeight - window.innerHeight
-      if (docHeight > 0) {
-        setScrollProgress(Math.round((scrollTop / docHeight) * 100))
-      }
-    }
-
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
-
-  // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === 'b') {
@@ -84,20 +59,6 @@ export default function Layout({ children }: LayoutProps) {
 
   return (
     <div className="min-h-[100dvh]" style={{ backgroundColor: 'var(--page-bg)' }}>
-      {/* Reading progress bar */}
-      <div
-        className="fixed top-0 left-0 right-0 h-[3px] z-50"
-        style={{ backgroundColor: 'transparent' }}
-      >
-        <div
-          className="h-full transition-all duration-200"
-          style={{
-            width: `${scrollProgress}%`,
-            background: 'var(--accent-gradient)',
-          }}
-        />
-      </div>
-
       <Navbar
         onMenuClick={toggleSidebar}
         sidebarOpen={sidebarOpen}
@@ -107,21 +68,18 @@ export default function Layout({ children }: LayoutProps) {
 
       <Sidebar isOpen={sidebarOpen} onClose={closeSidebar} />
 
-      {/* Main content area */}
       <main
-        className="transition-all duration-300"
+        className="transition-all duration-200"
         style={{
-          paddingTop: '60px',
+          paddingTop: '56px',
           paddingLeft: sidebarOpen ? '280px' : '0px',
           minHeight: '100dvh',
         }}
       >
-        {/* Scrollable content */}
-        <div
-          className="min-h-[calc(100dvh-60px)] flex flex-col"
-          style={{ transition: 'margin-left 0.3s ease' }}
-        >
-          <div className="flex-1">{children}</div>
+        <div className="min-h-[calc(100dvh-56px)] flex flex-col">
+          <div className="flex-1 max-w-[900px] mx-auto w-full px-6 py-8">
+            {children}
+          </div>
           <Footer />
         </div>
       </main>

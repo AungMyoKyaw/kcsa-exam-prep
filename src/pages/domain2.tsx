@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router';
-import { motion, useInView } from 'framer-motion';
 import {
   Server,
   Database,
@@ -22,24 +21,14 @@ import CodeBlock from '@/components/CodeBlock';
 import QuizComponent from '@/components/QuizComponent';
 import { useProgress } from '@/hooks/useProgress';
 
-const easeOutExpo = [0.16, 1, 0.3, 1] as [number, number, number, number];
 
 /* ────────────────────── Animated Section Wrapper ────────────────────── */
+/* ── Simple Section Wrapper ── */
 function Section({ children, id, className = '' }: { children: React.ReactNode; id?: string; className?: string }) {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: '-15% 0px' });
-
   return (
-    <motion.section
-      ref={ref}
-      id={id}
-      initial={{ opacity: 0, y: 30 }}
-      animate={isInView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.6, ease: easeOutExpo }}
-      className={`mb-16 ${className}`}
-    >
+    <section id={id} className={`mb-16 ${className}`}>
       {children}
-    </motion.section>
+    </section>
   );
 }
 
@@ -75,11 +64,8 @@ function StickyPortsBar() {
   return (
     <>
       <div id="ports-sentinel" />
-      <motion.div
+      <div
         ref={barRef}
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, ease: easeOutExpo, delay: 0.2 }}
         className="mb-8 overflow-x-auto"
         style={{
           position: isSticky ? 'fixed' : 'relative',
@@ -98,11 +84,8 @@ function StickyPortsBar() {
             Ports:
           </span>
           {portsData.map((p, i) => (
-            <motion.div
+            <div
               key={p.port}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: i * 0.05 }}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs cursor-default transition-all duration-200 hover:scale-105"
               style={{
                 backgroundColor: 'var(--surface-code)',
@@ -115,10 +98,10 @@ function StickyPortsBar() {
                 {p.port}
               </span>
               <span style={{ color: 'var(--text-secondary)' }}>{p.label}</span>
-            </motion.div>
+            </div>
           ))}
         </div>
-      </motion.div>
+      </div>
     </>
   );
 }
@@ -178,11 +161,9 @@ function ArchitectureDiagram() {
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {controlPlane.map((comp, i) => (
-              <motion.div
+              <div
                 key={comp.name}
-                initial={{ opacity: 0, y: 20 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.4, ease: easeOutExpo, delay: i * 0.1 }}
                 className="rounded-lg p-3 text-center transition-all duration-200 hover:scale-105"
                 style={{
                   backgroundColor: comp.highlight ? `${comp.color}20` : 'var(--surface-elevated)',
@@ -201,33 +182,29 @@ function ArchitectureDiagram() {
                 <div className="text-xs mt-1" style={{ color: 'var(--text-tertiary)' }}>
                   {comp.detail}
                 </div>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>
 
         {/* Connection arrows */}
         <div className="flex justify-center my-2">
-          <motion.div
-            initial={{ opacity: 0 }}
+          <div
             animate={isInView ? { opacity: 1 } : {}}
-            transition={{ delay: 0.5 }}
             className="text-xs flex items-center gap-1 px-3 py-1 rounded-full"
             style={{ backgroundColor: 'var(--surface-elevated)', color: 'var(--text-tertiary)' }}
           >
             <Network size={12} />
             HTTPS / mTLS
-          </motion.div>
+          </div>
         </div>
 
         {/* Worker Nodes Zone */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {workerNodes.map((node, ni) => (
-            <motion.div
+            <div
               key={node.name}
-              initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.4, ease: easeOutExpo, delay: 0.4 + ni * 0.15 }}
               className="rounded-lg p-4"
               style={{
                 backgroundColor: 'rgba(4,80,54,0.04)',
@@ -270,15 +247,13 @@ function ArchitectureDiagram() {
                   </div>
                 </div>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
 
         {/* External Client */}
-        <motion.div
-          initial={{ opacity: 0 }}
+        <div
           animate={isInView ? { opacity: 1 } : {}}
-          transition={{ delay: 0.8 }}
           className="flex items-center justify-center gap-2 mt-4 px-4 py-2 rounded-lg mx-auto w-fit"
           style={{ backgroundColor: 'var(--surface-elevated)', border: '1px solid var(--border-subtle)' }}
         >
@@ -286,7 +261,7 @@ function ArchitectureDiagram() {
           <span className="text-xs" style={{ color: 'var(--text-tertiary)' }}>
             kubectl → API Server:6443 (HTTPS)
           </span>
-        </motion.div>
+        </div>
       </div>
     </div>
   );
@@ -638,10 +613,7 @@ export default function Domain2Page() {
   return (
     <div className="max-w-[900px] mx-auto px-6 py-10">
       {/* ── Breadcrumb ── */}
-      <motion.nav
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.4 }}
+      <nav
         className="flex items-center gap-2 text-xs mb-6"
         style={{ color: 'var(--text-tertiary)' }}
       >
@@ -650,13 +622,10 @@ export default function Domain2Page() {
         </Link>
         <ChevronRight size={14} />
         <span>Domain 2: Kubernetes Cluster Component Security</span>
-      </motion.nav>
+      </nav>
 
       {/* ── Chapter Header ── */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, ease: easeOutExpo }}
+      <div
         className="mb-10"
       >
         <h1
@@ -691,7 +660,7 @@ export default function Domain2Page() {
           each component authenticates and authorizes. Pay special attention to API Server flags,
           etcd encryption, and Kubelet hardening.
         </CalloutBox>
-      </motion.div>
+      </div>
 
       {/* ── Sticky Ports Bar ── */}
       <StickyPortsBar />
@@ -1693,11 +1662,7 @@ volumeBindingMode: WaitForFirstConsumer`}
       </Section>
 
       {/* ══════════ Chapter Footer ══════════ */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        transition={{ duration: 0.5 }}
-        viewport={{ once: true }}
+      <div
         className="flex items-center justify-between mt-16 pt-8"
         style={{ borderTop: '1px solid var(--border-subtle)' }}
       >
@@ -1726,7 +1691,7 @@ volumeBindingMode: WaitForFirstConsumer`}
           Domain 3: Security Fundamentals
           <ArrowRight size={14} />
         </Link>
-      </motion.div>
+      </div>
     </div>
   );
 }

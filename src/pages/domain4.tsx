@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
 import { Link } from 'react-router';
 import { ChevronRight, BookOpen, ArrowRight } from 'lucide-react';
 import { useProgress } from '@/hooks/useProgress';
@@ -12,7 +11,6 @@ import ComparisonTable from '@/components/ComparisonTable';
 import StrideDiagram from '@/components/StrideDiagram';
 
 const DOMAIN_ID = 'domain4';
-const easeOutExpo = [0.16, 1, 0.3, 1] as [number, number, number, number];
 
 /* ─── Quiz Data ─── */
 const quizQuestions: QuizQuestion[] = [
@@ -184,23 +182,17 @@ export default function Domain4Page() {
   return (
     <div className="max-w-[900px] mx-auto px-6 py-8 md:py-12">
       {/* Breadcrumb */}
-      <motion.nav
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, ease: easeOutExpo }}
+      <nav
         className="flex items-center gap-2 text-xs mb-6"
         style={{ color: 'var(--text-tertiary)' }}
       >
         <Link to="/" className="hover:underline" style={{ color: 'var(--accent-primary)' }}>Home</Link>
         <ChevronRight size={12} />
         <span>Domain 4</span>
-      </motion.nav>
+      </nav>
 
       {/* Chapter Header */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, ease: easeOutExpo, delay: 0.1 }}
+      <div
         className="mb-10"
       >
         <div className="mb-3 flex items-center gap-3 flex-wrap">
@@ -252,35 +244,27 @@ export default function Domain4Page() {
           <strong>Exam Focus: 16% of exam (~13 questions).</strong> STRIDE mapping to Kubernetes
           components, container escape vectors, and privilege escalation paths are high-frequency topics.
         </Callout>
-      </motion.div>
+      </div>
 
       {/* ─── Section 4.1: Trust Boundaries and Data Flow ─── */}
       <section id="trust-boundaries">
         <SectionHeader number="4.1" title="Trust Boundaries and Data Flow" />
 
-        <motion.p
-          initial={{ opacity: 0, y: 15 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, ease: easeOutExpo }}
+        <p
           className="mb-4 text-base leading-relaxed"
           style={{ color: 'var(--text-primary)', maxWidth: '680px' }}
         >
           A <strong>trust boundary</strong> is where data or control passes between components with
           different privilege levels. Understanding trust boundaries is fundamental to threat modeling
           — every boundary is a potential attack surface.
-        </motion.p>
+        </p>
 
-        <motion.h3
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.4, ease: easeOutExpo }}
+        <h3
           className="text-lg font-bold mb-3"
           style={{ color: 'var(--text-primary)' }}
         >
           Key Trust Boundaries in Kubernetes
-        </motion.h3>
+        </h3>
 
         <div className="space-y-3 mb-6">
           {[
@@ -325,12 +309,8 @@ export default function Domain4Page() {
               critical: false,
             },
           ].map((boundary, idx) => (
-            <motion.div
+            <div
               key={idx}
-              initial={{ opacity: 0, x: -10 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.3, ease: easeOutExpo, delay: idx * 0.05 }}
               className="flex items-start gap-3 px-4 py-3 rounded-xl"
               style={{
                 backgroundColor: boundary.critical ? 'rgba(212, 43, 30, 0.04)' : 'var(--surface-base)',
@@ -342,20 +322,16 @@ export default function Domain4Page() {
                 <h4 className="text-sm font-bold" style={{ color: 'var(--text-primary)' }}>{boundary.name}</h4>
                 <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>{boundary.desc}</p>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
 
-        <motion.h3
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.4, ease: easeOutExpo }}
+        <h3
           className="text-lg font-bold mb-3"
           style={{ color: 'var(--text-primary)' }}
         >
           Typical Request Flow
-        </motion.h3>
+        </h3>
 
         <CodeBlock
           code={`User (kubectl) → API Server (6443, TLS, Auth, RBAC) → etcd (2379, TLS)
@@ -380,33 +356,25 @@ export default function Domain4Page() {
       <section id="stride">
         <SectionHeader number="4.2" title="STRIDE Framework Applied to Kubernetes" />
 
-        <motion.p
-          initial={{ opacity: 0, y: 15 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, ease: easeOutExpo }}
+        <p
           className="mb-4 text-base leading-relaxed"
           style={{ color: 'var(--text-primary)', maxWidth: '680px' }}
         >
           <strong>STRIDE</strong> is a threat classification model from Microsoft. Each letter represents
           a threat category. For the KCSA exam, you must be able to map each STRIDE category to a
           concrete Kubernetes attack and mitigation.
-        </motion.p>
+        </p>
 
         {/* Interactive STRIDE Diagram */}
         <StrideDiagram onHover={setActiveStride} />
 
         {/* STRIDE Mapping Table */}
-        <motion.h3
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.4, ease: easeOutExpo }}
+        <h3
           className="text-lg font-bold mb-3"
           style={{ color: 'var(--text-primary)' }}
         >
           STRIDE-to-Kubernetes Mapping
-        </motion.h3>
+        </h3>
 
         <ComparisonTable columns={strideColumns} rows={strideRows} />
 
@@ -423,28 +391,20 @@ export default function Domain4Page() {
       <section id="persistence">
         <SectionHeader number="4.3" title="Persistence Mechanisms" />
 
-        <motion.p
-          initial={{ opacity: 0, y: 15 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, ease: easeOutExpo }}
+        <p
           className="mb-4 text-base leading-relaxed"
           style={{ color: 'var(--text-primary)', maxWidth: '680px' }}
         >
           Attackers aim to maintain access after initial compromise. Understanding persistence
           mechanisms is essential for both defending clusters and understanding the threat model.
-        </motion.p>
+        </p>
 
-        <motion.h3
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.4, ease: easeOutExpo }}
+        <h3
           className="text-lg font-bold mb-3"
           style={{ color: 'var(--text-primary)' }}
         >
           Kubernetes-Specific Persistence Techniques
-        </motion.h3>
+        </h3>
 
         <div className="space-y-3 mb-6">
           {[
@@ -489,12 +449,8 @@ export default function Domain4Page() {
               level: 'Medium',
             },
           ].map((technique, idx) => (
-            <motion.div
+            <div
               key={idx}
-              initial={{ opacity: 0, x: -10 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.3, ease: easeOutExpo, delay: idx * 0.04 }}
               className="flex items-start gap-3 px-4 py-3 rounded-xl"
               style={{ backgroundColor: 'var(--surface-base)', border: '1px solid var(--border-subtle)' }}
             >
@@ -511,20 +467,16 @@ export default function Domain4Page() {
                 <h4 className="text-sm font-bold" style={{ color: 'var(--text-primary)' }}>{technique.name}</h4>
                 <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>{technique.desc}</p>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
 
-        <motion.h3
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.4, ease: easeOutExpo }}
+        <h3
           className="text-lg font-bold mb-3"
           style={{ color: 'var(--text-primary)' }}
         >
           Detection Strategies
-        </motion.h3>
+        </h3>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
           {[
@@ -535,17 +487,13 @@ export default function Domain4Page() {
             'Unexpected webhook configurations',
             'Node filesystem integrity monitoring',
           ].map((strategy, idx) => (
-            <motion.div
+            <div
               key={idx}
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.3, ease: easeOutExpo, delay: idx * 0.04 }}
               className="p-3 rounded-lg text-sm"
               style={{ backgroundColor: 'var(--surface-base)', border: '1px solid var(--border-subtle)', color: 'var(--text-primary)' }}
             >
               {strategy}
-            </motion.div>
+            </div>
           ))}
         </div>
       </section>
@@ -554,28 +502,20 @@ export default function Domain4Page() {
       <section id="dos">
         <SectionHeader number="4.4" title="Denial of Service" />
 
-        <motion.p
-          initial={{ opacity: 0, y: 15 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, ease: easeOutExpo }}
+        <p
           className="mb-4 text-base leading-relaxed"
           style={{ color: 'var(--text-primary)', maxWidth: '680px' }}
         >
           Denial of Service (DoS) attacks aim to disrupt service availability. In Kubernetes, DoS can
           target any component from the API Server down to individual pods.
-        </motion.p>
+        </p>
 
-        <motion.h3
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.4, ease: easeOutExpo }}
+        <h3
           className="text-lg font-bold mb-3"
           style={{ color: 'var(--text-primary)' }}
         >
           DoS Attack Vectors
-        </motion.h3>
+        </h3>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
           {[
@@ -604,31 +544,23 @@ export default function Domain4Page() {
               desc: 'SYN floods targeting Services.',
             },
           ].map((vector, idx) => (
-            <motion.div
+            <div
               key={idx}
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.4, ease: easeOutExpo, delay: idx * 0.05 }}
               className="p-4 rounded-xl"
               style={{ backgroundColor: 'var(--surface-base)', border: '1px solid var(--border-subtle)' }}
             >
               <h4 className="text-sm font-bold mb-1" style={{ color: 'var(--accent-coral)' }}>{vector.name}</h4>
               <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>{vector.desc}</p>
-            </motion.div>
+            </div>
           ))}
         </div>
 
-        <motion.h3
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.4, ease: easeOutExpo }}
+        <h3
           className="text-lg font-bold mb-3"
           style={{ color: 'var(--text-primary)' }}
         >
           Mitigations
-        </motion.h3>
+        </h3>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
           {[
@@ -639,18 +571,14 @@ export default function Domain4Page() {
             { name: 'API Priority & Fairness', desc: 'Protect API Server from overload' },
             { name: 'Network Policies', desc: 'Restrict unnecessary traffic' },
           ].map((mit, idx) => (
-            <motion.div
+            <div
               key={idx}
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.3, ease: easeOutExpo, delay: idx * 0.04 }}
               className="p-3 rounded-lg"
               style={{ backgroundColor: 'var(--surface-base)', border: '1px solid var(--border-subtle)' }}
             >
               <div className="text-xs font-bold" style={{ color: 'var(--accent-sage)' }}>{mit.name}</div>
               <div className="text-xs mt-0.5" style={{ color: 'var(--text-secondary)' }}>{mit.desc}</div>
-            </motion.div>
+            </div>
           ))}
         </div>
 
@@ -700,29 +628,21 @@ spec:
       <section id="container-escape">
         <SectionHeader number="4.5" title="Malicious Code Execution & Container Escape" />
 
-        <motion.p
-          initial={{ opacity: 0, y: 15 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, ease: easeOutExpo }}
+        <p
           className="mb-4 text-base leading-relaxed"
           style={{ color: 'var(--text-primary)', maxWidth: '680px' }}
         >
           Container escapes fall into three main categories: exploiting vulnerabilities, using
           privileged containers, and leveraging misconfigurations. Container escape is one of the
           most tested topics on the KCSA exam.
-        </motion.p>
+        </p>
 
-        <motion.h3
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.4, ease: easeOutExpo }}
+        <h3
           className="text-lg font-bold mb-3"
           style={{ color: 'var(--text-primary)' }}
         >
           Container Escape Techniques
-        </motion.h3>
+        </h3>
 
         <ComparisonTable columns={escapeVectorsColumns} rows={escapeVectorsRows} />
 
@@ -732,16 +652,12 @@ spec:
           <code>nsenter --target 1 --mount --uts --ipc --net --pid -- bash</code>
         </Callout>
 
-        <motion.h3
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.4, ease: easeOutExpo }}
+        <h3
           className="text-lg font-bold mb-3"
           style={{ color: 'var(--text-primary)' }}
         >
           Notable Container Escape CVEs
-        </motion.h3>
+        </h3>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
           {[
@@ -750,32 +666,24 @@ spec:
             { cve: 'CVE-2022-0847', desc: 'Dirty Pipe', year: '2022' },
             { cve: 'CVE-2024-21626', desc: 'Leaky Vessels', year: '2024' },
           ].map((c) => (
-            <motion.div
+            <div
               key={c.cve}
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.3, ease: easeOutExpo }}
               className="p-3 rounded-lg text-center"
               style={{ backgroundColor: 'var(--surface-base)', border: '1px solid var(--border-subtle)' }}
             >
               <div className="text-xs font-bold" style={{ color: 'var(--accent-coral)' }}>{c.cve}</div>
               <div className="text-[11px] mt-1" style={{ color: 'var(--text-primary)' }}>{c.desc}</div>
               <div className="text-[10px] mt-0.5" style={{ color: 'var(--text-tertiary)' }}>{c.year}</div>
-            </motion.div>
+            </div>
           ))}
         </div>
 
-        <motion.h3
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.4, ease: easeOutExpo }}
+        <h3
           className="text-lg font-bold mb-3"
           style={{ color: 'var(--text-primary)' }}
         >
           Mitigations
-        </motion.h3>
+        </h3>
 
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6">
           {[
@@ -788,18 +696,14 @@ spec:
             { name: 'Regular patching', desc: 'Keep kernel and runtime updated' },
             { name: 'gVisor/Kata', desc: 'Sandboxed runtimes for untrusted' },
           ].map((mit, idx) => (
-            <motion.div
+            <div
               key={idx}
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.3, ease: easeOutExpo, delay: idx * 0.03 }}
               className="p-3 rounded-lg"
               style={{ backgroundColor: 'var(--surface-base)', border: '1px solid var(--border-subtle)' }}
             >
               <div className="text-xs font-bold" style={{ color: 'var(--accent-sage)' }}>{mit.name}</div>
               <div className="text-[11px] mt-0.5" style={{ color: 'var(--text-secondary)' }}>{mit.desc}</div>
-            </motion.div>
+            </div>
           ))}
         </div>
 
@@ -815,42 +719,30 @@ spec:
       <section id="lateral-movement">
         <SectionHeader number="4.6" title="Attacker on the Network — Lateral Movement" />
 
-        <motion.p
-          initial={{ opacity: 0, y: 15 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, ease: easeOutExpo }}
+        <p
           className="mb-4 text-base leading-relaxed"
           style={{ color: 'var(--text-primary)', maxWidth: '680px' }}
         >
           By default, all pods in a cluster can communicate with each other (flat network). An attacker
           who compromises one pod can potentially reach any other pod. This is the #1 enabler of lateral
           movement in Kubernetes.
-        </motion.p>
+        </p>
 
-        <motion.h3
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.4, ease: easeOutExpo }}
+        <h3
           className="text-lg font-bold mb-3"
           style={{ color: 'var(--text-primary)' }}
         >
           Attack Paths
-        </motion.h3>
+        </h3>
 
         <ComparisonTable columns={lateralPathsColumns} rows={lateralPathsRows} />
 
-        <motion.h3
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.4, ease: easeOutExpo }}
+        <h3
           className="text-lg font-bold mb-3"
           style={{ color: 'var(--text-primary)' }}
         >
           Mitigations
-        </motion.h3>
+        </h3>
 
         <div className="space-y-3 mb-6">
           {[
@@ -885,12 +777,8 @@ spec:
               critical: false,
             },
           ].map((mit, idx) => (
-            <motion.div
+            <div
               key={idx}
-              initial={{ opacity: 0, x: -10 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.3, ease: easeOutExpo, delay: idx * 0.04 }}
               className="flex items-start gap-3 px-4 py-3 rounded-xl"
               style={{
                 backgroundColor: mit.critical ? 'rgba(4, 80, 54, 0.04)' : 'var(--surface-base)',
@@ -907,7 +795,7 @@ spec:
                 <h4 className="text-sm font-bold" style={{ color: 'var(--text-primary)' }}>{mit.name}</h4>
                 <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>{mit.desc}</p>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
 
@@ -923,28 +811,20 @@ spec:
       <section id="privilege-escalation">
         <SectionHeader number="4.7" title="Privilege Escalation & RBAC Abuse" />
 
-        <motion.p
-          initial={{ opacity: 0, y: 15 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, ease: easeOutExpo }}
+        <p
           className="mb-4 text-base leading-relaxed"
           style={{ color: 'var(--text-primary)', maxWidth: '680px' }}
         >
           Privilege escalation in Kubernetes involves gaining unauthorized capabilities beyond what was
           originally granted. RBAC misconfigurations are the most common source.
-        </motion.p>
+        </p>
 
-        <motion.h3
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.4, ease: easeOutExpo }}
+        <h3
           className="text-lg font-bold mb-3"
           style={{ color: 'var(--text-primary)' }}
         >
           RBAC Abuse Vectors
-        </motion.h3>
+        </h3>
 
         <div className="space-y-3 mb-6">
           {[
@@ -979,12 +859,8 @@ spec:
               risk: 'High',
             },
           ].map((vector, idx) => (
-            <motion.div
+            <div
               key={idx}
-              initial={{ opacity: 0, x: -10 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.3, ease: easeOutExpo, delay: idx * 0.04 }}
               className="px-4 py-3 rounded-xl"
               style={{ backgroundColor: 'var(--surface-base)', border: '1px solid var(--border-subtle)' }}
             >
@@ -1001,20 +877,16 @@ spec:
                 </span>
               </div>
               <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>{vector.desc}</p>
-            </motion.div>
+            </div>
           ))}
         </div>
 
-        <motion.h3
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.4, ease: easeOutExpo }}
+        <h3
           className="text-lg font-bold mb-3"
           style={{ color: 'var(--text-primary)' }}
         >
           Additional Escalation Paths
-        </motion.h3>
+        </h3>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
           {[
@@ -1025,31 +897,23 @@ spec:
             { name: 'Namespace modification', desc: 'Change Pod Security Admission labels' },
             { name: 'Pod creation', desc: 'Create privileged pods to escape to host' },
           ].map((path, idx) => (
-            <motion.div
+            <div
               key={idx}
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.3, ease: easeOutExpo, delay: idx * 0.03 }}
               className="p-3 rounded-lg"
               style={{ backgroundColor: 'var(--surface-base)', border: '1px solid var(--border-subtle)' }}
             >
               <div className="text-xs font-bold" style={{ color: 'var(--accent-coral)' }}>{path.name}</div>
               <div className="text-xs mt-0.5" style={{ color: 'var(--text-secondary)' }}>{path.desc}</div>
-            </motion.div>
+            </div>
           ))}
         </div>
 
-        <motion.h3
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.4, ease: easeOutExpo }}
+        <h3
           className="text-lg font-bold mb-3"
           style={{ color: 'var(--text-primary)' }}
         >
           Checking Permissions
-        </motion.h3>
+        </h3>
 
         <CodeBlock
           code={`# Check if a user can perform an action
@@ -1068,16 +932,12 @@ kubectl get rolebindings,clusterrolebindings --all-namespaces \\
           filename="rbac-audit.sh"
         />
 
-        <motion.h3
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.4, ease: easeOutExpo }}
+        <h3
           className="text-lg font-bold mb-3"
           style={{ color: 'var(--text-primary)' }}
         >
           Best Practices
-        </motion.h3>
+        </h3>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
           {[
@@ -1088,18 +948,14 @@ kubectl get rolebindings,clusterrolebindings --all-namespaces \\
             'Audit log all RBAC changes',
             'Tools: kubectl-who-can, rbac-lookup, Kubescape RBAC visualizer',
           ].map((practice, idx) => (
-            <motion.div
+            <div
               key={idx}
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.3, ease: easeOutExpo, delay: idx * 0.03 }}
               className="flex items-center gap-2 px-3 py-2 rounded-lg"
               style={{ backgroundColor: 'var(--surface-base)', border: '1px solid var(--border-subtle)' }}
             >
               <span style={{ color: 'var(--accent-sage)' }}>✓</span>
               <span className="text-sm" style={{ color: 'var(--text-primary)' }}>{practice}</span>
-            </motion.div>
+            </div>
           ))}
         </div>
 
@@ -1116,41 +972,29 @@ kubectl get rolebindings,clusterrolebindings --all-namespaces \\
       <section id="mitre">
         <SectionHeader number="4.8" title="MITRE ATT&CK for Containers" />
 
-        <motion.p
-          initial={{ opacity: 0, y: 15 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, ease: easeOutExpo }}
+        <p
           className="mb-4 text-base leading-relaxed"
           style={{ color: 'var(--text-primary)', maxWidth: '680px' }}
         >
           MITRE ATT&CK for Containers maps real-world adversary techniques to container environments.
           The matrix covers 9 tactics relevant to Kubernetes, from initial access to impact.
-        </motion.p>
+        </p>
 
-        <motion.h3
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.4, ease: easeOutExpo }}
+        <h3
           className="text-lg font-bold mb-3"
           style={{ color: 'var(--text-primary)' }}
         >
           The 9 Tactics of the Containers Matrix
-        </motion.h3>
+        </h3>
 
         <ComparisonTable columns={mitreTacticsColumns} rows={mitreTacticsRows} />
 
-        <motion.h3
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.4, ease: easeOutExpo }}
+        <h3
           className="text-lg font-bold mb-3"
           style={{ color: 'var(--text-primary)' }}
         >
           Key MITRE Techniques for Kubernetes
-        </motion.h3>
+        </h3>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
           {[
@@ -1163,19 +1007,15 @@ kubectl get rolebindings,clusterrolebindings --all-namespaces \\
             { id: 'T1496', name: 'Resource Hijacking', tactics: 'Impact' },
             { id: 'T1083', name: 'File Discovery', tactics: 'Discovery' },
           ].map((technique) => (
-            <motion.div
+            <div
               key={technique.id}
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.3, ease: easeOutExpo }}
               className="p-3 rounded-lg"
               style={{ backgroundColor: 'var(--surface-base)', border: '1px solid var(--border-subtle)' }}
             >
               <div className="text-xs font-bold" style={{ color: 'var(--accent-primary)' }}>{technique.id}</div>
               <div className="text-xs mt-0.5 font-medium" style={{ color: 'var(--text-primary)' }}>{technique.name}</div>
               <div className="text-[10px] mt-0.5" style={{ color: 'var(--text-tertiary)' }}>{technique.tactics}</div>
-            </motion.div>
+            </div>
           ))}
         </div>
 
@@ -1189,11 +1029,7 @@ kubectl get rolebindings,clusterrolebindings --all-namespaces \\
 
       {/* ─── Quiz Section ─── */}
       <section id="quiz" className="mt-16 mb-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.2 }}
-          transition={{ duration: 0.6, ease: easeOutExpo }}
+        <div
           className="text-center mb-8"
         >
           <h2
@@ -1210,7 +1046,7 @@ kubectl get rolebindings,clusterrolebindings --all-namespaces \\
               Previous score: {progress.quizScore}/{quizQuestions.length}
             </p>
           )}
-        </motion.div>
+        </div>
 
         <Quiz
           questions={quizQuestions}
@@ -1220,11 +1056,7 @@ kubectl get rolebindings,clusterrolebindings --all-namespaces \\
       </section>
 
       {/* ─── Footer Navigation ─── */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.5, ease: easeOutExpo }}
+      <div
         className="flex items-center justify-between mt-12 pt-6"
         style={{ borderTop: '1px solid var(--border-subtle)' }}
       >
@@ -1244,7 +1076,7 @@ kubectl get rolebindings,clusterrolebindings --all-namespaces \\
           Next: Domain 5
           <ChevronRight size={14} />
         </Link>
-      </motion.div>
+      </div>
     </div>
   );
 }
