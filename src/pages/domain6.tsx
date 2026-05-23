@@ -24,19 +24,7 @@ import QuizCard from './components/QuizCard'
 import type { QuizQuestion } from './components/QuizCard'
 
 
-const fadeUp = {
-  initial: { opacity: 0, y: 30 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, margin: '-50px' },
-  transition: { duration: 0.6, ease: easeOutExpo },
-}
 
-const staggerChild = {
-  initial: { opacity: 0, y: 20 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true },
-  transition: { duration: 0.5, ease: easeOutExpo },
-}
 
 /* ------------------------------------------------------------------ */
 /*  DATA                                                               */
@@ -308,7 +296,7 @@ export default function Domain6Page() {
 
       {/* Breadcrumb */}
       <nav
-        {...fadeUp}
+        
         className="flex items-center gap-2 mb-6 text-sm"
       >
         <Link
@@ -323,7 +311,7 @@ export default function Domain6Page() {
       </nav>
 
       {/* Chapter Header */}
-      <header {...fadeUp} className="mb-10">
+      <header  className="mb-10">
         <div
           className="mb-2 text-xs font-semibold uppercase tracking-[0.06em]"
           style={{ color: 'var(--text-tertiary)' }}
@@ -374,7 +362,7 @@ export default function Domain6Page() {
       </header>
 
       {/* Section 6.1 — Compliance Frameworks */}
-      <section {...fadeUp} className="mb-12">
+      <section  className="mb-12">
         <div className="flex items-center gap-3 mb-4">
           <div
             className="w-10 h-10 rounded-lg flex items-center justify-center"
@@ -453,7 +441,7 @@ export default function Domain6Page() {
           {cisSafeguards.map((sg, i) => (
             <div
               key={i}
-              {...staggerChild}
+              
               className="flex items-center gap-3 py-1.5"
             >
               <span
@@ -576,7 +564,7 @@ export default function Domain6Page() {
       </section>
 
       {/* Section 6.2 — CIS Kubernetes Benchmarks */}
-      <section {...fadeUp} className="mb-12">
+      <section  className="mb-12">
         <div className="flex items-center gap-3 mb-4">
           <div
             className="w-10 h-10 rounded-lg flex items-center justify-center"
@@ -774,7 +762,7 @@ kube-bench run --json > kube-bench-results.json`}
           ].map((check, i) => (
             <div
               key={i}
-              {...staggerChild}
+              
               className="flex items-start gap-3 p-3 rounded-lg"
               style={{ backgroundColor: 'var(--surface-base)', border: '1px solid var(--border-subtle)' }}
             >
@@ -788,7 +776,7 @@ kube-bench run --json > kube-bench-results.json`}
       </section>
 
       {/* Section 6.3 — Threat Modeling */}
-      <section {...fadeUp} className="mb-12">
+      <section  className="mb-12">
         <div className="flex items-center gap-3 mb-4">
           <div
             className="w-10 h-10 rounded-lg flex items-center justify-center"
@@ -1016,7 +1004,7 @@ kube-bench run --json > kube-bench-results.json`}
       </section>
 
       {/* Section 6.4 — Supply Chain Compliance */}
-      <section {...fadeUp} className="mb-12">
+      <section  className="mb-12">
         <div className="flex items-center gap-3 mb-4">
           <div
             className="w-10 h-10 rounded-lg flex items-center justify-center"
@@ -1082,7 +1070,7 @@ kube-bench run --json > kube-bench-results.json`}
       </section>
 
       {/* Section 6.5 — Security Automation Tools */}
-      <section {...fadeUp} className="mb-12">
+      <section  className="mb-12">
         <div className="flex items-center gap-3 mb-4">
           <div
             className="w-10 h-10 rounded-lg flex items-center justify-center"
@@ -1192,7 +1180,7 @@ jobs:
       </section>
 
       {/* Section 6.6 — Exam Preparation Strategy */}
-      <section {...fadeUp} className="mb-12">
+      <section  className="mb-12">
         <div className="flex items-center gap-3 mb-4">
           <div
             className="w-10 h-10 rounded-lg flex items-center justify-center"
@@ -1226,7 +1214,7 @@ jobs:
           {studyChecklist.map((item, i) => (
             <div
               key={i}
-              {...staggerChild}
+              
               className="flex items-start gap-3 p-3 rounded-lg"
               style={{ backgroundColor: 'var(--surface-base)', border: '1px solid var(--border-subtle)' }}
             >
@@ -1289,7 +1277,7 @@ jobs:
       </section>
 
       {/* Quiz */}
-      <section {...fadeUp} className="mb-12">
+      <section  className="mb-12">
         <h2
           className="text-2xl font-normal mb-6"
           style={{
@@ -1304,7 +1292,7 @@ jobs:
 
       {/* Chapter Footer */}
       <footer
-        {...fadeUp}
+        
         className="flex items-center justify-between py-6"
         style={{ borderTop: '1px solid var(--border-subtle)' }}
       >

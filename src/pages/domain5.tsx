@@ -23,19 +23,7 @@ import QuizCard from './components/QuizCard'
 import type { QuizQuestion } from './components/QuizCard'
 
 
-const fadeUp = {
-  initial: { opacity: 0, y: 30 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, margin: '-50px' },
-  transition: { duration: 0.6, ease: easeOutExpo },
-}
 
-const staggerChild = {
-  initial: { opacity: 0, y: 20 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true },
-  transition: { duration: 0.5, ease: easeOutExpo },
-}
 
 /* ------------------------------------------------------------------ */
 /*  DATA                                                               */
@@ -214,7 +202,7 @@ export default function Domain5Page() {
 
       {/* Breadcrumb */}
       <nav
-        {...fadeUp}
+        
         className="flex items-center gap-2 mb-6 text-sm"
       >
         <Link
@@ -229,7 +217,7 @@ export default function Domain5Page() {
       </nav>
 
       {/* Chapter Header */}
-      <header {...fadeUp} className="mb-10">
+      <header  className="mb-10">
         <div
           className="mb-2 text-xs font-semibold uppercase tracking-[0.06em]"
           style={{ color: 'var(--text-tertiary)' }}
@@ -280,7 +268,7 @@ export default function Domain5Page() {
       </header>
 
       {/* Section 5.1 — Supply Chain Security */}
-      <section {...fadeUp} className="mb-12">
+      <section  className="mb-12">
         <div className="flex items-center gap-3 mb-4">
           <div
             className="w-10 h-10 rounded-lg flex items-center justify-center"
@@ -322,7 +310,7 @@ export default function Domain5Page() {
           {slsaLevels.map((l) => (
             <div
               key={l.level}
-              {...staggerChild}
+              
               className="flex items-start gap-4 p-4 rounded-xl"
               style={{
                 backgroundColor: 'var(--surface-base)',
@@ -398,7 +386,7 @@ export default function Domain5Page() {
       </section>
 
       {/* Section 5.2 — Image Repository Security */}
-      <section {...fadeUp} className="mb-12">
+      <section  className="mb-12">
         <div className="flex items-center gap-3 mb-4">
           <div
             className="w-10 h-10 rounded-lg flex items-center justify-center"
@@ -523,7 +511,7 @@ trivy image --format spdx-json --output sbom.json myregistry.io/app:v1.0.0`}
       </section>
 
       {/* Section 5.3 — Observability */}
-      <section {...fadeUp} className="mb-12">
+      <section  className="mb-12">
         <div className="flex items-center gap-3 mb-4">
           <div
             className="w-10 h-10 rounded-lg flex items-center justify-center"
@@ -648,7 +636,7 @@ trivy image --format spdx-json --output sbom.json myregistry.io/app:v1.0.0`}
       </section>
 
       {/* Section 5.4 — Service Mesh */}
-      <section {...fadeUp} className="mb-12">
+      <section  className="mb-12">
         <div className="flex items-center gap-3 mb-4">
           <div
             className="w-10 h-10 rounded-lg flex items-center justify-center"
@@ -803,7 +791,7 @@ spec:
       </section>
 
       {/* Section 5.5 — PKI */}
-      <section {...fadeUp} className="mb-12">
+      <section  className="mb-12">
         <div className="flex items-center gap-3 mb-4">
           <div
             className="w-10 h-10 rounded-lg flex items-center justify-center"
@@ -924,7 +912,7 @@ spec:
       </section>
 
       {/* Section 5.6 — Connectivity */}
-      <section {...fadeUp} className="mb-12">
+      <section  className="mb-12">
         <div className="flex items-center gap-3 mb-4">
           <div
             className="w-10 h-10 rounded-lg flex items-center justify-center"
@@ -1000,7 +988,7 @@ spec:
       </section>
 
       {/* Section 5.7 — Admission Control */}
-      <section {...fadeUp} className="mb-12">
+      <section  className="mb-12">
         <div className="flex items-center gap-3 mb-4">
           <div
             className="w-10 h-10 rounded-lg flex items-center justify-center"
@@ -1211,7 +1199,7 @@ spec:
       </section>
 
       {/* Quiz */}
-      <section {...fadeUp} className="mb-12">
+      <section  className="mb-12">
         <h2
           className="text-2xl font-normal mb-6"
           style={{
@@ -1226,7 +1214,7 @@ spec:
 
       {/* Chapter Footer */}
       <footer
-        {...fadeUp}
+        
         className="flex items-center justify-between py-6"
         style={{ borderTop: '1px solid var(--border-subtle)' }}
       >
