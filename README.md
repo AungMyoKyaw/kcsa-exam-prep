@@ -1,11 +1,20 @@
-# kubernetes-exam-prep
+# KCSA Exam Prep
 
-Kubernetes certification exam preparation app with practice exams, cheat sheets, and domain-based learning.
+Kubernetes and Cloud Native Security Associate (KCSA) certification exam preparation app.
 
-Built with React + TypeScript + Vite + Tailwind CSS + shadcn/ui.
+## Exam Domains
+
+| Domain | Title | Weight |
+|--------|-------|--------|
+| 1 | Overview of Cloud Native Security | 14% |
+| 2 | Kubernetes Cluster Component Security | 22% |
+| 3 | Kubernetes Security Fundamentals | 22% |
+| 4 | Kubernetes Threat Model | 16% |
+| 5 | Platform Security | 16% |
+| 6 | Compliance and Security Frameworks | 10% |
 
 ## Features
-- 6 Domain-based learning sections
+- Domain-based learning (6 sections matching exam blueprint)
 - Practice Exam mode
 - Cheat Sheet reference
 - Glossary
