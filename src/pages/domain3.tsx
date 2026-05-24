@@ -596,7 +596,7 @@ kubectl label --dry-run=server --overwrite ns --all \\
                 </h4>
                 {method.recommended && (
                   <span
-                    className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full uppercase"
+                    className="text-xs font-semibold px-1.5 py-0.5 rounded-full uppercase"
                     style={{
                       backgroundColor: 'rgba(163, 196, 168, 0.15)',
                       color: 'var(--accent-sage)',
@@ -607,7 +607,7 @@ kubectl label --dry-run=server --overwrite ns --all \\
                 )}
                 {!method.recommended && method.name !== 'Static Token File' && (
                   <span
-                    className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full uppercase"
+                    className="text-xs font-semibold px-1.5 py-0.5 rounded-full uppercase"
                     style={{
                       backgroundColor: 'rgba(179, 134, 0, 0.1)',
                       color: 'var(--warning)',
@@ -863,7 +863,7 @@ kubectl auth can-i create secrets --all-namespaces`}
               <div className="text-xs font-bold" style={{ color: 'var(--text-primary)' }}>{p.name}</div>
               <div className="text-xs mt-0.5" style={{ color: 'var(--text-secondary)' }}>{p.desc}</div>
               <div
-                className="text-[10px] mt-1 font-medium"
+                className="text-xs mt-1 font-medium"
                 style={{
                   color: p.name === 'kms v2' ? 'var(--accent-sage)' : p.status.includes('Not') || p.status.includes('Deprecated') ? 'var(--accent-coral)' : 'var(--text-tertiary)',
                 }}
@@ -1004,7 +1004,7 @@ spec:
             >
               <div className="flex items-center gap-2 mb-1">
                 <h4 className="text-sm font-bold" style={{ color: 'var(--text-primary)' }}>{s.name}</h4>
-                <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full" style={{ backgroundColor: 'var(--surface-elevated)', color: 'var(--text-tertiary)' }}>
+                <span className="text-xs font-semibold px-1.5 py-0.5 rounded-full" style={{ backgroundColor: 'var(--surface-elevated)', color: 'var(--text-tertiary)' }}>
                   {s.level}
                 </span>
               </div>
@@ -1035,7 +1035,7 @@ spec:
               style={{ backgroundColor: 'var(--surface-base)', border: '1px solid var(--border-subtle)' }}
             >
               <div className="text-xs font-bold" style={{ color: 'var(--accent-primary)' }}>{ctrl.name}</div>
-              <div className="text-[11px] mt-1" style={{ color: 'var(--text-secondary)' }}>{ctrl.desc}</div>
+              <div className="text-xs mt-1" style={{ color: 'var(--text-secondary)' }}>{ctrl.desc}</div>
             </div>
           ))}
         </div>

@@ -9,34 +9,6 @@ interface LayoutProps {
 
 export default function Layout({ children }: LayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(true)
-  const [theme, setTheme] = useState<'light' | 'dark' | 'system'>('dark')
-
-  useEffect(() => {
-    const saved = localStorage.getItem('kcsa-theme') as 'light' | 'dark' | 'system' | null
-    if (saved) setTheme(saved)
-  }, [])
-
-  useEffect(() => {
-    const root = document.documentElement
-    root.classList.remove('light', 'dark')
-
-    if (theme === 'system') {
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-      root.classList.add(prefersDark ? 'dark' : 'light')
-    } else {
-      root.classList.add(theme)
-    }
-
-    localStorage.setItem('kcsa-theme', theme)
-  }, [theme])
-
-  const handleThemeToggle = useCallback(() => {
-    setTheme((prev) => {
-      if (prev === 'dark') return 'light'
-      if (prev === 'light') return 'system'
-      return 'dark'
-    })
-  }, [])
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -62,8 +34,6 @@ export default function Layout({ children }: LayoutProps) {
       <Navbar
         onMenuClick={toggleSidebar}
         sidebarOpen={sidebarOpen}
-        theme={theme}
-        onThemeToggle={handleThemeToggle}
       />
 
       <Sidebar isOpen={sidebarOpen} onClose={closeSidebar} />

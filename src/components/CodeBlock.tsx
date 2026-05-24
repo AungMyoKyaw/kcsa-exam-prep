@@ -68,14 +68,14 @@ export default function CodeBlock({
           <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--text-tertiary)' }}>
             {language}
           </span>
-          {filename && (
+          {filename != null && (
             <span className="text-xs" style={{ color: 'var(--text-secondary)' }}>
               {filename}
             </span>
           )}
         </div>
         <button
-          onClick={handleCopy}
+          onClick={() => { void handleCopy(); }}
           className="flex items-center gap-1.5 text-xs font-medium px-2.5 py-1.5 rounded-md transition-colors"
           style={{
             color: copied ? 'var(--accent-sage)' : 'var(--text-secondary)',

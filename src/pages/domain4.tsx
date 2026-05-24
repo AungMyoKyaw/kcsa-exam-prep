@@ -455,7 +455,7 @@ export default function Domain4Page() {
               style={{ backgroundColor: 'var(--surface-base)', border: '1px solid var(--border-subtle)' }}
             >
               <span
-                className="flex-shrink-0 text-[10px] font-semibold px-2 py-0.5 rounded-full mt-0.5"
+                className="flex-shrink-0 text-xs font-semibold px-2 py-0.5 rounded-full mt-0.5"
                 style={{
                   backgroundColor: technique.level === 'Critical' ? 'rgba(232, 122, 93, 0.15)' : 'rgba(179, 134, 0, 0.1)',
                   color: technique.level === 'Critical' ? 'var(--accent-coral)' : 'var(--warning)',
@@ -672,8 +672,8 @@ spec:
               style={{ backgroundColor: 'var(--surface-base)', border: '1px solid var(--border-subtle)' }}
             >
               <div className="text-xs font-bold" style={{ color: 'var(--accent-coral)' }}>{c.cve}</div>
-              <div className="text-[11px] mt-1" style={{ color: 'var(--text-primary)' }}>{c.desc}</div>
-              <div className="text-[10px] mt-0.5" style={{ color: 'var(--text-tertiary)' }}>{c.year}</div>
+              <div className="text-xs mt-1" style={{ color: 'var(--text-primary)' }}>{c.desc}</div>
+              <div className="text-xs mt-0.5" style={{ color: 'var(--text-tertiary)' }}>{c.year}</div>
             </div>
           ))}
         </div>
@@ -702,7 +702,7 @@ spec:
               style={{ backgroundColor: 'var(--surface-base)', border: '1px solid var(--border-subtle)' }}
             >
               <div className="text-xs font-bold" style={{ color: 'var(--accent-sage)' }}>{mit.name}</div>
-              <div className="text-[11px] mt-0.5" style={{ color: 'var(--text-secondary)' }}>{mit.desc}</div>
+              <div className="text-xs mt-0.5" style={{ color: 'var(--text-secondary)' }}>{mit.desc}</div>
             </div>
           ))}
         </div>
@@ -867,7 +867,7 @@ spec:
               <div className="flex items-center gap-2 mb-1">
                 <h4 className="text-sm font-bold" style={{ color: 'var(--text-primary)' }}>{vector.name}</h4>
                 <span
-                  className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full"
+                  className="text-xs font-semibold px-1.5 py-0.5 rounded-full"
                   style={{
                     backgroundColor: vector.risk === 'Critical' ? 'rgba(232, 122, 93, 0.15)' : 'rgba(179, 134, 0, 0.1)',
                     color: vector.risk === 'Critical' ? 'var(--accent-coral)' : 'var(--warning)',
@@ -1014,7 +1014,7 @@ kubectl get rolebindings,clusterrolebindings --all-namespaces \\
             >
               <div className="text-xs font-bold" style={{ color: 'var(--accent-primary)' }}>{technique.id}</div>
               <div className="text-xs mt-0.5 font-medium" style={{ color: 'var(--text-primary)' }}>{technique.name}</div>
-              <div className="text-[10px] mt-0.5" style={{ color: 'var(--text-tertiary)' }}>{technique.tactics}</div>
+              <div className="text-xs mt-0.5" style={{ color: 'var(--text-tertiary)' }}>{technique.tactics}</div>
             </div>
           ))}
         </div>

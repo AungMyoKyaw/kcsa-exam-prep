@@ -12,7 +12,7 @@ function getTermsGroupedByLetter(terms: GlossaryTerm[]): Record<string, Glossary
   const groups: Record<string, GlossaryTerm[]> = {};
   terms.forEach((t) => {
     const letter = t.term[0].toUpperCase();
-    if (!groups[letter]) groups[letter] = [];
+    if (!groups[letter]) {groups[letter] = [];}
     groups[letter].push(t);
   });
   // Sort each group alphabetically
@@ -41,7 +41,7 @@ export default function Glossary() {
 
   // Filter terms based on search
   const filteredTerms = useMemo(() => {
-    if (!searchQuery.trim()) return glossaryTerms;
+    if (!searchQuery.trim()) {return glossaryTerms;}
     const results = fuse.search(searchQuery);
     return results.map((r) => r.item);
   }, [searchQuery, fuse]);
@@ -79,7 +79,7 @@ export default function Glossary() {
   };
 
   const getDomainColor = (domainId?: number) => {
-    if (!domainId) return 'var(--text-tertiary)';
+    if (!domainId) {return 'var(--text-tertiary)';}
     const colors = ['', '#9B87F5', '#326CE5', '#045036', '#E87A5D', '#F2C44D', '#A3C4A8'];
     return colors[domainId] || 'var(--text-tertiary)';
   };
@@ -248,10 +248,10 @@ export default function Glossary() {
                                 )}
                                 {term.domain && (
                                   <span
-                                    className="text-[10px] font-semibold px-2 py-0.5 rounded-full uppercase tracking-wider"
+                                    className="text-xs font-semibold px-2 py-0.5 rounded-full uppercase tracking-wider"
                                     style={{
                                       color: getDomainColor(term.domain),
-                                      backgroundColor: getDomainColor(term.domain) + '18',
+                                      backgroundColor: `${getDomainColor(term.domain)  }18`,
                                     }}
                                   >
                                     Domain {term.domain}
@@ -293,7 +293,7 @@ export default function Glossary() {
                                   {term.relatedTerms && term.relatedTerms.length > 0 && (
                                     <div className="flex items-center flex-wrap gap-2">
                                       <span
-                                        className="text-[10px] font-semibold uppercase tracking-[0.06em]"
+                                        className="text-xs font-semibold uppercase tracking-[0.06em]"
                                         style={{ color: 'var(--text-tertiary)' }}
                                       >
                                         See also:

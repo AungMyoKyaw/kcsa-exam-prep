@@ -54,7 +54,7 @@ function DomainProgressCard({ domain }: { domain: (typeof domains)[0] }) {
           <span className="text-xs font-semibold uppercase tracking-wide" style={{ color: 'var(--text-tertiary)' }}>
             {domain.number}
           </span>
-          <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full" style={{ backgroundColor: 'var(--surface-elevated)', color: 'var(--text-secondary)' }}>
+          <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{ backgroundColor: 'var(--surface-elevated)', color: 'var(--text-secondary)' }}>
             {domain.weight}%
           </span>
         </div>
@@ -90,7 +90,7 @@ function DomainStudyCard({ domain }: { domain: (typeof domains)[0] }) {
           <span className="text-2xl font-bold" style={{ color: 'var(--text-tertiary)' }}>
             {domain.id}
           </span>
-          <span className="text-[11px] font-semibold px-2 py-1 rounded-full" style={{ backgroundColor: 'var(--surface-elevated)', color: 'var(--text-secondary)' }}>
+          <span className="text-xs font-semibold px-2 py-1 rounded-full" style={{ backgroundColor: 'var(--surface-elevated)', color: 'var(--text-secondary)' }}>
             {domain.weight}%
           </span>
         </div>
@@ -180,7 +180,7 @@ function RecommendationCard({
 
   return (
     <div className="flex items-center gap-4 p-4 rounded-lg" style={{ backgroundColor: 'var(--surface-base)', border: '1px solid var(--border-subtle)' }}>
-      <span className="flex-shrink-0 text-[11px] font-semibold px-2.5 py-1 rounded-full uppercase tracking-wide" style={{ backgroundColor: colors.bg, color: colors.text }}>
+      <span className="flex-shrink-0 text-xs font-semibold px-2.5 py-1 rounded-full uppercase tracking-wide" style={{ backgroundColor: colors.bg, color: colors.text }}>
         {priority}
       </span>
       <div className="flex-1 min-w-0">
@@ -198,7 +198,7 @@ function TipCard({ tip }: { tip: (typeof examTips)[0] }) {
       className="flex-shrink-0 w-[300px] min-h-[160px] p-5 rounded-lg flex flex-col"
       style={{ backgroundColor: 'var(--surface-base)', border: '1px solid var(--border-subtle)' }}
     >
-      <span className="self-start text-[11px] font-semibold px-2 py-1 rounded-full mb-3" style={{ backgroundColor: 'var(--surface-elevated)', color: 'var(--accent-primary)' }}>
+      <span className="self-start text-xs font-semibold px-2 py-1 rounded-full mb-3" style={{ backgroundColor: 'var(--surface-elevated)', color: 'var(--accent-primary)' }}>
         {tip.category}
       </span>
       <p className="text-base font-semibold mb-2 flex-1" style={{ color: 'var(--text-primary)', lineHeight: 1.5 }}>
@@ -221,14 +221,14 @@ export default function Home() {
 
   const updateScrollState = () => {
     const el = tipsScrollRef.current
-    if (!el) return
+    if (!el) {return}
     setCanScrollLeft(el.scrollLeft > 10)
     setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 10)
   }
 
   const scrollTips = (direction: 'left' | 'right') => {
     const el = tipsScrollRef.current
-    if (!el) return
+    if (!el) {return}
     el.scrollBy({ left: direction === 'left' ? -300 : 300, behavior: 'smooth' })
     setTimeout(updateScrollState, 350)
   }

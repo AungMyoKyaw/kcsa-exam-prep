@@ -50,7 +50,9 @@ export default function Footer() {
               <button
                 className="inline-flex items-center gap-2 text-sm transition-colors duration-200 hover:underline underline-offset-2"
                 style={{ color: 'var(--text-secondary)' }}
-                onClick={() => {}}
+                onClick={() => {
+                  // Intentional no-op: placeholder for future navigation
+                }}
                 onMouseEnter={(e) => {
                   ;(e.currentTarget as HTMLElement).style.color = 'var(--accent-primary)'
                 }}

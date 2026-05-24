@@ -5,9 +5,6 @@ import {
   BarChart3,
   Keyboard,
   Info,
-  Sun,
-  Moon,
-  Monitor,
   AlertTriangle,
   ExternalLink,
   RotateCcw,
@@ -26,34 +23,15 @@ const settingsTabs = [
 // ===== Tab 1: Appearance =====
 
 function AppearanceTab() {
-  const [theme, setTheme] = useState<'light' | 'dark' | 'system'>('dark');
   const [codeFontSize, setCodeFontSize] = useState(14);
   const [readingFontSize, setReadingFontSize] = useState(16);
 
   useEffect(() => {
-    const saved = localStorage.getItem('kcsa-theme') as 'light' | 'dark' | 'system' | null;
-    if (saved) setTheme(saved);
     const codeSize = localStorage.getItem('kcsa-code-font-size');
-    if (codeSize) setCodeFontSize(parseInt(codeSize));
+    if (codeSize) {setCodeFontSize(parseInt(codeSize));}
     const readSize = localStorage.getItem('kcsa-reading-font-size');
-    if (readSize) setReadingFontSize(parseInt(readSize));
+    if (readSize) {setReadingFontSize(parseInt(readSize));}
   }, []);
-
-  const handleThemeChange = (newTheme: 'light' | 'dark' | 'system') => {
-    setTheme(newTheme);
-    localStorage.setItem('kcsa-theme', newTheme);
-    // Dispatch event for Layout to pick up
-    window.dispatchEvent(new StorageEvent('storage', { key: 'kcsa-theme' }));
-    // Also directly apply
-    const root = document.documentElement;
-    root.classList.remove('light', 'dark');
-    if (newTheme === 'system') {
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      root.classList.add(prefersDark ? 'dark' : 'light');
-    } else {
-      root.classList.add(newTheme);
-    }
-  };
 
   const handleCodeFontChange = (size: number) => {
     setCodeFontSize(size);
@@ -66,60 +44,8 @@ function AppearanceTab() {
     document.documentElement.style.setProperty('--reading-font-size', `${size}px`);
   };
 
-  const themeOptions: { id: 'light' | 'dark' | 'system'; label: string; desc: string; icon: typeof Sun }[] = [
-    { id: 'light', label: 'Light', desc: 'Clean, bright reading experience', icon: Sun },
-    { id: 'dark', label: 'Dark', desc: 'Easy on the eyes, developer-friendly', icon: Moon },
-    { id: 'system', label: 'System', desc: 'Follows your OS setting', icon: Monitor },
-  ];
-
   return (
     <div className="space-y-8">
-      {/* Theme Selection */}
-      <div>
-        <h3 className="text-xl font-bold mb-1" style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-body)' }}>
-          Theme
-        </h3>
-        <p className="text-sm mb-4" style={{ color: 'var(--text-secondary)' }}>
-          Choose your preferred color scheme
-        </p>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {themeOptions.map((opt) => (
-            <button
-              key={opt.id}
-              onClick={() => handleThemeChange(opt.id)}
-              className="p-5 rounded-[20px] border-2 text-left transition-all duration-200 hover:scale-[1.02]"
-              style={{
-                borderColor: theme === opt.id ? 'var(--accent-primary)' : 'var(--border-subtle)',
-                backgroundColor: 'var(--surface-base)',
-              }}
-            >
-              <div className="flex items-center justify-between mb-3">
-                <opt.icon
-                  size={24}
-                  style={{ color: theme === opt.id ? 'var(--accent-primary)' : 'var(--text-secondary)' }}
-                />
-                <div
-                  className="w-5 h-5 rounded-full border-2 flex items-center justify-center"
-                  style={{
-                    borderColor: theme === opt.id ? 'var(--accent-primary)' : 'var(--border-medium)',
-                  }}
-                >
-                  {theme === opt.id && (
-                    <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: 'var(--accent-primary)' }} />
-                  )}
-                </div>
-              </div>
-              <p className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>
-                {opt.label}
-              </p>
-              <p className="text-xs mt-1" style={{ color: 'var(--text-secondary)' }}>
-                {opt.desc}
-              </p>
-            </button>
-          ))}
-        </div>
-      </div>
-
       {/* Code Font Size */}
       <div
         className="pt-8"
@@ -302,7 +228,7 @@ function ProgressTab() {
                     {domain.number}: {domain.shortName}
                   </span>
                   <span
-                    className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full"
+                    className="text-xs font-semibold px-1.5 py-0.5 rounded-full"
                     style={{ backgroundColor: 'rgba(242,196,77,0.15)', color: 'var(--accent-amber)' }}
                   >
                     {domain.weight}%
@@ -368,7 +294,7 @@ function ProgressTab() {
             className="fixed inset-0 z-50 flex items-center justify-center p-4"
             style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
             onClick={(e) => {
-              if (e.target === e.currentTarget) setShowResetDialog(false);
+              if (e.target === e.currentTarget) {setShowResetDialog(false);}
             }}
           >
             <motion.div
@@ -438,7 +364,7 @@ function ShortcutsTab() {
       shortcuts: [
         { keys: ['Ctrl/Cmd', 'K'], action: 'Focus search input' },
         { keys: ['Ctrl/Cmd', 'B'], action: 'Toggle sidebar' },
-        { keys: ['Ctrl/Cmd', 'Shift', 'L'], action: 'Toggle dark/light mode' },
+        { keys: ['Ctrl/Cmd', 'Shift', 'L'], action: 'Toggle sidebar' },
         { keys: ['?'], action: 'Show keyboard shortcuts help' },
         { keys: ['Esc'], action: 'Close modal / search / sidebar' },
       ],

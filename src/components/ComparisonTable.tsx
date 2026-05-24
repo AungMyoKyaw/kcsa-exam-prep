@@ -16,7 +16,7 @@ const easeOutExpo = [0.16, 1, 0.3, 1] as [number, number, number, number];
 
 export default function ComparisonTable({ columns, rows, highlightRow }: ComparisonTableProps) {
   const getHighlightColor = (row: Record<string, string>) => {
-    if (!highlightRow) return null;
+    if (!highlightRow) {return null;}
     return highlightRow(row);
   };
 

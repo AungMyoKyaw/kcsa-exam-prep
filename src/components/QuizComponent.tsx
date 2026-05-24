@@ -29,12 +29,12 @@ export default function QuizComponent({ questions, domainId }: QuizComponentProp
   const currentQuestion = questions[currentIndex];
 
   const handleSelect = useCallback((index: number) => {
-    if (submitted) return;
+    if (submitted) {return;}
     setSelectedIndex(index);
   }, [submitted]);
 
   const handleSubmit = useCallback(() => {
-    if (selectedIndex === null) return;
+    if (selectedIndex === null) {return;}
     setSubmitted(true);
     setShowExplanation(true);
     const newAnswered = new Set(answeredQuestions);

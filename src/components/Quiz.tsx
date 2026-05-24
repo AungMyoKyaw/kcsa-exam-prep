@@ -29,7 +29,7 @@ export default function Quiz({ questions, domainId: _domainId, onComplete }: Qui
   const isCorrect = selectedIndex === question.correctIndex;
 
   const handleSubmit = useCallback(() => {
-    if (selectedIndex === null) return;
+    if (selectedIndex === null) {return;}
     const correct = selectedIndex === question.correctIndex;
     const newScores = [...scores, correct];
     setScores(newScores);

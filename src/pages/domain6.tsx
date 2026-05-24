@@ -18,10 +18,10 @@ import {
   FlaskConical,
   Bug,
 } from 'lucide-react'
-import CalloutBox from './components/CalloutBox'
-import CodeBlock from './components/CodeBlock'
-import QuizCard from './components/QuizCard'
-import type { QuizQuestion } from './components/QuizCard'
+import CalloutBox from '@/components/CalloutBox'
+import CodeBlock from '@/components/CodeBlock'
+import QuizComponent from '@/components/QuizComponent'
+import type { QuizQuestion } from '@/components/QuizComponent'
 
 
 
@@ -264,7 +264,7 @@ export default function Domain6Page() {
       try {
         const stored = localStorage.getItem('kcsa-progress')
         const data = stored ? JSON.parse(stored) : {}
-        if (!data.domain6) data.domain6 = {}
+        if (!data.domain6) {data.domain6 = {}}
         data.domain6.scrollPercent = Math.round(progress)
         if (progress > 90) {
           data.domain6.read = true
@@ -445,7 +445,7 @@ export default function Domain6Page() {
               className="flex items-center gap-3 py-1.5"
             >
               <span
-                className="flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold"
+                className="flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold"
                 style={{
                   backgroundColor: 'var(--surface-elevated)',
                   color: 'var(--accent-primary)',
@@ -837,7 +837,7 @@ kube-bench run --json > kube-bench-results.json`}
                     <div className="text-xs font-medium" style={{ color: 'var(--text-primary)' }}>
                       {cat.name}
                     </div>
-                    <div className="text-[10px]" style={{ color: 'var(--text-tertiary)' }}>
+                    <div className="text-xs" style={{ color: 'var(--text-tertiary)' }}>
                       {cat.example}
                     </div>
                   </div>
@@ -866,7 +866,7 @@ kube-bench run --json > kube-bench-results.json`}
               ].map((phase, i) => (
                 <li key={i} className="flex items-center gap-2 text-xs">
                   <span
-                    className="flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold"
+                    className="flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold"
                     style={{ backgroundColor: 'var(--accent-lavender-soft)', color: 'var(--accent-lavender)' }}
                   >
                     {i + 1}
@@ -901,7 +901,7 @@ kube-bench run --json > kube-bench-results.json`}
               ].map((stage, i) => (
                 <span
                   key={i}
-                  className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-medium"
+                  className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium"
                   style={{
                     backgroundColor: 'var(--surface-elevated)',
                     color: 'var(--text-secondary)',
@@ -992,7 +992,7 @@ kube-bench run --json > kube-bench-results.json`}
               <div className="text-xs font-medium" style={{ color: 'var(--text-primary)' }}>
                 {d.name}
               </div>
-              <div className="text-[10px]" style={{ color: 'var(--text-tertiary)' }}>
+              <div className="text-xs" style={{ color: 'var(--text-tertiary)' }}>
                 {d.desc}
               </div>
             </div>
@@ -1122,7 +1122,7 @@ kube-bench run --json > kube-bench-results.json`}
                   </td>
                   <td className="px-3 py-3">
                     <span
-                      className="inline-block px-2 py-0.5 rounded-full text-[10px] font-medium"
+                      className="inline-block px-2 py-0.5 rounded-full text-xs font-medium"
                       style={{
                         backgroundColor: 'var(--surface-elevated)',
                         color: 'var(--text-secondary)',
@@ -1229,7 +1229,7 @@ jobs:
               </span>
               {item.critical && (
                 <span
-                  className="flex-shrink-0 ml-auto px-1.5 py-0.5 rounded text-[10px] font-medium"
+                  className="flex-shrink-0 ml-auto px-1.5 py-0.5 rounded text-xs font-medium"
                   style={{ backgroundColor: 'rgba(232, 122, 93, 0.1)', color: 'var(--accent-coral)' }}
                 >
                   High Yield
@@ -1287,7 +1287,7 @@ jobs:
         >
           Chapter Quiz
         </h2>
-        <QuizCard questions={quizQuestions} domainId="6" />
+        <QuizComponent questions={quizQuestions} domainId="6" />
       </section>
 
       {/* Chapter Footer */}

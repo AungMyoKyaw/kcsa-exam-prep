@@ -59,7 +59,7 @@ export default function CalloutBox({ variant, title, children }: CalloutBoxProps
             className="text-sm font-semibold"
             style={{ color: config.textColor }}
           >
-            {title || config.label}
+            {title ?? config.label}
           </span>
         </div>
         <div

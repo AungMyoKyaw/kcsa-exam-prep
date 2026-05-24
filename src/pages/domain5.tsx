@@ -17,10 +17,10 @@ import {
   GitBranch,
   Fingerprint,
 } from 'lucide-react'
-import CalloutBox from './components/CalloutBox'
-import CodeBlock from './components/CodeBlock'
-import QuizCard from './components/QuizCard'
-import type { QuizQuestion } from './components/QuizCard'
+import CalloutBox from '@/components/CalloutBox'
+import CodeBlock from '@/components/CodeBlock'
+import QuizComponent from '@/components/QuizComponent'
+import type { QuizQuestion } from '@/components/QuizComponent'
 
 
 
@@ -170,7 +170,7 @@ export default function Domain5Page() {
       try {
         const stored = localStorage.getItem('kcsa-progress')
         const data = stored ? JSON.parse(stored) : {}
-        if (!data.domain5) data.domain5 = {}
+        if (!data.domain5) {data.domain5 = {}}
         data.domain5.scrollPercent = Math.round(progress)
         if (progress > 90) {
           data.domain5.read = true
@@ -1209,7 +1209,7 @@ spec:
         >
           Chapter Quiz
         </h2>
-        <QuizCard questions={quizQuestions} domainId="5" />
+        <QuizComponent questions={quizQuestions} domainId="5" />
       </section>
 
       {/* Chapter Footer */}

@@ -13,16 +13,14 @@ interface DomainProgress {
   chapters?: Record<string, ChapterProgress>;
 }
 
-interface ProgressData {
-  [domainId: string]: DomainProgress;
-}
+type ProgressData = Record<string, DomainProgress>;
 
 const STORAGE_KEY = 'kcsa-domain-progress';
 
 function loadProgress(): ProgressData {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) return JSON.parse(raw);
+    if (raw != null && raw !== '') {return JSON.parse(raw);}
   } catch { /* ignore */ }
   return {};
 }
@@ -36,7 +34,7 @@ function saveProgress(data: ProgressData) {
 export function useProgress(domainId: string) {
   const [progress, setProgress] = useState<DomainProgress>(() => {
     const all = loadProgress();
-    return all[domainId] || { scrollPercent: 0, quizCompleted: false, chapters: {} };
+    return all[domainId] ?? { scrollPercent: 0, quizCompleted: false, chapters: {} };
   });
 
   const updateScroll = useCallback((chapterIdOrPercent: string | number, maybePercent?: number) => {
@@ -47,7 +45,7 @@ export function useProgress(domainId: string) {
     setProgress(prev => {
       const chapters = { ...prev.chapters };
       chapters[chapterId] = {
-        ...(chapters[chapterId] || { read: false }),
+        ...(chapters[chapterId] ?? { read: false }),
         scrollPercent: Math.min(100, Math.round(percent as number)),
       };
 
@@ -59,7 +57,7 @@ export function useProgress(domainId: string) {
 
       if (next.scrollPercent >= 90) {
         next.lastReadAt = new Date().toISOString();
-        if (chapters[chapterId]) chapters[chapterId].read = true;
+        if (chapters[chapterId] != null) {chapters[chapterId].read = true;}
       }
 
       const all = loadProgress();
@@ -72,8 +70,8 @@ export function useProgress(domainId: string) {
   const markRead = useCallback((chapterId?: string) => {
     setProgress(prev => {
       const chapters = { ...prev.chapters };
-      const id = chapterId || 'default';
-      chapters[id] = { ...(chapters[id] || { scrollPercent: 0 }), read: true };
+      const id = chapterId ?? 'default';
+      chapters[id] = { ...(chapters[id] ?? { scrollPercent: 0 }), read: true };
 
       const next: DomainProgress = {
         ...prev,

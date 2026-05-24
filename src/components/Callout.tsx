@@ -56,7 +56,7 @@ export default function Callout({ variant, title, children }: CalloutProps) {
         <div className="flex items-center gap-2 mb-2">
           <Icon size={16} style={{ color: c.borderColor }} />
           <span className="text-sm font-semibold" style={{ color: c.borderColor }}>
-            {title || c.label}
+            {title ?? c.label}
           </span>
         </div>
         <div className="text-base leading-relaxed" style={{ color: 'var(--text-primary)' }}>

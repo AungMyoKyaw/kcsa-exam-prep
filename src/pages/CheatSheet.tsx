@@ -269,7 +269,7 @@ function RBACTab() {
                     className="text-xs font-semibold px-2 py-1 rounded-full"
                     style={{
                       color: dangerColors[v.dangerLevel],
-                      backgroundColor: dangerColors[v.dangerLevel] + '18',
+                      backgroundColor: `${dangerColors[v.dangerLevel]  }18`,
                     }}
                   >
                     {v.dangerLevel}

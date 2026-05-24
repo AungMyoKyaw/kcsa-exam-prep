@@ -679,7 +679,7 @@ export function getTermsByLetter(letter: string): GlossaryTerm[] {
 export function getAllLetters(): string[] {
   const letters = new Set<string>();
   glossaryTerms.forEach((t) => {
-    if (t.term[0]) letters.add(t.term[0].toUpperCase());
+    if (t.term[0]) {letters.add(t.term[0].toUpperCase());}
   });
   return Array.from(letters).sort();
 }

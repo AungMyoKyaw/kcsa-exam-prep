@@ -203,7 +203,7 @@ function ExamInProgress({
     timerRef.current = setInterval(() => {
       setTimeRemaining((prev) => {
         if (prev <= 1) {
-          if (timerRef.current) clearInterval(timerRef.current);
+          if (timerRef.current) {clearInterval(timerRef.current);}
           onFinish(answers, flagged, TOTAL_TIME);
           return 0;
         }
@@ -211,12 +211,12 @@ function ExamInProgress({
       });
     }, 1000);
     return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
+      if (timerRef.current) {clearInterval(timerRef.current);}
     };
   }, []);
 
   const handleFinish = useCallback(() => {
-    if (timerRef.current) clearInterval(timerRef.current);
+    if (timerRef.current) {clearInterval(timerRef.current);}
     onFinish(answers, flagged, TOTAL_TIME - timeRemaining);
   }, [answers, flagged, timeRemaining, onFinish]);
 
@@ -231,9 +231,9 @@ function ExamInProgress({
       } else if (e.key === 'f' || e.key === 'F') {
         toggleFlag(currentIndex);
       } else if (e.key === 'ArrowRight' || e.key === 'n' || e.key === 'N') {
-        if (currentIndex < questions.length - 1) setCurrentIndex((p) => p + 1);
+        if (currentIndex < questions.length - 1) {setCurrentIndex((p) => p + 1);}
       } else if (e.key === 'ArrowLeft' || e.key === 'p' || e.key === 'P') {
-        if (currentIndex > 0) setCurrentIndex((p) => p - 1);
+        if (currentIndex > 0) {setCurrentIndex((p) => p - 1);}
       } else if (e.key === 'Enter') {
         if (!submitted[currentIndex] && answers[currentIndex] !== null) {
           handleSubmit();
@@ -251,14 +251,14 @@ function ExamInProgress({
   }, [currentIndex, answers, submitted, questions]);
 
   const handleSelect = (optionIndex: number) => {
-    if (submitted[currentIndex]) return;
+    if (submitted[currentIndex]) {return;}
     const newAnswers = [...answers];
     newAnswers[currentIndex] = optionIndex;
     setAnswers(newAnswers);
   };
 
   const handleSubmit = () => {
-    if (answers[currentIndex] === null) return;
+    if (answers[currentIndex] === null) {return;}
     const newSubmitted = [...submitted];
     newSubmitted[currentIndex] = true;
     setSubmitted(newSubmitted);
@@ -654,7 +654,7 @@ function ExamInProgress({
                 <button
                   key={i}
                   onClick={() => goToQuestion(i)}
-                  className="w-full aspect-square rounded-md text-[10px] font-medium transition-all duration-150 relative"
+                  className="w-full aspect-square rounded-md text-xs font-medium transition-all duration-150 relative"
                   style={{
                     backgroundColor: answers[i] !== null ? 'var(--accent-primary)' : 'var(--surface-elevated)',
                     color: answers[i] !== null ? '#fff' : 'var(--text-secondary)',
@@ -908,9 +908,9 @@ function ResultsScreen({
 
   if (showReview) {
     const filtered = questions.filter((q, i) => {
-      if (reviewFilter === 'correct') return answers[i] === q.correctAnswer;
-      if (reviewFilter === 'incorrect') return answers[i] !== q.correctAnswer;
-      if (reviewFilter === 'flagged') return flagged[i];
+      if (reviewFilter === 'correct') {return answers[i] === q.correctAnswer;}
+      if (reviewFilter === 'incorrect') {return answers[i] !== q.correctAnswer;}
+      if (reviewFilter === 'flagged') {return flagged[i];}
       return true;
     });
 

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router';
+import { useInView, motion } from 'framer-motion';
 import {
   Server,
   Database,
@@ -57,7 +58,7 @@ function StickyPortsBar() {
     );
 
     const sentinel = document.getElementById('ports-sentinel');
-    if (sentinel) observer.observe(sentinel);
+    if (sentinel) {observer.observe(sentinel);}
     return () => observer.disconnect();
   }, []);
 
@@ -161,7 +162,7 @@ function ArchitectureDiagram() {
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {controlPlane.map((comp, i) => (
-              <div
+              <motion.div
                 key={comp.name}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
                 className="rounded-lg p-3 text-center transition-all duration-200 hover:scale-105"
@@ -182,27 +183,27 @@ function ArchitectureDiagram() {
                 <div className="text-xs mt-1" style={{ color: 'var(--text-tertiary)' }}>
                   {comp.detail}
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
 
         {/* Connection arrows */}
         <div className="flex justify-center my-2">
-          <div
+          <motion.div
             animate={isInView ? { opacity: 1 } : {}}
             className="text-xs flex items-center gap-1 px-3 py-1 rounded-full"
             style={{ backgroundColor: 'var(--surface-elevated)', color: 'var(--text-tertiary)' }}
           >
             <Network size={12} />
             HTTPS / mTLS
-          </div>
+          </motion.div>
         </div>
 
         {/* Worker Nodes Zone */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {workerNodes.map((node, ni) => (
-            <div
+            <motion.div
               key={node.name}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               className="rounded-lg p-4"
@@ -247,12 +248,12 @@ function ArchitectureDiagram() {
                   </div>
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
 
         {/* External Client */}
-        <div
+        <motion.div
           animate={isInView ? { opacity: 1 } : {}}
           className="flex items-center justify-center gap-2 mt-4 px-4 py-2 rounded-lg mx-auto w-fit"
           style={{ backgroundColor: 'var(--surface-elevated)', border: '1px solid var(--border-subtle)' }}
@@ -261,7 +262,7 @@ function ArchitectureDiagram() {
           <span className="text-xs" style={{ color: 'var(--text-tertiary)' }}>
             kubectl → API Server:6443 (HTTPS)
           </span>
-        </div>
+        </motion.div>
       </div>
     </div>
   );
@@ -603,7 +604,7 @@ export default function Domain2Page() {
       if (docHeight > 0) {
         const pct = Math.round((scrollTop / docHeight) * 100);
         updateScroll('domain2-main', pct);
-        if (pct >= 90) markRead('domain2-main');
+        if (pct >= 90) {markRead('domain2-main');}
       }
     };
     window.addEventListener('scroll', handleScroll, { passive: true });

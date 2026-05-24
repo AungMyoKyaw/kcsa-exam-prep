@@ -3,8 +3,6 @@ import { Link } from 'react-router'
 import {
   Menu,
   Search,
-  Sun,
-  Moon,
   BookOpen,
   X,
 } from 'lucide-react'
@@ -12,11 +10,9 @@ import {
 interface NavbarProps {
   onMenuClick: () => void
   sidebarOpen: boolean
-  theme: 'light' | 'dark' | 'system'
-  onThemeToggle: () => void
 }
 
-export default function Navbar({ onMenuClick, sidebarOpen, theme, onThemeToggle }: NavbarProps) {
+export default function Navbar({ onMenuClick, sidebarOpen }: NavbarProps) {
   const [searchQuery, setSearchQuery] = useState('')
   const searchInputRef = useRef<HTMLInputElement>(null)
 
@@ -30,8 +26,6 @@ export default function Navbar({ onMenuClick, sidebarOpen, theme, onThemeToggle 
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [])
-
-  const isDark = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)
 
   return (
     <nav
@@ -101,20 +95,6 @@ export default function Navbar({ onMenuClick, sidebarOpen, theme, onThemeToggle 
             </button>
           )}
         </div>
-      </div>
-
-      {/* Right Group */}
-      <div className="flex items-center gap-2 flex-shrink-0">
-        <button
-          onClick={onThemeToggle}
-          className="w-9 h-9 rounded-md flex items-center justify-center hover:bg-[var(--surface-elevated)] transition-colors"
-          style={{
-            color: 'var(--text-secondary)',
-          }}
-          aria-label="Toggle theme"
-        >
-          {isDark ? <Sun size={16} /> : <Moon size={16} />}
-        </button>
       </div>
     </nav>
   )

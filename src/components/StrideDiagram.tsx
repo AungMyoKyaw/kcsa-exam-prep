@@ -75,7 +75,7 @@ export default function StrideDiagram({ onHover }: StrideDiagramProps) {
           <text
             x="200" y="175"
             textAnchor="middle"
-            fontSize="10"
+            fontSize="12"
             fontWeight="600"
             fill="var(--accent-primary)"
             fontFamily="var(--font-body)"
@@ -83,9 +83,9 @@ export default function StrideDiagram({ onHover }: StrideDiagramProps) {
             Kubernetes
           </text>
           <text
-            x="200" y="188"
+            x="200" y="187"
             textAnchor="middle"
-            fontSize="9"
+            fontSize="11"
             fill="var(--text-secondary)"
             fontFamily="var(--font-body)"
           >
@@ -149,7 +149,7 @@ export default function StrideDiagram({ onHover }: StrideDiagramProps) {
                 x={h.x}
                 y={h.y + 10}
                 textAnchor="middle"
-                fontSize="8"
+                fontSize="10"
                 fontWeight="600"
                 fill={isHovered ? h.color : 'var(--text-secondary)'}
                 fontFamily="var(--font-body)"
@@ -159,9 +159,9 @@ export default function StrideDiagram({ onHover }: StrideDiagramProps) {
               {h.label.includes('\n') && (
                 <text
                   x={h.x}
-                  y={h.y + 20}
+                  y={h.y + 24}
                   textAnchor="middle"
-                  fontSize="8"
+                  fontSize="10"
                   fontWeight="600"
                   fill={isHovered ? h.color : 'var(--text-secondary)'}
                   fontFamily="var(--font-body)"
@@ -175,7 +175,7 @@ export default function StrideDiagram({ onHover }: StrideDiagramProps) {
       </svg>
 
       {/* Tooltip */}
-      {hovered && (
+      {hovered != null && (
         <motion.div
           initial={{ opacity: 0, y: 5 }}
           animate={{ opacity: 1, y: 0 }}

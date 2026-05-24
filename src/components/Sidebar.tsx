@@ -95,7 +95,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                   </span>
                 </Link>
                 <span
-                  className="flex-shrink-0 text-[11px] font-semibold px-1.5 py-0.5 rounded-full"
+                  className="flex-shrink-0 text-xs font-semibold px-1.5 py-0.5 rounded-full"
                   style={{
                     backgroundColor: 'var(--surface-elevated)',
                     color: 'var(--text-tertiary)',
@@ -150,7 +150,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                       />
                     </div>
                     <span
-                      className="text-[10px] font-medium"
+                      className="text-xs font-medium"
                       style={{ color: 'var(--text-tertiary)' }}
                     >
                       {readCount}/{totalChapters}
