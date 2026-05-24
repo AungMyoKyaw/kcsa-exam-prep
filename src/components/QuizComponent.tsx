@@ -281,34 +281,28 @@ export default function QuizComponent({ questions, domainId }: QuizComponentProp
                   <div
                     className="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center mt-0.5 text-xs font-semibold"
                     style={{
-                      backgroundColor: showCorrect
-                        ? 'var(--accent-sage)'
-                        : showIncorrect
-                        ? 'var(--accent-coral)'
-                        : isSelected
-                        ? 'var(--accent-primary)'
-                        : 'var(--surface-elevated)',
+                      backgroundColor: (() => {
+                        if (showCorrect) { return 'var(--accent-sage)' }
+                        if (showIncorrect) { return 'var(--accent-coral)' }
+                        if (isSelected) { return 'var(--accent-primary)' }
+                        return 'var(--surface-elevated)'
+                      })(),
                       color: isSelected || showCorrect || showIncorrect
                         ? '#fff'
                         : 'var(--text-secondary)',
-                      border: `1px solid ${
-                        showCorrect
-                          ? 'var(--accent-sage)'
-                          : showIncorrect
-                          ? 'var(--accent-coral)'
-                          : isSelected
-                          ? 'var(--accent-primary)'
-                          : 'var(--border-medium)'
-                      }`,
+                      border: `1px solid ${(() => {
+                        if (showCorrect) { return 'var(--accent-sage)' }
+                        if (showIncorrect) { return 'var(--accent-coral)' }
+                        if (isSelected) { return 'var(--accent-primary)' }
+                        return 'var(--border-medium)'
+                      })()}`,
                     }}
                   >
-                    {showCorrect ? (
-                      <Check size={14} />
-                    ) : showIncorrect ? (
-                      <X size={14} />
-                    ) : (
-                      String.fromCharCode(65 + index)
-                    )}
+                    {(() => {
+                      if (showCorrect) { return <Check size={14} /> }
+                      if (showIncorrect) { return <X size={14} /> }
+                      return String.fromCharCode(65 + index)
+                    })()}
                   </div>
                   <span
                     className="text-sm leading-relaxed"

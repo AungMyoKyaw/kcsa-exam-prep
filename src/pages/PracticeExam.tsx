@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Clock,
@@ -126,7 +126,7 @@ function StartScreen({ onStart }: { onStart: () => void }) {
               >
                 <div className="flex justify-between items-center mb-1">
                   <span className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>
-                    Domain {d.domain}: {domainInfo?.shortName || d.name}
+                    Domain {d.domain}: {domainInfo?.shortName ?? d.name}
                   </span>
                   <div className="flex items-center gap-3">
                     <span className="text-xs" style={{ color: 'var(--text-secondary)' }}>
@@ -142,7 +142,7 @@ function StartScreen({ onStart }: { onStart: () => void }) {
                     className="h-full rounded-full"
                     style={{ background: 'var(--accent-gradient)' }}
                     initial={{ width: 0 }}
-                    animate={{ width: `${domainInfo?.weight || 0}%` }}
+                    animate={{ width: `${domainInfo?.weight ?? 0}%` }}
                     transition={{ duration: 0.8, ease: easeOutExpo, delay: 0.6 + i * 0.1 }}
                   />
                 </div>
@@ -199,32 +199,59 @@ function ExamInProgress({
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // Timer
+  const answersRef = useRef(answers);
+  const flaggedRef = useRef(flagged);
+  const onFinishRef = useRef(onFinish);
+  useEffect(() => { answersRef.current = answers; }, [answers]);
+  useEffect(() => { flaggedRef.current = flagged; }, [flagged]);
+  useEffect(() => { onFinishRef.current = onFinish; }, [onFinish]);
+
   useEffect(() => {
     timerRef.current = setInterval(() => {
       setTimeRemaining((prev) => {
         if (prev <= 1) {
-          if (timerRef.current) {clearInterval(timerRef.current);}
-          onFinish(answers, flagged, TOTAL_TIME);
+          if (timerRef.current != null) { clearInterval(timerRef.current); }
+          onFinishRef.current(answersRef.current, flaggedRef.current, TOTAL_TIME);
           return 0;
         }
         return prev - 1;
       });
     }, 1000);
     return () => {
-      if (timerRef.current) {clearInterval(timerRef.current);}
+      if (timerRef.current != null) { clearInterval(timerRef.current); }
     };
   }, []);
 
   const handleFinish = useCallback(() => {
-    if (timerRef.current) {clearInterval(timerRef.current);}
+    if (timerRef.current != null) { clearInterval(timerRef.current); }
     onFinish(answers, flagged, TOTAL_TIME - timeRemaining);
   }, [answers, flagged, timeRemaining, onFinish]);
+
+  const handleSelect = useCallback((optionIndex: number) => {
+    if (submitted[currentIndex]) {return;}
+    const newAnswers = [...answers];
+    newAnswers[currentIndex] = optionIndex;
+    setAnswers(newAnswers);
+  }, [submitted, currentIndex, answers]);
+
+  const handleSubmit = useCallback(() => {
+    if (answers[currentIndex] === null) {return;}
+    const newSubmitted = [...submitted];
+    newSubmitted[currentIndex] = true;
+    setSubmitted(newSubmitted);
+  }, [answers, currentIndex, submitted]);
+
+  const toggleFlag = useCallback((index: number) => {
+    const newFlagged = [...flagged];
+    newFlagged[index] = !newFlagged[index];
+    setFlagged(newFlagged);
+  }, [flagged]);
 
   // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key >= '1' && e.key <= '4') {
-        const optIndex = parseInt(e.key) - 1;
+        const optIndex = parseInt(e.key, 10) - 1;
         if (optIndex < questions[currentIndex].options.length) {
           handleSelect(optIndex);
         }
@@ -248,27 +275,7 @@ function ExamInProgress({
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [currentIndex, answers, submitted, questions]);
-
-  const handleSelect = (optionIndex: number) => {
-    if (submitted[currentIndex]) {return;}
-    const newAnswers = [...answers];
-    newAnswers[currentIndex] = optionIndex;
-    setAnswers(newAnswers);
-  };
-
-  const handleSubmit = () => {
-    if (answers[currentIndex] === null) {return;}
-    const newSubmitted = [...submitted];
-    newSubmitted[currentIndex] = true;
-    setSubmitted(newSubmitted);
-  };
-
-  const toggleFlag = (index: number) => {
-    const newFlagged = [...flagged];
-    newFlagged[index] = !newFlagged[index];
-    setFlagged(newFlagged);
-  };
+  }, [currentIndex, answers, submitted, questions, handleSelect, handleSubmit, toggleFlag]);
 
   const goToQuestion = (index: number) => {
     setCurrentIndex(index);
@@ -382,20 +389,19 @@ function ExamInProgress({
                     </span>
                     <span
                       className="text-xs font-medium px-2 py-0.5 rounded"
-                      style={{
-                        backgroundColor:
-                          question.difficulty === 'Easy'
-                            ? 'rgba(10,123,62,0.1)'
-                            : question.difficulty === 'Medium'
-                              ? 'rgba(242,196,77,0.15)'
-                              : 'rgba(232,122,93,0.1)',
-                        color:
-                          question.difficulty === 'Easy'
-                            ? 'var(--success)'
-                            : question.difficulty === 'Medium'
-                              ? 'var(--warning)'
-                              : 'var(--danger)',
-                      }}
+                      style={(() => {
+                        const backgroundColor = (() => {
+                          if (question.difficulty === 'Easy') { return 'rgba(10,123,62,0.1)' }
+                          if (question.difficulty === 'Medium') { return 'rgba(242,196,77,0.15)' }
+                          return 'rgba(232,122,93,0.1)'
+                        })()
+                        const color = (() => {
+                          if (question.difficulty === 'Easy') { return 'var(--success)' }
+                          if (question.difficulty === 'Medium') { return 'var(--warning)' }
+                          return 'var(--danger)'
+                        })()
+                        return { backgroundColor, color }
+                      })()}
                     >
                       {question.difficulty}
                     </span>
@@ -410,7 +416,7 @@ function ExamInProgress({
                   </h2>
 
                   {/* Code Snippet */}
-                  {question.codeSnippet && (
+                  {question.codeSnippet != null && (
                     <pre
                       className="p-4 rounded-xl mb-6 overflow-x-auto"
                       style={{
@@ -441,24 +447,26 @@ function ExamInProgress({
                           onClick={() => handleSelect(i)}
                           disabled={isSubmitted}
                           className="w-full flex items-start gap-3 p-4 rounded-xl border text-left transition-all duration-200"
-                          style={{
-                            borderColor: showCorrect
-                              ? 'var(--accent-sage)'
-                              : showIncorrect
-                                ? 'var(--accent-coral)'
-                                : isSelected
-                                  ? 'var(--accent-primary)'
-                                  : 'var(--border-medium)',
-                            backgroundColor: showCorrect
-                              ? 'rgba(163,196,168,0.1)'
-                              : showIncorrect
-                                ? 'rgba(232,122,93,0.1)'
-                                : isSelected
-                                  ? 'rgba(4,80,54,0.08)'
-                                  : 'var(--surface-base)',
-                            opacity: isSubmitted && !isSelected && !isCorrect ? 0.6 : 1,
-                            cursor: isSubmitted ? 'default' : 'pointer',
-                          }}
+                          style={(() => {
+                            const borderColor = (() => {
+                              if (showCorrect) { return 'var(--accent-sage)' }
+                              if (showIncorrect) { return 'var(--accent-coral)' }
+                              if (isSelected) { return 'var(--accent-primary)' }
+                              return 'var(--border-medium)'
+                            })()
+                            const backgroundColor = (() => {
+                              if (showCorrect) { return 'rgba(163,196,168,0.1)' }
+                              if (showIncorrect) { return 'rgba(232,122,93,0.1)' }
+                              if (isSelected) { return 'rgba(4,80,54,0.08)' }
+                              return 'var(--surface-base)'
+                            })()
+                            return {
+                              borderColor,
+                              backgroundColor,
+                              opacity: isSubmitted && !isSelected && !isCorrect ? 0.6 : 1,
+                              cursor: isSubmitted ? 'default' : 'pointer',
+                            }
+                          })()}
                           onMouseEnter={(e) => {
                             if (!isSubmitted) {
                               (e.currentTarget as HTMLElement).style.borderColor = 'var(--accent-primary)';
@@ -479,22 +487,21 @@ function ExamInProgress({
                           {/* Radio circle */}
                           <div
                             className="w-5 h-5 rounded-full border-2 flex-shrink-0 mt-0.5 flex items-center justify-center"
-                            style={{
-                              borderColor: showCorrect
-                                ? 'var(--accent-sage)'
-                                : showIncorrect
-                                  ? 'var(--accent-coral)'
-                                  : isSelected
-                                    ? 'var(--accent-primary)'
-                                    : 'var(--border-medium)',
-                              backgroundColor: isSelected || showCorrect || showIncorrect
-                                ? showCorrect
-                                  ? 'var(--accent-sage)'
-                                  : showIncorrect
-                                    ? 'var(--accent-coral)'
-                                    : 'var(--accent-primary)'
-                                : 'transparent',
-                            }}
+                            style={(() => {
+                              const borderColor = (() => {
+                                if (showCorrect) { return 'var(--accent-sage)' }
+                                if (showIncorrect) { return 'var(--accent-coral)' }
+                                if (isSelected) { return 'var(--accent-primary)' }
+                                return 'var(--border-medium)'
+                              })()
+                              const backgroundColor = (() => {
+                                if (!isSelected && !showCorrect && !showIncorrect) { return 'transparent' }
+                                if (showCorrect) { return 'var(--accent-sage)' }
+                                if (showIncorrect) { return 'var(--accent-coral)' }
+                                return 'var(--accent-primary)'
+                              })()
+                              return { borderColor, backgroundColor }
+                            })()}
                           >
                             {(isSelected || showCorrect || showIncorrect) && (
                               <div className="w-2 h-2 rounded-full bg-white" />
@@ -557,41 +564,49 @@ function ExamInProgress({
                       <ChevronLeft size={16} /> Previous
                     </button>
 
-                    {!submitted[currentIndex] ? (
-                      <button
-                        onClick={handleSubmit}
-                        disabled={answers[currentIndex] === null}
-                        className="px-6 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 disabled:opacity-40 hover:scale-[1.02] active:scale-[0.98]"
-                        style={{
-                          backgroundColor: 'var(--accent-primary)',
-                          color: '#fff',
-                        }}
-                      >
-                        Submit Answer
-                      </button>
-                    ) : currentIndex < questions.length - 1 ? (
-                      <button
-                        onClick={() => setCurrentIndex((p) => p + 1)}
-                        className="flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
-                        style={{
-                          backgroundColor: 'var(--accent-primary)',
-                          color: '#fff',
-                        }}
-                      >
-                        Next <ChevronRight size={16} />
-                      </button>
-                    ) : (
-                      <button
-                        onClick={handleFinish}
-                        className="flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
-                        style={{
-                          backgroundColor: 'var(--accent-coral)',
-                          color: '#fff',
-                        }}
-                      >
-                        <Flag size={14} /> Finish Exam
-                      </button>
-                    )}
+                    {(() => {
+                      if (!submitted[currentIndex]) {
+                        return (
+                          <button
+                            onClick={handleSubmit}
+                            disabled={answers[currentIndex] === null}
+                            className="px-6 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 disabled:opacity-40 hover:scale-[1.02] active:scale-[0.98]"
+                            style={{
+                              backgroundColor: 'var(--accent-primary)',
+                              color: '#fff',
+                            }}
+                          >
+                            Submit Answer
+                          </button>
+                        )
+                      }
+                      if (currentIndex < questions.length - 1) {
+                        return (
+                          <button
+                            onClick={() => setCurrentIndex((p) => p + 1)}
+                            className="flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+                            style={{
+                              backgroundColor: 'var(--accent-primary)',
+                              color: '#fff',
+                            }}
+                          >
+                            Next <ChevronRight size={16} />
+                          </button>
+                        )
+                      }
+                      return (
+                        <button
+                          onClick={handleFinish}
+                          className="flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+                          style={{
+                            backgroundColor: 'var(--accent-coral)',
+                            color: '#fff',
+                          }}
+                        >
+                          <Flag size={14} /> Finish Exam
+                        </button>
+                      )
+                    })()}
                   </div>
                 </div>
               </motion.div>
@@ -872,20 +887,21 @@ function ResultsScreen({
   const passed = score >= 75;
 
   // Domain breakdown
-  const domainScores: Record<number, { correct: number; total: number; name: string }> = {};
-  questions.forEach((q, i) => {
-    if (!domainScores[q.domain]) {
-      domainScores[q.domain] = { correct: 0, total: 0, name: q.domainName };
-    }
-    domainScores[q.domain].total++;
-    if (answers[i] === q.correctAnswer) {
-      domainScores[q.domain].correct++;
-    }
-  });
+  const domainScores = useMemo(() => {
+    const ds: Record<number, { correct: number; total: number; name: string }> = {};
+    questions.forEach((q, i) => {
+      ds[q.domain] ??= { correct: 0, total: 0, name: q.domainName };
+      ds[q.domain].total++;
+      if (answers[i] === q.correctAnswer) {
+        ds[q.domain].correct++;
+      }
+    });
+    return ds;
+  }, [questions, answers]);
 
   // Weak areas (lowest 3)
   const weakAreas = Object.entries(domainScores)
-    .map(([id, data]) => ({ domainId: parseInt(id), ...data, pct: Math.round((data.correct / data.total) * 100) }))
+    .map(([id, data]) => ({ domainId: parseInt(id, 10), ...data, pct: Math.round((data.correct / data.total) * 100) }))
     .sort((a, b) => a.pct - b.pct)
     .slice(0, 3);
 
@@ -901,10 +917,10 @@ function ResultsScreen({
         Object.entries(domainScores).map(([id, data]) => [id, { correct: data.correct, total: data.total }])
       ),
     };
-    const existing = JSON.parse(localStorage.getItem('kcsa-practice-exams') || '[]');
+    const existing = JSON.parse(localStorage.getItem('kcsa-practice-exams') ?? '[]');
     existing.push(result);
     localStorage.setItem('kcsa-practice-exams', JSON.stringify(existing));
-  }, []);
+  }, [score, questions.length, correctCount, timeSpent, domainScores]);
 
   if (showReview) {
     const filtered = questions.filter((q, i) => {
@@ -988,18 +1004,19 @@ function ResultsScreen({
                         <div
                           key={i}
                           className="flex items-center gap-2 p-2 rounded-lg"
-                          style={{
-                            backgroundColor: isCorrectOpt
-                              ? 'rgba(163,196,168,0.1)'
-                              : isUserChoice && !isCorrect
-                                ? 'rgba(232,122,93,0.1)'
-                                : 'transparent',
-                            border: isCorrectOpt
-                              ? '1px solid var(--accent-sage)'
-                              : isUserChoice && !isCorrect
-                                ? '1px solid var(--accent-coral)'
-                                : '1px solid transparent',
-                          }}
+                          style={(() => {
+                            const backgroundColor = (() => {
+                              if (isCorrectOpt) { return 'rgba(163,196,168,0.1)' }
+                              if (isUserChoice && !isCorrect) { return 'rgba(232,122,93,0.1)' }
+                              return 'transparent'
+                            })()
+                            const border = (() => {
+                              if (isCorrectOpt) { return '1px solid var(--accent-sage)' }
+                              if (isUserChoice && !isCorrect) { return '1px solid var(--accent-coral)' }
+                              return '1px solid transparent'
+                            })()
+                            return { backgroundColor, border }
+                          })()}
                         >
                           <span className="font-mono text-sm" style={{ color: 'var(--text-secondary)' }}>
                             {String.fromCharCode(65 + i)}.

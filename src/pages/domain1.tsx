@@ -13,6 +13,7 @@ import {
 import Callout from '@/components/Callout';
 import CalloutBox from '@/components/CalloutBox';
 import CodeBlock from '@/components/CodeBlock';
+import ComparisonTable from '@/components/ComparisonTable';
 import QuizComponent from '@/components/QuizComponent';
 import { useProgress } from '@/hooks/useProgress';
 
@@ -100,6 +101,18 @@ function SharedResponsibilityTable() {
     { layer: 'Application / Code', provider: false, customer: true },
   ];
 
+  const getCellColor = (value: string | boolean) => {
+    if (typeof value === 'string') { return 'var(--text-secondary)'; }
+    if (value) { return 'var(--accent-sage)'; }
+    return 'var(--text-tertiary)';
+  };
+
+  const getCellText = (value: string | boolean) => {
+    if (typeof value === 'string') { return value; }
+    if (value) { return '✓'; }
+    return '—';
+  };
+
   return (
     <div className="overflow-x-auto my-6">
       <table className="w-full text-sm" style={{ borderCollapse: 'separate', borderSpacing: 0 }}>
@@ -114,11 +127,11 @@ function SharedResponsibilityTable() {
           {rows.map((row, i) => (
             <tr key={i}>
               <td className="px-4 py-3" style={{ borderBottom: '1px solid var(--border-subtle)', borderLeft: '1px solid var(--border-subtle)', color: 'var(--text-primary)' }}>{row.layer}</td>
-              <td className="px-4 py-3 text-center" style={{ borderBottom: '1px solid var(--border-subtle)', color: typeof row.provider === 'string' ? 'var(--text-secondary)' : row.provider ? 'var(--accent-sage)' : 'var(--text-tertiary)' }}>
-                {typeof row.provider === 'string' ? row.provider : row.provider ? '✓' : '—'}
+              <td className="px-4 py-3 text-center" style={{ borderBottom: '1px solid var(--border-subtle)', color: getCellColor(row.provider) }}>
+                {getCellText(row.provider)}
               </td>
-              <td className="px-4 py-3 text-center" style={{ borderBottom: '1px solid var(--border-subtle)', borderRight: '1px solid var(--border-subtle)', color: typeof row.customer === 'string' ? 'var(--text-secondary)' : row.customer ? 'var(--accent-sage)' : 'var(--text-tertiary)' }}>
-                {typeof row.customer === 'string' ? row.customer : row.customer ? '✓' : '—'}
+              <td className="px-4 py-3 text-center" style={{ borderBottom: '1px solid var(--border-subtle)', borderRight: '1px solid var(--border-subtle)', color: getCellColor(row.customer) }}>
+                {getCellText(row.customer)}
               </td>
             </tr>
           ))}
@@ -202,7 +215,7 @@ export default function Domain1Page() {
 
         <h3>Cloud Layer</h3>
         <p style={{ color: 'var(--text-secondary)' }}>
-          The Cloud layer is the foundation. It includes the physical infrastructure, the hypervisor, the network, and the cloud provider's security controls. This is where you configure IAM policies, network security groups, encryption at rest, and logging.
+          The Cloud layer is the foundation. It includes the physical infrastructure, the hypervisor, the network, and the cloud provider&apos;s security controls. This is where you configure IAM policies, network security groups, encryption at rest, and logging.
         </p>
 
         <Callout variant="exam">
@@ -264,7 +277,7 @@ kubectl logs job/kube-bench`}
 
         <h3>MITRE ATT&CK for Containers</h3>
         <p style={{ color: 'var(--text-secondary)' }}>
-          MITRE's container matrix maps adversary tactics (Initial Access, Execution, Persistence, etc.) to specific Kubernetes threats. Use it to threat-model your cluster and validate that your defenses cover each tactic.
+          MITRE&apos;s container matrix maps adversary tactics (Initial Access, Execution, Persistence, etc.) to specific Kubernetes threats. Use it to threat-model your cluster and validate that your defenses cover each tactic.
         </p>
       </Section>
 
@@ -316,7 +329,7 @@ spec:
         </p>
 
         <Callout variant="exam">
-          A namespace with a ResourceQuota but no LimitRange will reject pods that don't specify explicit resource requests — the pod won't get a default.
+          A namespace with a ResourceQuota but no LimitRange will reject pods that don&apos;t specify explicit resource requests — the pod won&apos;t get a default.
         </Callout>
 
         <h3>Runtime Isolation</h3>
@@ -369,6 +382,142 @@ cosign verify --key cosign.pub myregistry/app:v1.2.3`}
         <p style={{ color: 'var(--text-secondary)' }}>
           Host your own registry (Harbor, ECR, GCR, ACR) with vulnerability scanning, RBAC, and retention policies. Never pull images from public registries without verification.
         </p>
+      </Section>
+
+      {/* ═══════ Cloud Provider Security ═══════ */}
+      <Section id="d1-c4b">
+        <h2 className="flex items-center gap-3">
+          <Cloud size={24} style={{ color: 'var(--accent-primary)' }} />
+          Cloud Provider Security Specifics
+        </h2>
+
+        <p style={{ color: 'var(--text-secondary)' }}>
+          Each cloud provider implements the shared responsibility model differently. Understanding provider-specific security controls is critical for the exam.
+        </p>
+
+        <h3>AWS IMDSv2</h3>
+        <p style={{ color: 'var(--text-secondary)' }}>
+          The Instance Metadata Service (IMDS) provides credentials and configuration to EC2 instances. <strong>IMDSv1</strong> was vulnerable to SSRF attacks that could steal IAM credentials from pods. <strong>IMDSv2</strong> requires a session token obtained via a PUT request, making SSRF exploitation nearly impossible.
+        </p>
+
+        <Callout variant="warning">
+          Without IMDSv2, a compromised pod can steal the node&apos;s IAM role credentials via a simple HTTP request to 169.254.169.254. This is a critical exam topic — always enforce IMDSv2 on EKS worker nodes.
+        </Callout>
+
+        <h3>GKE Metadata Concealment &amp; Workload Identity</h3>
+        <p style={{ color: 'var(--text-secondary)' }}>
+          GKE offers two mechanisms to prevent pod access to node metadata:
+        </p>
+        <ul className="space-y-2 mb-4" style={{ color: 'var(--text-secondary)' }}>
+          <li className="flex items-start gap-2 text-sm">
+            <span style={{ color: 'var(--accent-primary)' }}>•</span>
+            <strong>Metadata Concealment</strong>: A daemonset proxy that blocks pod access to sensitive metadata endpoints (legacy).
+          </li>
+          <li className="flex items-start gap-2 text-sm">
+            <span style={{ color: 'var(--accent-primary)' }}>•</span>
+            <strong>Workload Identity</strong>: Maps Kubernetes ServiceAccounts to Google IAM service accounts. Pods get short-lived OAuth tokens instead of node credentials.
+          </li>
+        </ul>
+
+        <h3>AKS Managed Identity</h3>
+        <p style={{ color: 'var(--text-secondary)' }}>
+          Azure Kubernetes Service uses <strong>Managed Identity</strong> for the control plane and node pool authentication. User-assigned managed identities replace service principals, eliminating long-lived credentials. AKS also supports <strong>Azure AD Workload Identity</strong> (federated credentials) for pod-level IAM.
+        </p>
+
+        <h3>Shared Responsibility Per Provider</h3>
+        <ComparisonTable
+          columns={[
+            { key: 'provider', header: 'Provider' },
+            { key: 'managed', header: 'Managed Control Plane' },
+            { key: 'nodeIAM', header: 'Node IAM Protection' },
+            { key: 'podIAM', header: 'Pod IAM Mechanism' },
+          ]}
+          rows={[
+            { provider: 'AWS EKS', managed: 'Yes', nodeIAM: 'IMDSv2 required', podIAM: 'IRSA / Pod Identity' },
+            { provider: 'GKE', managed: 'Yes', nodeIAM: 'Metadata concealment', podIAM: 'Workload Identity' },
+            { provider: 'AKS', managed: 'Yes', nodeIAM: 'Managed Identity', podIAM: 'Azure AD Workload Identity' },
+          ]}
+        />
+
+        <Callout variant="tip">
+          Cloud is the FOUNDATION — if the cloud is broken, nothing above matters. Think of it as the ground floor of a building.
+        </Callout>
+      </Section>
+
+      {/* ═══════ Artifact Registry Security ═══════ */}
+      <Section id="d1-c4c">
+        <h2 className="flex items-center gap-3">
+          <Container size={24} style={{ color: 'var(--accent-primary)' }} />
+          Artifact Registry Security
+        </h2>
+
+        <h3>Registry Authentication Methods</h3>
+        <p style={{ color: 'var(--text-secondary)' }}>
+          Kubernetes supports multiple ways to authenticate to private registries:
+        </p>
+        <div className="space-y-3 mb-6">
+          {[
+            { title: 'imagePullSecrets', desc: 'Per-pod Secret with .dockerconfigjson. Most explicit but requires manual pod configuration.' },
+            { title: 'ServiceAccount imagePullSecrets', desc: 'Attach the Secret to a ServiceAccount — all pods using that SA automatically inherit it. Best practice for most workloads.' },
+            { title: 'Node-wide credential providers', desc: 'Cloud-specific: ECR credential helper, GCR helper, ACR helper. Transparent to pods but less explicit.' },
+          ].map((method) => (
+            <div key={method.title} className="flex items-start gap-3 px-4 py-3 rounded-lg" style={{ backgroundColor: 'var(--surface-base)', border: '1px solid var(--border-subtle)' }}>
+              <Check size={14} className="mt-0.5 flex-shrink-0" style={{ color: 'var(--accent-sage)' }} />
+              <div>
+                <span className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>{method.title}:</span>
+                <span className="text-sm ml-1" style={{ color: 'var(--text-secondary)' }}>{method.desc}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <h3>Image Pull Policies</h3>
+        <ComparisonTable
+          columns={[
+            { key: 'policy', header: 'Policy' },
+            { key: 'behavior', header: 'Behavior' },
+            { key: 'safe', header: 'When Safe' },
+            { key: 'danger', header: 'When Dangerous' },
+          ]}
+          rows={[
+            { policy: 'Always', behavior: 'Pull every time pod starts', safe: 'Immutable tags, production', danger: 'Slower startup, registry dependency' },
+            { policy: 'IfNotPresent', behavior: 'Pull only if not cached locally', safe: 'Immutable tags, digests', danger: 'With :latest tag — silent stale image' },
+            { policy: 'Never', behavior: 'Never pull; must exist locally', safe: 'Air-gapped, pre-loaded images', danger: 'If image missing, pod fails' },
+          ]}
+        />
+
+        <Callout variant="warning">
+          IfNotPresent with :latest tag = silent stale image. Always use digests in production.
+        </Callout>
+
+        <h3>Harbor &amp; OCI Standards</h3>
+        <p style={{ color: 'var(--text-secondary)' }}>
+          Harbor is an open-source registry with built-in vulnerability scanning, RBAC, and image signing. It supports OCI (Open Container Initiative) standards for artifacts, meaning you can store Helm charts, SBOMs, and signatures alongside images.
+        </p>
+      </Section>
+
+      {/* ═══════ Configuration as a Security Layer ═══════ */}
+      <Section id="d1-c4d">
+        <h2 className="flex items-center gap-3">
+          <FileCheck size={24} style={{ color: 'var(--accent-primary)' }} />
+          Configuration as a Security Layer
+        </h2>
+
+        <p style={{ color: 'var(--text-secondary)' }}>
+          Some curricula list <strong>Configuration</strong> as the 4th C instead of Code. This variation emphasizes that misconfiguration — not fancy exploits — is the number one cause of cloud breaches.
+        </p>
+
+        <Callout variant="exam">
+          The Cloud Security Alliance (CSA) and multiple industry reports consistently rank misconfiguration as the leading cause of cloud data breaches. A single overly permissive S3 bucket or Security Group can expose an entire organization.
+        </Callout>
+
+        <p style={{ color: 'var(--text-secondary)' }}>
+          Configuration security covers: IAM policies, network ACLs, storage buckets, encryption settings, logging configuration, and Kubernetes resource definitions. Every YAML file is a potential security control.
+        </p>
+
+        <Callout variant="tip">
+          4Cs = Cloud Cluster Container Code. But some say Cloud Cluster Container Config. Either way, Cloud is the base.
+        </Callout>
       </Section>
 
       {/* ═══════ DevSecOps ═══════ */}

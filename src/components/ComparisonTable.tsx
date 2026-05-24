@@ -69,29 +69,31 @@ export default function ComparisonTable({ columns, rows, highlightRow }: Compari
                     idx < rows.length - 1
                       ? '1px solid var(--border-subtle)'
                       : 'none',
-                  backgroundColor: highlightColor || 'transparent',
+                  backgroundColor: highlightColor ?? 'transparent',
                 }}
               >
                 {columns.map((col, colIdx) => (
                   <td
                     key={col.key}
                     className="px-4 py-3"
-                    style={{
-                      color: colIdx === 0 ? 'var(--text-primary)' : 'var(--text-secondary)',
-                      fontWeight: colIdx === 0 ? 600 : 400,
-                      borderLeft:
-                        colIdx > 0 && colIdx === 1
-                          ? '2px solid var(--accent-amber)'
-                          : colIdx > 0 && colIdx === 2
-                          ? '2px solid var(--accent-sage)'
-                          : 'none',
-                      backgroundColor:
-                        row[col.key] === 'Forbidden'
-                          ? 'rgba(232, 122, 93, 0.05)'
-                          : row[col.key] === 'Required' || row[col.key]?.includes('MUST')
-                          ? 'rgba(163, 196, 168, 0.05)'
-                          : 'transparent',
-                    }}
+                    style={(() => {
+                      const borderLeft = (() => {
+                        if (colIdx > 0 && colIdx === 1) { return '2px solid var(--accent-amber)' }
+                        if (colIdx > 0 && colIdx === 2) { return '2px solid var(--accent-sage)' }
+                        return 'none'
+                      })()
+                      const backgroundColor = (() => {
+                        if (row[col.key] === 'Forbidden') { return 'rgba(232, 122, 93, 0.05)' }
+                        if (row[col.key] === 'Required' || row[col.key]?.includes('MUST')) { return 'rgba(163, 196, 168, 0.05)' }
+                        return 'transparent'
+                      })()
+                      return {
+                        color: colIdx === 0 ? 'var(--text-primary)' : 'var(--text-secondary)',
+                        fontWeight: colIdx === 0 ? 600 : 400,
+                        borderLeft,
+                        backgroundColor,
+                      }
+                    })()}
                   >
                     {row[col.key]}
                   </td>

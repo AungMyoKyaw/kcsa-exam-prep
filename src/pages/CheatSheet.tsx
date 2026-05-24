@@ -69,10 +69,10 @@ function useCopyButton() {
   return { copiedMap, handleCopy };
 }
 
-function CopyBtn({ text, copyKey, onCopy, copied }: { text: string; copyKey: string; onCopy: (t: string, k: string) => void; copied: boolean }) {
+function CopyBtn({ text, copyKey, onCopy, copied }: { text: string; copyKey: string; onCopy: (t: string, k: string) => void | Promise<void>; copied: boolean }) {
   return (
     <button
-      onClick={() => onCopy(text, copyKey)}
+      onClick={() => { void onCopy(text, copyKey); }}
       className="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium transition-all duration-200"
       style={{
         backgroundColor: copied ? 'rgba(10,123,62,0.1)' : 'var(--surface-elevated)',
@@ -88,7 +88,7 @@ function CopyBtn({ text, copyKey, onCopy, copied }: { text: string; copyKey: str
 
 // ===== Tab Content Components =====
 
-function PortsTab({ copiedMap, handleCopy }: { copiedMap: Record<string, boolean>; handleCopy: (t: string, k: string) => void }) {
+function PortsTab({ copiedMap, handleCopy }: { copiedMap: Record<string, boolean>; handleCopy: (t: string, k: string) => void | Promise<void> }) {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -116,7 +116,7 @@ function PortsTab({ copiedMap, handleCopy }: { copiedMap: Record<string, boolean
                 transition={{ delay: i * 0.04 }}
                 style={{
                   borderBottom: '1px solid var(--border-subtle)',
-                  backgroundColor: row.danger ? 'rgba(232,122,93,0.06)' : 'transparent',
+                  backgroundColor: row.danger === true ? 'rgba(232,122,93,0.06)' : 'transparent',
                 }}
               >
                 <td className="py-3 px-4 font-medium" style={{ color: 'var(--text-primary)' }}>{row.component}</td>
@@ -127,7 +127,7 @@ function PortsTab({ copiedMap, handleCopy }: { copiedMap: Record<string, boolean
                   >
                     {row.port}
                   </span>
-                  {row.danger && (
+                  {row.danger === true && (
                     <span
                       className="ml-2 text-xs font-semibold px-2 py-0.5 rounded"
                       style={{ color: 'var(--accent-coral)', backgroundColor: 'rgba(232,122,93,0.12)' }}
@@ -147,7 +147,7 @@ function PortsTab({ copiedMap, handleCopy }: { copiedMap: Record<string, boolean
   );
 }
 
-function PSSTab({ copiedMap, handleCopy }: { copiedMap: Record<string, boolean>; handleCopy: (t: string, k: string) => void }) {
+function PSSTab({ copiedMap, handleCopy }: { copiedMap: Record<string, boolean>; handleCopy: (t: string, k: string) => void | Promise<void> }) {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -359,7 +359,7 @@ function EncryptionTab() {
   );
 }
 
-function NetworkTab({ copiedMap, handleCopy }: { copiedMap: Record<string, boolean>; handleCopy: (t: string, k: string) => void }) {
+function NetworkTab({ copiedMap, handleCopy }: { copiedMap: Record<string, boolean>; handleCopy: (t: string, k: string) => void | Promise<void> }) {
   return (
     <div className="space-y-6">
       <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
@@ -396,7 +396,7 @@ function NetworkTab({ copiedMap, handleCopy }: { copiedMap: Record<string, boole
   );
 }
 
-function CommandsTab({ copiedMap, handleCopy }: { copiedMap: Record<string, boolean>; handleCopy: (t: string, k: string) => void }) {
+function CommandsTab({ copiedMap, handleCopy }: { copiedMap: Record<string, boolean>; handleCopy: (t: string, k: string) => void | Promise<void> }) {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">

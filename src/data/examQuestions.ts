@@ -13,16 +13,18 @@ export interface ExamQuestion {
   relatedSection: string;
 }
 
-// 60 questions distributed by exam weight
-// Domain 1: 8 questions (14%)
-// Domain 2: 14 questions (22%) 
-// Domain 3: 14 questions (22%)
-// Domain 4: 10 questions (16%)
-// Domain 5: 10 questions (16%)
-// Domain 6: 4 questions (10%)
+import { examQuestionsNew } from './examQuestionsNew'
+
+// ~105 questions distributed by exam weight
+// Domain 1: ~14 questions (14%)
+// Domain 2: ~23 questions (22%)
+// Domain 3: ~23 questions (22%)
+// Domain 4: ~17 questions (16%)
+// Domain 5: ~17 questions (16%)
+// Domain 6: ~11 questions (10%)
 
 export const examQuestions: ExamQuestion[] = [
-  // ===== DOMAIN 1: Overview of Cloud Native Security (8 questions) =====
+  // ===== DOMAIN 1: Overview of Cloud Native Security (~14 questions) =====
   {
     id: 1,
     domain: 1,
@@ -993,6 +995,7 @@ export const examQuestions: ExamQuestion[] = [
     difficulty: 'Easy',
     relatedSection: '/domain6/d6-c3',
   },
+  ...examQuestionsNew,
 ];
 
 export function getQuestionsByDomain(domainId: number): ExamQuestion[] {

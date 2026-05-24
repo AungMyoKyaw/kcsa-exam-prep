@@ -90,11 +90,11 @@ export default function Quiz({ questions, domainId: _domainId, onComplete }: Qui
             </span>
           </p>
           <p className="text-sm mb-6" style={{ color: 'var(--text-secondary)' }}>
-            {percentage >= 80
-              ? 'Excellent! You are well prepared for this domain.'
-              : percentage >= 60
-              ? 'Good effort! Review the explanations to strengthen your understanding.'
-              : 'Keep studying! Review the material and try again.'}
+            {((): string => {
+              if (percentage >= 80) { return 'Excellent! You are well prepared for this domain.' }
+              if (percentage >= 60) { return 'Good effort! Review the explanations to strengthen your understanding.' }
+              return 'Keep studying! Review the material and try again.'
+            })()}
           </p>
           <div className="flex justify-center gap-3">
             <button
@@ -185,7 +185,6 @@ export default function Quiz({ questions, domainId: _domainId, onComplete }: Qui
                   }
                 } else if (idx === selectedIndex) {
                   borderColor = 'var(--accent-primary)';
-                  bgColor = 'var(--accent-primary)';
                   bgColor = 'rgba(4, 80, 54, 0.08)';
                   textColor = 'var(--accent-primary)';
                 }
@@ -209,25 +208,21 @@ export default function Quiz({ questions, domainId: _domainId, onComplete }: Qui
                     <span
                       className="flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold"
                       style={{
-                        backgroundColor: submitted
-                          ? idx === question.correctIndex
-                            ? 'rgba(163, 196, 168, 0.2)'
-                            : idx === selectedIndex
-                            ? 'rgba(232, 122, 93, 0.2)'
-                            : 'var(--surface-elevated)'
-                          : idx === selectedIndex
-                          ? 'rgba(4, 80, 54, 0.15)'
-                          : 'var(--surface-elevated)',
+                        backgroundColor: (() => {
+                          if (submitted && idx === question.correctIndex) { return 'rgba(163, 196, 168, 0.2)' }
+                          if (submitted && idx === selectedIndex) { return 'rgba(232, 122, 93, 0.2)' }
+                          if (submitted) { return 'var(--surface-elevated)' }
+                          if (idx === selectedIndex) { return 'rgba(4, 80, 54, 0.15)' }
+                          return 'var(--surface-elevated)'
+                        })(),
                         color: textColor,
                       }}
                     >
-                      {submitted && idx === question.correctIndex ? (
-                        <CheckCircle size={16} />
-                      ) : submitted && idx === selectedIndex && idx !== question.correctIndex ? (
-                        <XCircle size={16} />
-                      ) : (
-                        String.fromCharCode(65 + idx)
-                      )}
+                      {(() => {
+                        if (submitted && idx === question.correctIndex) { return <CheckCircle size={16} /> }
+                        if (submitted && idx === selectedIndex && idx !== question.correctIndex) { return <XCircle size={16} /> }
+                        return String.fromCharCode(65 + idx)
+                      })()}
                     </span>
                     <span className="text-sm leading-relaxed">{option}</span>
                   </motion.button>

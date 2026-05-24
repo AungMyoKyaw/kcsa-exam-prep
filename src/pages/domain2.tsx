@@ -18,7 +18,9 @@ import {
   Check,
 } from 'lucide-react';
 import CalloutBox from '@/components/CalloutBox';
+import Callout from '@/components/Callout';
 import CodeBlock from '@/components/CodeBlock';
+import ComparisonTable from '@/components/ComparisonTable';
 import QuizComponent from '@/components/QuizComponent';
 import { useProgress } from '@/hooks/useProgress';
 
@@ -167,8 +169,8 @@ function ArchitectureDiagram() {
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
                 className="rounded-lg p-3 text-center transition-all duration-200 hover:scale-105"
                 style={{
-                  backgroundColor: comp.highlight ? `${comp.color}20` : 'var(--surface-elevated)',
-                  border: `1.5px solid ${comp.highlight ? comp.color : 'var(--border-subtle)'}`,
+                  backgroundColor: comp.highlight === true ? `${comp.color}20` : 'var(--surface-elevated)',
+                  border: `1.5px solid ${comp.highlight === true ? comp.color : 'var(--border-subtle)'}`,
                 }}
               >
                 <div className="text-xs font-bold mb-1" style={{ color: 'var(--text-primary)' }}>
@@ -429,18 +431,25 @@ function EncryptionTable() {
           </tr>
         </thead>
         <tbody>
-          {providers.map((p, i) => (
+          {providers.map((p, _i) => {
+            const strengthColor = (() => {
+              if (p.strength === 'Strongest') { return 'var(--accent-sage)' }
+              if (p.strength === 'Weak') { return 'var(--accent-coral)' }
+              if (p.strength === 'None') { return 'var(--danger)' }
+              return 'var(--text-secondary)'
+            })()
+            return (
             <tr
               key={p.name}
               style={{
-                backgroundColor: i % 2 === 0 ? 'var(--surface-base)' : 'var(--surface-elevated)',
+                backgroundColor: _i % 2 === 0 ? 'var(--surface-base)' : 'var(--surface-elevated)',
               }}
             >
               <td className="px-4 py-3 font-mono font-semibold" style={{ color: 'var(--text-primary)', borderBottom: '1px solid var(--border-subtle)' }}>
                 {p.name}
               </td>
               <td className="px-4 py-3" style={{
-                color: p.strength === 'Strongest' ? 'var(--accent-sage)' : p.strength === 'Weak' ? 'var(--accent-coral)' : p.strength === 'None' ? 'var(--danger)' : 'var(--text-secondary)',
+                color: strengthColor,
                 borderBottom: '1px solid var(--border-subtle)',
               }}>
                 {p.strength}
@@ -459,7 +468,7 @@ function EncryptionTable() {
                 )}
               </td>
             </tr>
-          ))}
+          )})}
         </tbody>
       </table>
     </div>
@@ -837,6 +846,56 @@ rules:
         />
       </Section>
 
+      {/* ══════════ Section 2.1b: API Server Request Lifecycle ══════════ */}
+      <Section id="d2-apiserver-lifecycle">
+        <div className="flex items-center gap-3 mb-4">
+          <div
+            className="w-10 h-10 rounded-lg flex items-center justify-center"
+            style={{ backgroundColor: 'rgba(155,135,245,0.15)' }}
+          >
+            <Lock size={22} style={{ color: 'var(--accent-lavender)' }} />
+          </div>
+          <h2
+            className="text-2xl font-normal"
+            style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-display)' }}
+          >
+            2.1b API Server Request Lifecycle
+          </h2>
+        </div>
+
+        <p className="text-base leading-relaxed mb-4" style={{ color: 'var(--text-secondary)' }}>
+          Every request to the API Server follows a strict pipeline. Understanding this flow is essential for debugging auth failures and designing admission policies.
+        </p>
+
+        <div className="space-y-2 mb-6">
+          {[
+            { step: '1. kubectl', desc: 'User or component sends HTTPS request to :6443' },
+            { step: '2. AuthN', desc: 'Who are you? X.509, bearer token, OIDC, or webhook authentication' },
+            { step: '3. AuthZ / RBAC', desc: 'What can you do? RBAC checks roles and role bindings' },
+            { step: '4. Admission', desc: 'Should we allow or modify this? Mutating then Validating webhooks' },
+            { step: '5. Validation', desc: 'Schema validation — does the object conform to the API spec?' },
+            { step: '6. Persist', desc: 'Write to etcd. Only the API Server talks to etcd.' },
+          ].map((item) => (
+            <div
+              key={item.step}
+              className="flex items-start gap-3 px-4 py-3 rounded-lg"
+              style={{ backgroundColor: 'var(--surface-base)', border: '1px solid var(--border-subtle)' }}
+            >
+              <span className="text-xs font-mono font-bold flex-shrink-0 px-2 py-1 rounded" style={{ backgroundColor: 'var(--surface-code)', color: 'var(--accent-primary)' }}>
+                {item.step}
+              </span>
+              <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+                {item.desc}
+              </span>
+            </div>
+          ))}
+        </div>
+
+        <Callout variant="tip">
+          AuthN knows your NAME. AuthZ knows your ROLE. Admission can CHANGE your request.
+        </Callout>
+      </Section>
+
       {/* ══════════ Section 2.2: etcd ══════════ */}
       <Section id="d2-etcd">
         <div className="flex items-center gap-3 mb-4">
@@ -934,6 +993,80 @@ resources:
         />
       </Section>
 
+      {/* ══════════ Section 2.2b: etcd Backup & Restore Security ══════════ */}
+      <Section id="d2-etcd-backup">
+        <div className="flex items-center gap-3 mb-4">
+          <div
+            className="w-10 h-10 rounded-lg flex items-center justify-center"
+            style={{ backgroundColor: 'rgba(4,80,54,0.1)' }}
+          >
+            <Database size={22} style={{ color: 'var(--accent-primary)' }} />
+          </div>
+          <h2
+            className="text-2xl font-normal"
+            style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-display)' }}
+          >
+            2.2b etcd Backup &amp; Restore Security
+          </h2>
+        </div>
+
+        <p className="text-base leading-relaxed mb-4" style={{ color: 'var(--text-secondary)' }}>
+          etcd backups contain the entire cluster state — including all Secrets in plaintext if encryption at rest is not enabled. Securing backups is as critical as securing etcd itself.
+        </p>
+
+        <h3 className="text-lg font-semibold mb-3" style={{ color: 'var(--text-primary)' }}>
+          Taking an Encrypted Snapshot
+        </h3>
+
+        <CodeBlock
+          language="bash"
+          code={`# Create an etcd snapshot with client certificate authentication
+etcdctl snapshot save /backup/etcd-snapshot.db \\
+  --endpoints=https://127.0.0.1:2379 \\
+  --cacert=/etc/kubernetes/pki/etcd/ca.crt \\
+  --cert=/etc/kubernetes/pki/etcd/server.crt \\
+  --key=/etc/kubernetes/pki/etcd/server.key
+
+# Encrypt the snapshot before storing it offsite
+gpg --symmetric --cipher-algo AES256 /backup/etcd-snapshot.db`}
+        />
+
+        <Callout variant="warning">
+          Never store etcd snapshots in plaintext. A snapshot contains every Secret, ConfigMap, and cluster credential. Treat it like a raw database dump — encrypt it before backup.
+        </Callout>
+
+        <h3 className="text-lg font-semibold mb-3" style={{ color: 'var(--text-primary)' }}>
+          Restoring from Snapshot
+        </h3>
+        <p className="text-sm leading-relaxed mb-4" style={{ color: 'var(--text-secondary)' }}>
+          Restoring etcd reverts the entire cluster state to the snapshot point-in-time. This affects ALL resources — not just the ones you intended to recover.
+        </p>
+
+        <CodeBlock
+          language="bash"
+          code={`# 1. Stop the API Server (prevents writes during restore)
+mv /etc/kubernetes/manifests/kube-apiserver.yaml /tmp/
+
+# 2. Restore the snapshot
+etcdctl snapshot restore /backup/etcd-snapshot.db \\
+  --data-dir=/var/lib/etcd-restored \\
+  --initial-cluster=master-1=https://192.168.1.10:2380 \\
+  --initial-advertise-peer-urls=https://192.168.1.10:2380 \\
+  --name=master-1
+
+# 3. Update etcd data-dir if needed, then restart API Server
+mv /tmp/kube-apiserver.yaml /etc/kubernetes/manifests/`}
+        />
+
+        <Callout variant="warning">
+          Restoring etcd reverts ALL cluster state, not just what you wanted. Plan accordingly.
+        </Callout>
+
+        <Callout variant="tip">
+          etcd backup = cluster state. Encrypt it like you&apos;d encrypt a database dump.
+        </Callout>
+      </Section>
+
       {/* ══════════ Section 2.3: Kubelet ══════════ */}
       <Section id="d2-kubelet">
         <div className="flex items-center gap-3 mb-4">
@@ -970,11 +1103,11 @@ resources:
               key={p.port}
               className="rounded-lg p-4"
               style={{
-                backgroundColor: p.danger ? 'rgba(232,122,93,0.08)' : 'var(--surface-base)',
-                border: `1.5px solid ${p.danger ? 'var(--accent-coral)' : 'var(--border-subtle)'}`,
+                backgroundColor: p.danger === true ? 'rgba(232,122,93,0.08)' : 'var(--surface-base)',
+                border: `1.5px solid ${p.danger === true ? 'var(--accent-coral)' : 'var(--border-subtle)'}`,
               }}
             >
-              <div className="font-mono text-lg font-bold" style={{ color: p.danger ? 'var(--accent-coral)' : 'var(--accent-primary)' }}>
+              <div className="font-mono text-lg font-bold" style={{ color: p.danger === true ? 'var(--accent-coral)' : 'var(--accent-primary)' }}>
                 {p.port}
               </div>
               <div className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>
@@ -1040,6 +1173,27 @@ resources:
             </tbody>
           </table>
         </div>
+
+        <h3 className="text-lg font-semibold mb-3" style={{ color: 'var(--text-primary)' }}>
+          Read-Only Port Disable (10255)
+        </h3>
+        <p className="text-sm leading-relaxed mb-4" style={{ color: 'var(--text-secondary)' }}>
+          The Kubelet read-only port (10255) provides unauthenticated access to pod specs, node metrics, and environment variables. An attacker on the node network can extract sensitive data including Secrets passed as environment variables.
+        </p>
+
+        <CodeBlock
+          language="bash"
+          code={`# Kubelet config: disable the read-only port
+--read-only-port=0
+
+# Verify it is disabled
+curl http://localhost:10255/pods
+# Should fail: connection refused`}
+        />
+
+        <Callout variant="warning">
+          Anyone on the node network can read pod specs, env vars, and node metrics via port 10255. This is a direct path to secret leakage. Always set --read-only-port=0 in production.
+        </Callout>
 
         <h3 className="text-lg font-semibold mb-3" style={{ color: 'var(--text-primary)' }}>
           NodeRestriction Admission Plugin
@@ -1240,6 +1394,66 @@ resources:
             </div>
           ))}
         </div>
+
+        <h3 className="text-lg font-semibold mb-3" style={{ color: 'var(--text-primary)' }}>
+          seccomp Profile Comparison
+        </h3>
+        <p className="text-sm leading-relaxed mb-4" style={{ color: 'var(--text-secondary)' }}>
+          seccomp (Secure Computing Mode) restricts which syscalls a container can make. Kubernetes supports three profile types via the securityContext.
+        </p>
+
+        <ComparisonTable
+          columns={[
+            { key: 'profile', header: 'Profile' },
+            { key: 'syscalls', header: 'Syscalls Allowed' },
+            { key: 'useCase', header: 'Use Case' },
+            { key: 'risk', header: 'Risk Level' },
+          ]}
+          rows={[
+            { profile: 'RuntimeDefault', syscalls: 'Subset — ~44 safe syscalls', useCase: 'General workloads', risk: 'Low' },
+            { profile: 'Unconfined', syscalls: 'ALL syscalls', useCase: 'Legacy / debugging only', risk: 'High' },
+            { profile: 'Localhost', syscalls: 'Custom whitelist', useCase: 'Hardened workloads', risk: 'Low (if profile is correct)' },
+          ]}
+        />
+
+        <Callout variant="tip">
+          RuntimeDefault = sandbox. Unconfined = no walls. Localhost = custom walls.
+        </Callout>
+
+        <h3 className="text-lg font-semibold mb-3" style={{ color: 'var(--text-primary)' }}>
+          AppArmor Profile Loading
+        </h3>
+        <p className="text-sm leading-relaxed mb-4" style={{ color: 'var(--text-secondary)' }}>
+          AppArmor is a Linux MAC system that confines programs to a set of files, capabilities, and network access. Profiles are loaded into the kernel with <code>apparmor_parser</code> and referenced by name in pod annotations.
+        </p>
+
+        <CodeBlock
+          language="bash"
+          code={`# Load a custom AppArmor profile on the node
+apparmor_parser -r -W /etc/apparmor.d/containers/nginx-profile
+
+# Reference it in a pod (legacy annotation)
+# container.apparmor.security.beta.kubernetes.io/nginx: localhost/nginx-profile`}
+        />
+
+        <h3 className="text-lg font-semibold mb-3" style={{ color: 'var(--text-primary)' }}>
+          SELinux Contexts for Containers
+        </h3>
+        <p className="text-sm leading-relaxed mb-4" style={{ color: 'var(--text-secondary)' }}>
+          SELinux uses type enforcement to label processes and files. For containers, the container runtime assigns an SELinux context automatically. In enforcing mode, a container process can only access files with a matching or allowed label.
+        </p>
+
+        <CodeBlock
+          language="yaml"
+          code={`# Explicit SELinux options in a pod
+spec:
+  securityContext:
+    seLinuxOptions:
+      level: "s0:c123,c456"
+      role: "system_r"
+      type: "container_t"
+      user: "system_u"`}
+        />
 
         <CalloutBox variant="exam">
           <strong>seccomp</strong> = syscall filtering. <strong>AppArmor</strong> = path-based MAC.
@@ -1546,6 +1760,125 @@ current-context: production-admin`}
             </div>
           ))}
         </div>
+      </Section>
+
+      {/* ══════════ Section 2.9b: TLS Bootstrapping ══════════ */}
+      <Section id="d2-bootstrap">
+        <div className="flex items-center gap-3 mb-4">
+          <div
+            className="w-10 h-10 rounded-lg flex items-center justify-center"
+            style={{ backgroundColor: 'rgba(4,80,54,0.1)' }}
+          >
+            <Lock size={22} style={{ color: 'var(--accent-primary)' }} />
+          </div>
+          <h2
+            className="text-2xl font-normal"
+            style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-display)' }}
+          >
+            2.9b TLS Bootstrapping &amp; Node Join Security
+          </h2>
+        </div>
+
+        <p className="text-base leading-relaxed mb-4" style={{ color: 'var(--text-secondary)' }}>
+          When a new worker node joins the cluster, it needs a valid client certificate to authenticate to the API Server. Kubernetes provides an automated TLS bootstrapping mechanism so nodes can join securely without manual certificate distribution.
+        </p>
+
+        <h3 className="text-lg font-semibold mb-3" style={{ color: 'var(--text-primary)' }}>
+          Bootstrap Flow
+        </h3>
+        <div className="space-y-2 mb-6">
+          {[
+            { step: '1. Bootstrap Token', desc: 'A short-lived Secret is created in the kube-system namespace with a token ID and secret.' },
+            { step: '2. kubelet uses token', desc: 'The new kubelet presents the bootstrap token to the API Server as initial credentials.' },
+            { step: '3. CSR submitted', desc: 'The kubelet generates a private key and submits a CertificateSigningRequest (CSR).' },
+            { step: '4. Approval', desc: 'An administrator or an auto-approver approves the CSR.' },
+            { step: '5. Certificate issued', desc: 'The kubelet downloads the signed certificate and begins normal operation.' },
+          ].map((item) => (
+            <div
+              key={item.step}
+              className="flex items-start gap-3 px-4 py-3 rounded-lg"
+              style={{ backgroundColor: 'var(--surface-base)', border: '1px solid var(--border-subtle)' }}
+            >
+              <span className="text-xs font-mono font-bold flex-shrink-0 px-2 py-1 rounded" style={{ backgroundColor: 'var(--surface-code)', color: 'var(--accent-primary)' }}>
+                {item.step}
+              </span>
+              <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+                {item.desc}
+              </span>
+            </div>
+          ))}
+        </div>
+
+        <h3 className="text-lg font-semibold mb-3" style={{ color: 'var(--text-primary)' }}>
+          Bootstrap Token Secret
+        </h3>
+
+        <CodeBlock
+          language="yaml"
+          code={`apiVersion: v1
+kind: Secret
+metadata:
+  name: bootstrap-token-07401b
+  namespace: kube-system
+type: bootstrap.kubernetes.io/token
+stringData:
+  token-id: "07401b"
+  token-secret: "f395ac634246ae72d1d8974f5bc"
+  usage-bootstrap-authentication: "true"
+  usage-bootstrap-signing: "true"
+  auth-extra-groups: system:bootstrappers:worker`}
+        />
+
+        <h3 className="text-lg font-semibold mb-3" style={{ color: 'var(--text-primary)' }}>
+          CertificateSigningRequest Resource
+        </h3>
+        <p className="text-sm leading-relaxed mb-4" style={{ color: 'var(--text-secondary)' }}>
+          The CSR resource holds the certificate request. After approval, the certificate is written to the status.certificate field.
+        </p>
+
+        <CodeBlock
+          language="bash"
+          code={`# List pending CSRs
+kubectl get csr
+
+# Approve a CSR manually
+kubectl certificate approve <csr-name>
+
+# Deny a suspicious CSR
+kubectl certificate deny <csr-name>`}
+        />
+
+        <h3 className="text-lg font-semibold mb-3" style={{ color: 'var(--text-primary)' }}>
+          Node Auto-Approval vs Manual Approval
+        </h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+          <div
+            className="rounded-lg p-4"
+            style={{ backgroundColor: 'var(--surface-base)', border: '1px solid var(--border-subtle)' }}
+          >
+            <div className="text-xs uppercase tracking-wider mb-1" style={{ color: 'var(--text-tertiary)' }}>
+              Auto-Approval
+            </div>
+            <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+              The <code>NodeAutoApproval</code> controller or RBAC-based auto-approver automatically approves CSR requests from nodes in the <code>system:bootstrappers</code> group. Convenient but requires strict token lifecycle management.
+            </div>
+          </div>
+          <div
+            className="rounded-lg p-4"
+            style={{ backgroundColor: 'var(--surface-base)', border: '1px solid var(--border-subtle)' }}
+          >
+            <div className="text-xs uppercase tracking-wider mb-1" style={{ color: 'var(--text-tertiary)' }}>
+              Manual Approval
+            </div>
+            <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+              An administrator reviews each CSR with <code>kubectl get csr</code> and explicitly approves or denies. More secure for regulated environments but operational overhead is higher.
+            </div>
+          </div>
+        </div>
+
+        <Callout variant="warning">
+          Why <code>--anonymous-auth=false</code> matters: if left enabled, the API Server accepts anonymous requests. A rogue node or attacker could probe the API Server without credentials. Always disable anonymous authentication in production.
+        </Callout>
       </Section>
 
       {/* ══════════ Section 2.10: Storage ══════════ */}

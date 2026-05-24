@@ -6,6 +6,7 @@ import {
   ClipboardList,
   BookOpen,
   Settings,
+  Zap,
   CheckCircle2,
   Circle,
 } from 'lucide-react'
@@ -169,6 +170,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
         style={{ borderTop: '1px solid var(--border-subtle)' }}
       >
         {[
+          { to: '/quick-recall', icon: Zap, label: 'Quick Recall' },
           { to: '/practice-exam', icon: FlaskConical, label: 'Practice Exam' },
           { to: '/cheat-sheet', icon: ClipboardList, label: 'Cheat Sheet' },
           { to: '/glossary', icon: BookOpen, label: 'Glossary' },

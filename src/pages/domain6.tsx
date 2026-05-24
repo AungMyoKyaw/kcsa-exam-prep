@@ -264,8 +264,8 @@ export default function Domain6Page() {
 
       try {
         const stored = localStorage.getItem('kcsa-progress')
-        const data = stored ? JSON.parse(stored) : {}
-        if (!data.domain6) {data.domain6 = {}}
+        const data = stored !== null ? JSON.parse(stored) : {}
+        data.domain6 ??= {}
         data.domain6.scrollPercent = Math.round(progress)
         if (progress > 90) {
           data.domain6.read = true
@@ -812,7 +812,7 @@ kube-bench run --json > kube-bench-results.json`}
               STRIDE
             </h4>
             <p className="text-xs leading-relaxed mb-3" style={{ color: 'var(--text-secondary)' }}>
-              Microsoft's threat categorization framework. Six threat categories mapped to Kubernetes:
+              Microsoft&apos;s threat categorization framework. Six threat categories mapped to Kubernetes:
             </p>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
               {[
@@ -1092,7 +1092,7 @@ kube-bench run --json > kube-bench-results.json`}
 
         <p className="text-base leading-relaxed mb-5" style={{ color: 'var(--text-secondary)' }}>
           Security automation tools enable continuous compliance, vulnerability scanning, runtime
-          detection, and policy enforcement. Understanding each tool's purpose and scope is critical.
+          detection, and policy enforcement. Understanding each tool&apos;s purpose and scope is critical.
         </p>
 
         <div className="overflow-x-auto mb-6">

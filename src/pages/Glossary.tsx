@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, useRef } from 'react';
+import { useState, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, ChevronDown } from 'lucide-react';
 import Fuse from 'fuse.js';
@@ -12,7 +12,7 @@ function getTermsGroupedByLetter(terms: GlossaryTerm[]): Record<string, Glossary
   const groups: Record<string, GlossaryTerm[]> = {};
   terms.forEach((t) => {
     const letter = t.term[0].toUpperCase();
-    if (!groups[letter]) {groups[letter] = [];}
+    groups[letter] ??= [];
     groups[letter].push(t);
   });
   // Sort each group alphabetically
@@ -24,7 +24,7 @@ function getTermsGroupedByLetter(terms: GlossaryTerm[]): Record<string, Glossary
 
 export default function Glossary() {
   const [searchQuery, setSearchQuery] = useState('');
-  const [expandedTerms, setExpandedTerms] = useState<Set<string>>(new Set());
+  const [manuallyExpanded, setManuallyExpanded] = useState<Set<string>>(new Set());
   const [activeLetter, setActiveLetter] = useState<string | null>(null);
   const letterRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
@@ -41,7 +41,7 @@ export default function Glossary() {
 
   // Filter terms based on search
   const filteredTerms = useMemo(() => {
-    if (!searchQuery.trim()) {return glossaryTerms;}
+    if (searchQuery.trim().length === 0) {return glossaryTerms;}
     const results = fuse.search(searchQuery);
     return results.map((r) => r.item);
   }, [searchQuery, fuse]);
@@ -49,17 +49,24 @@ export default function Glossary() {
   const groupedTerms = useMemo(() => getTermsGroupedByLetter(filteredTerms), [filteredTerms]);
   const availableLetters = useMemo(() => getAllLetters(), []);
 
-  // Expand all when searching
-  useEffect(() => {
-    if (searchQuery.trim()) {
-      setExpandedTerms(new Set(filteredTerms.map((t) => t.term)));
-    } else {
-      setExpandedTerms(new Set());
+  // Derive expanded terms: all filtered terms expand during search; manual toggles when not searching
+  const expandedTerms = useMemo(() => {
+    if (searchQuery.trim().length > 0) {
+      return new Set(filteredTerms.map((t) => t.term));
     }
-  }, [searchQuery]);
+    return manuallyExpanded;
+  }, [searchQuery, filteredTerms, manuallyExpanded]);
+
+  const handleSearchChange = (value: string) => {
+    setSearchQuery(value);
+    if (value.trim().length === 0) {
+      setManuallyExpanded(new Set());
+    }
+  };
 
   const toggleTerm = (term: string) => {
-    setExpandedTerms((prev) => {
+    if (searchQuery.trim().length > 0) {return;}
+    setManuallyExpanded((prev) => {
       const next = new Set(prev);
       if (next.has(term)) {
         next.delete(term);
@@ -79,7 +86,7 @@ export default function Glossary() {
   };
 
   const getDomainColor = (domainId?: number) => {
-    if (!domainId) {return 'var(--text-tertiary)';}
+    if (domainId === undefined || domainId === 0) {return 'var(--text-tertiary)';}
     const colors = ['', '#9B87F5', '#326CE5', '#045036', '#E87A5D', '#F2C44D', '#A3C4A8'];
     return colors[domainId] || 'var(--text-tertiary)';
   };
@@ -120,7 +127,7 @@ export default function Glossary() {
           <input
             type="text"
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => handleSearchChange(e.target.value)}
             placeholder="Search terms, acronyms, concepts..."
             className="w-full h-12 pl-12 pr-4 rounded-full text-base outline-none transition-all duration-300"
             style={{
@@ -139,7 +146,7 @@ export default function Glossary() {
         </motion.div>
 
         {/* Alphabet Navigation */}
-        {!searchQuery && (
+        {searchQuery.trim().length === 0 && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -158,7 +165,11 @@ export default function Glossary() {
                     className="w-9 h-9 rounded-md text-sm font-semibold transition-all duration-200"
                     style={{
                       backgroundColor: activeLetter === letter ? 'var(--accent-primary)' : 'var(--surface-elevated)',
-                      color: activeLetter === letter ? '#fff' : hasTerms ? 'var(--text-secondary)' : 'var(--text-tertiary)',
+                      color: (() => {
+                        if (activeLetter === letter) { return '#fff' }
+                        if (hasTerms) { return 'var(--text-secondary)' }
+                        return 'var(--text-tertiary)'
+                      })(),
                       cursor: hasTerms ? 'pointer' : 'not-allowed',
                       opacity: hasTerms ? 1 : 0.4,
                     }}
@@ -235,7 +246,7 @@ export default function Glossary() {
                                 >
                                   {term.term}
                                 </span>
-                                {term.acronym && (
+                                {term.acronym !== undefined && term.acronym !== '' && (
                                   <code
                                     className="text-xs px-2 py-0.5 rounded"
                                     style={{
@@ -246,7 +257,7 @@ export default function Glossary() {
                                     {term.acronym}
                                   </code>
                                 )}
-                                {term.domain && (
+                                {term.domain !== undefined && term.domain !== 0 && (
                                   <span
                                     className="text-xs font-semibold px-2 py-0.5 rounded-full uppercase tracking-wider"
                                     style={{
@@ -290,7 +301,7 @@ export default function Glossary() {
                                   >
                                     {term.definition}
                                   </p>
-                                  {term.relatedTerms && term.relatedTerms.length > 0 && (
+                                  {term.relatedTerms !== undefined && term.relatedTerms.length > 0 && (
                                     <div className="flex items-center flex-wrap gap-2">
                                       <span
                                         className="text-xs font-semibold uppercase tracking-[0.06em]"
@@ -302,7 +313,7 @@ export default function Glossary() {
                                         <button
                                           key={rt}
                                           onClick={() => {
-                                            setSearchQuery(rt);
+                                            handleSearchChange(rt);
                                           }}
                                           className="text-xs px-2.5 py-1 rounded-full transition-colors duration-200 hover:opacity-80"
                                           style={{

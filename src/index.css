@@ -156,7 +156,25 @@
     text-decoration: none;
   }
 
-  a:hover {
+a:hover {
     text-decoration: underline;
+  }
+
+  /* Quick Recall flashcard focus state */
+  [role="button"]:focus-visible {
+    outline: 2px solid var(--accent-primary);
+    outline-offset: 4px;
+    border-radius: 12px;
+  }
+
+  /* Backface visibility helper for flashcard flip */
+  .backface-hidden {
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+  }
+
+  .preserve-3d {
+    -webkit-transform-style: preserve-3d;
+    transform-style: preserve-3d;
   }
 }

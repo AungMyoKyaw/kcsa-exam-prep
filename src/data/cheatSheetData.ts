@@ -172,6 +172,11 @@ export const examTipsData: ExamTip[] = [
   { number: 8, title: '--anonymous-auth=false', detail: 'Required on both API Server and Kubelet to prevent unauthenticated access.' },
   { number: 9, title: 'NodeRestriction admission plugin', detail: 'Limits Kubelet scope to only its own node\'s pods. Critical for multi-node security.' },
   { number: 10, title: 'STRIDE: Spoofing, Tampering, Repudiation, Info Disclosure, DoS, Elevation', detail: 'Microsoft\'s threat classification model for systematic threat analysis.' },
+  { number: 11, title: 'Default ServiceAccount has NO permissions', detail: 'Must be explicitly bound via RoleBinding/ClusterRoleBinding to gain any access.' },
+  { number: 12, title: 'NetworkPolicy is NOT a firewall', detail: 'Only L3/L4 filtering. Policies use additive OR logic — multiple policies widen access.' },
+  { number: 13, title: 'Pod Security Admission = namespace labels', detail: 'Not admission webhook configuration. Set pod-security.kubernetes.io/enforce on namespaces.' },
+  { number: 14, title: 'Image digest > image tag', detail: 'Tags are mutable, digests are immutable SHA256 hashes. Use digest for supply chain integrity.' },
+  { number: 15, title: 'ResourceQuota limits total namespace resources', detail: 'LimitRanger limits per-pod/per-container defaults and maxima. Different scopes!' },
 ];
 
 export const timeManagementTips = [
@@ -180,3 +185,80 @@ export const timeManagementTips = [
   'Eliminate obviously wrong answers first',
   'Read carefully: "which is NOT" vs "which IS"',
 ];
+
+export const auditPolicyTemplate = `apiVersion: audit.k8s.io/v1
+kind: Policy
+rules:
+  # Log all requests at the Metadata level
+  - level: Metadata
+    resources:
+      - group: ''
+        resources: ['pods', 'services']
+    omitStages:
+      - RequestReceived
+  # Log secret changes at RequestResponse level
+  - level: RequestResponse
+    resources:
+      - group: ''
+        resources: ['secrets']
+    omitStages:
+      - RequestReceived
+  # Log auth-related at Request level
+  - level: Request
+    resources:
+      - group: 'rbac.authorization.k8s.io'
+        resources: ['roles', 'rolebindings']
+  # Default: don't log high-volume resources
+  - level: None
+    resources:
+      - group: ''
+        resources: ['configmaps', 'endpoints']`;
+
+export const mitreK8sTechniques = [
+  { technique: 'T1611', name: 'Escape to Host', tactic: 'Privilege Escalation', k8sExample: 'Privileged container + hostPID' },
+  { technique: 'T1610', name: 'Deploy Container', tactic: 'Execution', k8sExample: 'Malicious image in registry' },
+  { technique: 'T1552.007', name: 'Kubernetes API Credentials', tactic: 'Credential Access', k8sExample: 'Stolen SA token from pod' },
+  { technique: 'T1053.003', name: 'Scheduled Task/Job', tactic: 'Persistence', k8sExample: 'Malicious CronJob' },
+  { technique: 'T1098.005', name: 'Cloud Account Manipulation', tactic: 'Persistence', k8sExample: 'Compromised cloud IAM role' },
+];
+
+export const slsaQuickRef = `Level | Requirement | Exam Keyword
+1     | Provenance exists | "documented"
+2     | Signed + hosted build | "signed"
+3     | Hardened + hermetic | "vault"
+4     | Two-person + reproducible | "guards"`;
+
+export const falcoRulesExample = `- rule: Privileged Container Started
+  desc: Detect privileged container spawn
+  condition: >
+    spawned_process and
+    container and
+    proc.name = "docker-init" and
+    (proc.args contains "--privileged" or
+     container.privileged = true)
+  output: >
+    Privileged container started
+    user=%user.name command=%proc.cmdline
+    container=%container.name
+  priority: CRITICAL`;
+
+export const tlsBootstrapSteps = [
+  { step: 1, action: 'Create bootstrap token Secret', command: 'kubeadm token create' },
+  { step: 2, action: 'Node presents token to API Server', detail: 'Kubelet uses --bootstrap-kubeconfig' },
+  { step: 3, action: 'API Server creates CertificateSigningRequest', detail: 'Auto-approval or manual approval' },
+  { step: 4, action: 'Node receives signed certificate', detail: 'Stored in /var/lib/kubelet/pki' },
+];
+
+export const etcdBackupRestoreCommands = `# Snapshot backup with TLS
+etcdctl snapshot save /backup/snapshot.db \\
+  --cacert=/etc/etcd/ca.crt \\
+  --cert=/etc/etcd/server.crt \\
+  --key=/etc/etcd/server.key \\
+  --endpoints=https://127.0.0.1:2379
+
+# Snapshot restore
+etcdctl snapshot restore /backup/snapshot.db \\
+  --data-dir=/var/lib/etcd-new
+
+# WARNING: Stop API Server before restore
+# kubectl drain <node> && systemctl stop kube-apiserver`;

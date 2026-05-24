@@ -75,6 +75,12 @@ export const glossaryTerms: GlossaryTerm[] = [
     relatedTerms: ['ServiceAccount', 'TokenRequest', 'Legacy Token'],
     domain: 2,
   },
+  {
+    term: 'Bootstrap Token',
+    definition: 'Temporary token for node TLS bootstrapping. Created via kubeadm. Used by new nodes to authenticate to the API Server and request a signed certificate.',
+    relatedTerms: ['CertificateSigningRequest', 'kubeadm', 'TLS'],
+    domain: 2,
+  },
   // === C ===
   {
     term: 'CNI',
@@ -87,6 +93,13 @@ export const glossaryTerms: GlossaryTerm[] = [
     term: 'Capabilities',
     definition: 'Linux feature providing fine-grained privileges to processes. Containers should drop ALL capabilities and add only the minimum needed. Restricted PSS allows only NET_BIND_SERVICE.',
     relatedTerms: ['Pod Security Standards', 'seccomp', 'Privileged Container'],
+    domain: 2,
+  },
+  {
+    term: 'CertificateSigningRequest',
+    acronym: 'CSR',
+    definition: 'Kubernetes resource for requesting X.509 certificates. Nodes use CSRs during TLS bootstrapping. Can be approved manually or automatically by controllers.',
+    relatedTerms: ['Bootstrap Token', 'TLS', 'API Server'],
     domain: 2,
   },
   {
@@ -107,6 +120,13 @@ export const glossaryTerms: GlossaryTerm[] = [
     definition: 'Community-developed security configuration guide for Kubernetes. Provides prescriptive recommendations for securing clusters, assessed with tools like kube-bench.',
     relatedTerms: ['CIS', 'kube-bench', 'Hardening'],
     domain: 6,
+  },
+  {
+    term: 'Cloud IAM',
+    acronym: 'Identity and Access Management',
+    definition: 'Identity and Access Management for cloud providers (AWS IAM, GCP IAM, Azure AD). Kubernetes clusters running in cloud often integrate with Cloud IAM for node and user authentication.',
+    relatedTerms: ['Authentication', 'OIDC', 'AWS', 'Azure'],
+    domain: 2,
   },
   {
     term: 'ClusterRole',
@@ -139,6 +159,19 @@ export const glossaryTerms: GlossaryTerm[] = [
     relatedTerms: ['CRI', 'containerd', 'Runtime'],
     domain: 2,
   },
+  {
+    term: 'CRI-O',
+    definition: 'Lightweight container runtime designed specifically for Kubernetes. Implements the Container Runtime Interface (CRI). Alternative to containerd, focused on simplicity and Kubernetes integration.',
+    relatedTerms: ['CRI', 'containerd', 'Runtime'],
+    domain: 2,
+  },
+  {
+    term: 'CVE',
+    acronym: 'Common Vulnerabilities and Exposures',
+    definition: 'Standardized identifier for publicly known security vulnerabilities. Container images must be scanned for CVEs before deployment to prevent known exploits from reaching production.',
+    relatedTerms: ['Image Scanning', 'Trivy', 'Security'],
+    domain: 5,
+  },
   // === D ===
   {
     term: 'DaemonSet',
@@ -170,6 +203,19 @@ export const glossaryTerms: GlossaryTerm[] = [
     definition: 'Testing running applications for vulnerabilities. Tools like OWASP ZAP scan live applications to find runtime security issues. Complements SAST which analyzes source code.',
     relatedTerms: ['SAST', 'Security Testing', 'DevSecOps'],
     domain: 1,
+  },
+  {
+    term: 'DAST',
+    acronym: 'Dynamic Application Security Testing',
+    definition: 'Testing running applications for vulnerabilities. Tools like OWASP ZAP scan live applications to find runtime security issues. Complements SAST which analyzes source code.',
+    relatedTerms: ['SAST', 'Security Testing', 'DevSecOps'],
+    domain: 1,
+  },
+  {
+    term: 'Data Plane',
+    definition: 'Worker nodes, kubelet, and container runtime. Responsible for running pods and handling actual workload traffic. Contrast with Control Plane which manages cluster state.',
+    relatedTerms: ['Control Plane', 'Kubelet', 'Node', 'Runtime'],
+    domain: 2,
   },
   // === E ===
   {
@@ -224,6 +270,19 @@ export const glossaryTerms: GlossaryTerm[] = [
     relatedTerms: ['Compliance', 'HIPAA', 'PCI DSS', 'Data Protection'],
     domain: 6,
   },
+  {
+    term: 'GDPR',
+    acronym: 'General Data Protection Regulation',
+    definition: 'EU data protection law affecting Kubernetes deployments handling EU citizen data. Requires data protection measures, breach notification, and privacy by design.',
+    relatedTerms: ['Compliance', 'HIPAA', 'PCI DSS', 'Data Protection'],
+    domain: 6,
+  },
+  {
+    term: 'gVisor',
+    definition: 'Userspace kernel for sandboxed containers developed by Google. Provides an additional security layer between the container and host kernel by intercepting and validating syscalls.',
+    relatedTerms: ['Runtime', 'seccomp', 'Container'],
+    domain: 2,
+  },
   // === H ===
   {
     term: 'HIPAA',
@@ -277,6 +336,25 @@ export const glossaryTerms: GlossaryTerm[] = [
     relatedTerms: ['kube-proxy', 'iptables', 'Service'],
     domain: 2,
   },
+  {
+    term: 'IPVS',
+    acronym: 'IP Virtual Server',
+    definition: 'Kernel-level load balancing mode for kube-proxy. Better performance than iptables at scale due to O(1) lookup complexity regardless of service count.',
+    relatedTerms: ['kube-proxy', 'iptables', 'Service'],
+    domain: 2,
+  },
+  {
+    term: 'Image Digest',
+    definition: 'Immutable SHA256 hash of image content. More reliable than tags because tags can be reassigned to different images. Use digests for supply chain integrity and reproducible deployments.',
+    relatedTerms: ['Image Tag', 'Supply Chain', 'Cosign'],
+    domain: 5,
+  },
+  {
+    term: 'in-toto',
+    definition: 'Framework for supply chain integrity that records steps in the software supply chain. Tracks who performed what actions and when, providing end-to-end traceability from source to deployment.',
+    relatedTerms: ['Supply Chain', 'SLSA', 'Sigstore'],
+    domain: 5,
+  },
   // === K ===
   {
     term: 'KMS',
@@ -314,6 +392,18 @@ export const glossaryTerms: GlossaryTerm[] = [
     definition: 'Kubernetes-native policy engine using YAML-based policies for validation, mutation, and generation. Alternative to OPA Gatekeeper — more accessible as it uses familiar YAML instead of Rego.',
     relatedTerms: ['OPA', 'Admission Controller', 'Policy'],
     domain: 5,
+  },
+  {
+    term: 'Kyverno',
+    definition: 'Kubernetes-native policy engine using YAML-based policies for validation, mutation, and generation. Alternative to OPA Gatekeeper — more accessible as it uses familiar YAML instead of Rego.',
+    relatedTerms: ['OPA', 'Admission Controller', 'Policy'],
+    domain: 5,
+  },
+  {
+    term: 'Kata Containers',
+    definition: 'Lightweight VMs for container isolation. Combines the speed of containers with the security of VMs. Stronger isolation than namespaces alone, suitable for untrusted or multi-tenant workloads.',
+    relatedTerms: ['gVisor', 'Runtime', 'VM'],
+    domain: 2,
   },
   // === L ===
   {
@@ -503,6 +593,12 @@ export const glossaryTerms: GlossaryTerm[] = [
     domain: 5,
   },
   {
+    term: 'Rekor',
+    definition: 'Sigstore transparency log providing tamper-evident record of signed artifacts. Anyone can verify that an artifact was signed and that the signature existed at a specific time.',
+    relatedTerms: ['Sigstore', 'Cosign', 'Supply Chain'],
+    domain: 5,
+  },
+  {
     term: 'ResourceQuota',
     definition: 'Limits aggregate resource consumption per namespace. Prevents DoS via resource exhaustion by capping total CPU, memory, pod count, and other resources a namespace can consume.',
     relatedTerms: ['LimitRange', 'Namespace', 'DoS', 'Admission Controller'],
@@ -540,6 +636,13 @@ export const glossaryTerms: GlossaryTerm[] = [
     definition: 'Analyzing source code for vulnerabilities without executing it. Integrates into CI/CD pipelines for shift-left security. Complements DAST which tests running applications.',
     relatedTerms: ['DAST', 'DevSecOps', 'Shift-Left', 'Security Testing'],
     domain: 1,
+  },
+  {
+    term: 'SAR',
+    acronym: 'SubjectAccessReview',
+    definition: 'API to check if a user or ServiceAccount can perform an action on a resource. Used by kubectl auth can-i internally. Also used by external systems to evaluate permissions programmatically.',
+    relatedTerms: ['RBAC', 'Authorization', 'kubectl'],
+    domain: 3,
   },
   {
     term: 'SBOM',

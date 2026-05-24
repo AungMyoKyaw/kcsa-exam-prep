@@ -19,7 +19,9 @@ import {
   Fingerprint,
 } from 'lucide-react'
 import CalloutBox from '@/components/CalloutBox'
+import Callout from '@/components/Callout'
 import CodeBlock from '@/components/CodeBlock'
+import ComparisonTable from '@/components/ComparisonTable'
 import QuizComponent from '@/components/QuizComponent'
 import type { QuizQuestion } from '@/components/QuizComponent'
 
@@ -170,8 +172,8 @@ export default function Domain5Page() {
       // Save progress to localStorage
       try {
         const stored = localStorage.getItem('kcsa-progress')
-        const data = stored ? JSON.parse(stored) : {}
-        if (!data.domain5) {data.domain5 = {}}
+        const data = stored !== null ? JSON.parse(stored) : {}
+        data.domain5 ??= {}
         data.domain5.scrollPercent = Math.round(progress)
         if (progress > 90) {
           data.domain5.read = true
@@ -336,6 +338,32 @@ export default function Domain5Page() {
           ))}
         </div>
 
+        <h3
+          className="text-lg font-semibold mb-3 mt-8"
+          style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-body)' }}
+        >
+          SLSA Levels Deep Dive
+        </h3>
+        <ComparisonTable
+          columns={[
+            { key: 'level', header: 'Level' },
+            { key: 'provenance', header: 'Provenance Requirement' },
+            { key: 'build', header: 'Build Environment' },
+            { key: 'review', header: 'Review Requirement' },
+            { key: 'examTip', header: 'Exam Focus' },
+          ]}
+          rows={[
+            { level: '1', provenance: 'Exists (who, what, when)', build: 'Any', review: 'None', examTip: 'Documented build steps' },
+            { level: '2', provenance: 'Signed + hosted build service', build: 'Hosted build service', review: 'None', examTip: 'Signed provenance, not local builds' },
+            { level: '3', provenance: 'Signed + tamper-evident', build: 'Hardened + hermetic', review: 'None', examTip: 'Hermetic = no network during build' },
+            { level: '4', provenance: 'Signed + reproducible', build: 'Hardened + hermetic', review: 'Two-person review', examTip: 'Highest level, reproducible builds' },
+          ]}
+        />
+
+        <Callout variant="tip">
+          SLSA safe: 1=you wrote it, 2=you locked it, 3=vault, 4=two guards.
+        </Callout>
+
         <CalloutBox variant="exam">
           <strong>SLSA has 4 levels (1-4).</strong> Level 1 = provenance exists. Level 2 = signed
           provenance + hosted build. Level 3 = hardened build platform + hermetic builds. Level 4 =
@@ -466,30 +494,61 @@ trivy image --format spdx-json --output sbom.json myregistry.io/app:v1.0.0`}
           className="text-lg font-semibold mb-3"
           style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-body)' }}
         >
-          Image Signing
+          Sigstore Ecosystem
         </h3>
+        <p className="text-base leading-relaxed mb-4" style={{ color: 'var(--text-secondary)' }}>
+          Sigstore is a Linux Foundation project that provides a full stack for software signing and verification without long-lived keys. It consists of three main components plus a provenance framework:
+        </p>
+
         <div className="space-y-3 mb-6">
           {[
-            { tool: 'Cosign (Sigstore)', desc: 'Sign and verify using keyless signing (Fulcio + Rekor). Primarily for open source.' },
-            { tool: 'Notation (Notary v2)', desc: 'CNCF standard for image signing. Recommended by Microsoft (AKS) and Amazon (EKS) for enterprise.' },
-          ].map((signer) => (
+            { name: 'Cosign', icon: '🔏', desc: 'Sign and verify OCI artifacts (images, SBOMs, attestations). Supports keyless signing via Fulcio + Rekor.' },
+            { name: 'Rekor', icon: '📜', desc: 'Tamper-evident transparency log. Every signature is recorded publicly (or privately) so you can audit WHO signed WHAT and WHEN.' },
+            { name: 'Fulcio', icon: '🆔', desc: 'Identity-based code signing CA. Issues short-lived certificates bound to an OIDC identity (GitHub, Google, etc.). No need to manage long-lived private keys.' },
+            { name: 'in-toto', icon: '🔗', desc: 'Supply chain provenance framework. Records every step in the build pipeline (source → build → package → deploy) as signed attestations.' },
+          ].map((item) => (
             <div
-              key={signer.tool}
-              className="p-4 rounded-xl"
-              style={{
-                backgroundColor: 'var(--surface-base)',
-                border: '1px solid var(--border-subtle)',
-              }}
+              key={item.name}
+              className="flex items-start gap-3 px-4 py-3 rounded-xl"
+              style={{ backgroundColor: 'var(--surface-base)', border: '1px solid var(--border-subtle)' }}
             >
-              <div className="font-semibold text-sm mb-1" style={{ color: 'var(--text-primary)' }}>
-                {signer.tool}
-              </div>
-              <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>
-                {signer.desc}
+              <span className="text-lg flex-shrink-0">{item.icon}</span>
+              <div>
+                <span className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>{item.name}:</span>
+                <span className="text-sm ml-1" style={{ color: 'var(--text-secondary)' }}>{item.desc}</span>
               </div>
             </div>
           ))}
         </div>
+
+        <CodeBlock
+          language="bash"
+          code={`# Sign an image with Cosign (keyless via OIDC)
+cosign sign myregistry.io/app:v1.0.0
+
+# Verify an image signature
+cosign verify myregistry.io/app:v1.0.0 \\
+  --certificate-identity=admin@company.com \\
+  --certificate-oidc-issuer=https://accounts.google.com
+
+# Sign an SBOM alongside the image
+cosign attest --predicate sbom.spdx.json \\
+  --type spdxjson myregistry.io/app:v1.0.0`}
+        />
+
+        <Callout variant="tip">
+          Cosign signs, Rekor logs, Fulcio proves WHO signed. The three amigos of trust.
+        </Callout>
+
+        <h3
+          className="text-lg font-semibold mb-3 mt-6"
+          style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-body)' }}
+        >
+          Notation (Notary v2)
+        </h3>
+        <p className="text-base leading-relaxed mb-4" style={{ color: 'var(--text-secondary)' }}>
+          Notation is the CNCF standard for image signing, recommended by Microsoft (AKS) and Amazon (EKS) for enterprise environments. It uses the ORAS (OCI Registry As Storage) standard to store signatures alongside images in the registry.
+        </p>
 
         <CalloutBox variant="info">
           <strong>Docker Content Trust (DCT) is deprecated</strong> and replaced by Notary v2
@@ -636,6 +695,77 @@ trivy image --format spdx-json --output sbom.json myregistry.io/app:v1.0.0`}
         </ul>
       </section>
 
+      {/* Section 5.3b — Runtime Security Tools */}
+      <section  className="mb-12">
+        <div className="flex items-center gap-3 mb-4">
+          <div
+            className="w-10 h-10 rounded-lg flex items-center justify-center"
+            style={{ backgroundColor: 'rgba(232, 122, 93, 0.1)' }}
+          >
+            <Shield size={20} style={{ color: 'var(--accent-coral)' }} />
+          </div>
+          <h2
+            className="text-2xl font-normal"
+            style={{
+              color: 'var(--text-primary)',
+              fontFamily: 'var(--font-display)',
+            }}
+          >
+            5.3b Runtime Security Tools
+          </h2>
+        </div>
+
+        <h3
+          className="text-lg font-semibold mb-3"
+          style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-body)' }}
+        >
+          Falco: Rule-Based Runtime Detection
+        </h3>
+        <p className="text-base leading-relaxed mb-4" style={{ color: 'var(--text-secondary)' }}>
+          Falco is the CNCF-graduated runtime security tool that detects suspicious behavior using eBPF or kernel modules. It monitors system calls against a YAML-based rules engine and alerts on anomalous activity.
+        </p>
+
+        <CodeBlock
+          language="yaml"
+          code={`- rule: Privileged Container Started
+  desc: Detect when a privileged container is started
+  condition: >
+    spawned_process and
+    container.id != host and
+    container.privileged = true
+  output: >
+    Privileged container started
+    (user=%user.name command=%proc.cmdline
+    container=%container.name)
+  priority: CRITICAL`}
+        />
+
+        <h3
+          className="text-lg font-semibold mb-3 mt-6"
+          style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-body)' }}
+        >
+          Falco vs seccomp / AppArmor / SELinux
+        </h3>
+        <ComparisonTable
+          columns={[
+            { key: 'tool', header: 'Tool' },
+            { key: 'mechanism', header: 'Mechanism' },
+            { key: 'action', header: 'Action' },
+            { key: 'examNote', header: 'Exam Note' },
+          ]}
+          rows={[
+            { tool: 'Falco', mechanism: 'eBPF / kernel module', action: 'DETECTS and ALERTS', examNote: 'Detection only — does NOT block' },
+            { tool: 'seccomp', mechanism: 'Syscall filter', action: 'PREVENTS', examNote: 'Blocks forbidden syscalls' },
+            { tool: 'AppArmor', mechanism: 'Path-based MAC', action: 'PREVENTS', examNote: 'Restricts file + capability access' },
+            { tool: 'SELinux', mechanism: 'Label-based MAC', action: 'PREVENTS', examNote: 'Restricts resource access by label' },
+          ]}
+        />
+
+        <Callout variant="warning">
+          Falco DETECTS. seccomp/AppArmor/SELinux PREVENTS. Detection != Prevention.
+        </Callout>
+      </section>
+
       {/* Section 5.4 — Service Mesh */}
       <section  className="mb-12">
         <div className="flex items-center gap-3 mb-4">
@@ -745,9 +875,9 @@ trivy image --format spdx-json --output sbom.json myregistry.io/app:v1.0.0`}
         </div>
 
         <CalloutBox variant="warning">
-          Istio's default mTLS mode is <strong>PERMISSIVE</strong> — the sidecar accepts both mTLS
+          Istio&apos;s default mTLS mode is <strong>PERMISSIVE</strong> — the sidecar accepts both mTLS
           and plain-text traffic. This default exists for migration convenience. In PERMISSIVE mode,
-          an attacker's pod without an Istio sidecar can make plain-text HTTP calls to any mesh
+          an attacker&apos;s pod without an Istio sidecar can make plain-text HTTP calls to any mesh
           service. Always switch to STRICT after migration.
         </CalloutBox>
 
@@ -876,7 +1006,7 @@ spec:
         </h3>
         <p className="text-base leading-relaxed mb-4" style={{ color: 'var(--text-secondary)' }}>
           cert-manager is a CNCF incubating project for automatic certificate management. It
-          integrates with Let's Encrypt, Vault, and private CAs via <code>Certificate</code> and{' '}
+          integrates with Let&apos;s Encrypt, Vault, and private CAs via <code>Certificate</code> and{' '}
           <code>Issuer</code>/<code>ClusterIssuer</code> CRDs, with automatic renewal before expiry.
         </p>
 

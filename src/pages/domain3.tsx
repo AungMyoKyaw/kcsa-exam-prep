@@ -853,8 +853,12 @@ kubectl auth can-i create secrets --all-namespaces`}
             { name: 'kms v2', desc: 'Envelope encryption', status: 'Recommended (v1.29+)' },
           ].map((p) => {
             const statusColor = (() => {
-              if (p.name === 'kms v2') return 'var(--accent-sage)'
-              if (p.status.includes('Not') || p.status.includes('Deprecated')) return 'var(--accent-coral)'
+              if (p.name === 'kms v2') {
+                return 'var(--accent-sage)'
+              }
+              if (p.status.includes('Not') || p.status.includes('Deprecated')) {
+                return 'var(--accent-coral)'
+              }
               return 'var(--text-tertiary)'
             })()
             return (

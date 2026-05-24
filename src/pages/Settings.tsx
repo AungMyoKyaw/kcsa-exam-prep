@@ -28,9 +28,13 @@ function AppearanceTab() {
 
   useEffect(() => {
     const codeSize = localStorage.getItem('kcsa-code-font-size');
-    if (codeSize) {setCodeFontSize(parseInt(codeSize));}
+    if (codeSize != null) {
+      setTimeout(() => setCodeFontSize(parseInt(codeSize, 10)), 0);
+    }
     const readSize = localStorage.getItem('kcsa-reading-font-size');
-    if (readSize) {setReadingFontSize(parseInt(readSize));}
+    if (readSize != null) {
+      setTimeout(() => setReadingFontSize(parseInt(readSize, 10)), 0);
+    }
   }, []);
 
   const handleCodeFontChange = (size: number) => {
@@ -65,7 +69,7 @@ function AppearanceTab() {
             max={18}
             step={1}
             value={codeFontSize}
-            onChange={(e) => handleCodeFontChange(parseInt(e.target.value))}
+            onChange={(e) => handleCodeFontChange(parseInt(e.target.value, 10))}
             className="flex-1 accent-primary"
             style={{ accentColor: 'var(--accent-primary)' }}
           />
@@ -115,7 +119,7 @@ function AppearanceTab() {
             max={20}
             step={1}
             value={readingFontSize}
-            onChange={(e) => handleReadingFontChange(parseInt(e.target.value))}
+            onChange={(e) => handleReadingFontChange(parseInt(e.target.value, 10))}
             className="flex-1"
             style={{ accentColor: 'var(--accent-primary)' }}
           />
