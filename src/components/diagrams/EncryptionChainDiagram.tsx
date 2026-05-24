@@ -1,7 +1,3 @@
-import { motion } from 'framer-motion'
-
-const easeOutExpo = [0.16, 1, 0.3, 1] as [number, number, number, number]
-
 interface EncryptionChainDiagramProps {
   className?: string
 }
@@ -53,12 +49,9 @@ export default function EncryptionChainDiagram({ className }: EncryptionChainDia
         {layers.map((layer, idx) => (
           <div key={layer.label} className="flex flex-col items-center">
             {idx > 0 && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                whileInView={{ opacity: 1, height: 24 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.3, ease: easeOutExpo, delay: 0.2 + idx * 0.15 }}
+              <div
                 className="flex items-center overflow-hidden"
+                style={{ height: '24px' }}
               >
                 <svg width="20" height="24" viewBox="0 0 20 24" fill="none">
                   <path
@@ -69,13 +62,9 @@ export default function EncryptionChainDiagram({ className }: EncryptionChainDia
                     strokeLinejoin="round"
                   />
                 </svg>
-              </motion.div>
+              </div>
             )}
-            <motion.div
-              initial={{ opacity: 0, y: 15, scaleX: 0.8 }}
-              whileInView={{ opacity: 1, y: 0, scaleX: 1 }}
-              viewport={{ once: true, amount: 0.5 }}
-              transition={{ duration: 0.5, ease: easeOutExpo, delay: idx * 0.15 }}
+            <div
               className="relative flex flex-col items-center justify-center rounded-xl py-3 px-4 shadow-sm text-center"
               style={{
                 width: `${layer.width}px`,
@@ -92,24 +81,16 @@ export default function EncryptionChainDiagram({ className }: EncryptionChainDia
               </span>
 
               {layer.warning && (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.3, ease: easeOutExpo, delay: 0.9 }}
+                <div
                   className="absolute -right-3 -top-3 w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-sm"
                   style={{ backgroundColor: 'var(--accent-coral)' }}
                 >
                   ✕
-                </motion.div>
+                </div>
               )}
 
               {layer.highlight && (
-                <motion.div
-                  initial={{ opacity: 0, x: 10 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.4, ease: easeOutExpo, delay: 1.0 }}
+                <div
                   className="absolute left-full ml-3 top-1/2 -translate-y-1/2 whitespace-nowrap"
                 >
                   <span
@@ -121,24 +102,17 @@ export default function EncryptionChainDiagram({ className }: EncryptionChainDia
                   >
                     KMS v2 RECOMMENDED
                   </span>
-                </motion.div>
+                </div>
               )}
-            </motion.div>
+            </div>
           </div>
         ))}
       </div>
 
-      <motion.div
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.5, delay: 1.3 }}
-        className="mt-6 text-center text-xs max-w-md"
-        style={{ color: 'var(--text-tertiary)' }}
-      >
+      <div className="mt-6 text-center text-xs max-w-md" style={{ color: 'var(--text-tertiary)' }}>
         <span className="font-semibold" style={{ color: 'var(--accent-coral)' }}>⚠ base64 is NOT encryption — </span>
         it is just encoding. Anyone can decode it. The actual encryption happens at the DEK/KEK layer.
-      </motion.div>
+      </div>
     </div>
   )
 }

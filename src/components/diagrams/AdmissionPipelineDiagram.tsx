@@ -1,7 +1,3 @@
-import { motion } from 'framer-motion'
-
-const easeOutExpo = [0.16, 1, 0.3, 1] as [number, number, number, number]
-
 interface AdmissionPipelineDiagramProps {
   className?: string
 }
@@ -14,11 +10,7 @@ export default function AdmissionPipelineDiagram({ className }: AdmissionPipelin
     <div className={`my-8 w-full ${className ?? ''}`}>
       <div className="flex flex-col items-center gap-4">
         {/* Mutating Lane */}
-        <motion.div
-          initial={{ opacity: 0, x: -30 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true, amount: 0.4 }}
-          transition={{ duration: 0.6, ease: easeOutExpo }}
+        <div
           className="w-full max-w-xl"
         >
           <div
@@ -43,13 +35,9 @@ export default function AdmissionPipelineDiagram({ className }: AdmissionPipelin
               </span>
             </div>
             <div className="flex flex-wrap gap-2">
-              {mutatingControllers.map((ctrl, idx) => (
-                <motion.div
+              {mutatingControllers.map((ctrl) => (
+                <div
                   key={ctrl}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.3, ease: easeOutExpo, delay: 0.15 + idx * 0.08 }}
                   className="rounded-lg px-3 py-2 text-xs font-semibold shadow-sm"
                   style={{
                     backgroundColor: 'var(--surface-base)',
@@ -58,18 +46,14 @@ export default function AdmissionPipelineDiagram({ className }: AdmissionPipelin
                   }}
                 >
                   {ctrl}
-                </motion.div>
+                </div>
               ))}
             </div>
           </div>
-        </motion.div>
+        </div>
 
         {/* Arrow down */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.4, delay: 0.5 }}
+        <div
           className="flex flex-col items-center"
         >
           <svg width="24" height="36" viewBox="0 0 24 36" fill="none">
@@ -84,14 +68,10 @@ export default function AdmissionPipelineDiagram({ className }: AdmissionPipelin
           <span className="text-xs font-medium mt-1" style={{ color: 'var(--text-tertiary)' }}>
             Mutating runs BEFORE Validating
           </span>
-        </motion.div>
+        </div>
 
         {/* Validating Lane */}
-        <motion.div
-          initial={{ opacity: 0, x: 30 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true, amount: 0.4 }}
-          transition={{ duration: 0.6, ease: easeOutExpo, delay: 0.3 }}
+        <div
           className="w-full max-w-xl"
         >
           <div
@@ -116,13 +96,9 @@ export default function AdmissionPipelineDiagram({ className }: AdmissionPipelin
               </span>
             </div>
             <div className="flex flex-wrap gap-2">
-              {validatingControllers.map((ctrl, idx) => (
-                <motion.div
+              {validatingControllers.map((ctrl) => (
+                <div
                   key={ctrl}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.3, ease: easeOutExpo, delay: 0.5 + idx * 0.08 }}
                   className="rounded-lg px-3 py-2 text-xs font-semibold shadow-sm"
                   style={{
                     backgroundColor: 'var(--surface-base)',
@@ -131,18 +107,14 @@ export default function AdmissionPipelineDiagram({ className }: AdmissionPipelin
                   }}
                 >
                   {ctrl}
-                </motion.div>
+                </div>
               ))}
             </div>
           </div>
-        </motion.div>
+        </div>
 
         {/* Arrow to etcd */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.4, delay: 0.9 }}
+        <div
           className="flex flex-col items-center"
         >
           <svg width="24" height="36" viewBox="0 0 24 36" fill="none">
@@ -154,14 +126,10 @@ export default function AdmissionPipelineDiagram({ className }: AdmissionPipelin
               strokeLinejoin="round"
             />
           </svg>
-        </motion.div>
+        </div>
 
         {/* etcd */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, ease: easeOutExpo, delay: 1.0 }}
+        <div
           className="rounded-xl px-6 py-3 text-center font-semibold text-sm shadow-sm"
           style={{
             backgroundColor: 'var(--surface-elevated)',
@@ -170,20 +138,13 @@ export default function AdmissionPipelineDiagram({ className }: AdmissionPipelin
           }}
         >
           etcd <span className="font-normal" style={{ color: 'var(--text-secondary)' }}>(persist)</span>
-        </motion.div>
+        </div>
       </div>
 
-      <motion.div
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.5, delay: 1.2 }}
-        className="mt-6 text-center text-xs max-w-lg mx-auto"
-        style={{ color: 'var(--text-tertiary)' }}
-      >
+      <div className="mt-6 text-center text-xs max-w-lg mx-auto" style={{ color: 'var(--text-tertiary)' }}>
         <span className="font-semibold" style={{ color: 'var(--accent-coral)' }}>Key exam point: </span>
         Mutating controllers can CHANGE your request. Validating controllers only APPROVE or REJECT — they never modify.
-      </motion.div>
+      </div>
     </div>
   )
 }

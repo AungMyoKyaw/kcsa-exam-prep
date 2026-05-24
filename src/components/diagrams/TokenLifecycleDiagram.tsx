@@ -1,7 +1,3 @@
-import { motion } from 'framer-motion'
-
-const easeOutExpo = [0.16, 1, 0.3, 1] as [number, number, number, number]
-
 interface TokenLifecycleDiagramProps {
   className?: string
 }
@@ -25,11 +21,7 @@ export default function TokenLifecycleDiagram({ className }: TokenLifecycleDiagr
     <div className={`my-8 w-full ${className ?? ''}`}>
       <div className="flex flex-col sm:flex-row gap-6 justify-center items-stretch max-w-3xl mx-auto">
         {/* Legacy Token Column */}
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 0.6, ease: easeOutExpo }}
+        <div
           className="flex-1 rounded-xl p-4"
           style={{
             backgroundColor: 'rgba(207, 34, 46, 0.06)',
@@ -49,12 +41,8 @@ export default function TokenLifecycleDiagram({ className }: TokenLifecycleDiagr
           </div>
           <div className="flex flex-col gap-3">
             {legacySteps.map((step, idx) => (
-              <motion.div
+              <div
                 key={step.label}
-                initial={{ opacity: 0, y: 12 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, ease: easeOutExpo, delay: 0.15 + idx * 0.1 }}
                 className="flex items-center gap-3 rounded-lg px-3 py-2.5"
                 style={{
                   backgroundColor: 'var(--surface-base)',
@@ -70,19 +58,13 @@ export default function TokenLifecycleDiagram({ className }: TokenLifecycleDiagr
                 >
                   {step.label}
                 </span>
-              </motion.div>
+              </div>
             ))}
           </div>
-        </motion.div>
+        </div>
 
         {/* VS Divider */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.4, ease: easeOutExpo, delay: 0.3 }}
-          className="flex items-center justify-center"
-        >
+        <div className="flex items-center justify-center">
           <div
             className="rounded-full w-10 h-10 flex items-center justify-center text-xs font-bold shadow-sm"
             style={{
@@ -93,14 +75,10 @@ export default function TokenLifecycleDiagram({ className }: TokenLifecycleDiagr
           >
             VS
           </div>
-        </motion.div>
+        </div>
 
         {/* Bound Token Column */}
-        <motion.div
-          initial={{ opacity: 0, x: 20 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 0.6, ease: easeOutExpo, delay: 0.2 }}
+        <div
           className="flex-1 rounded-xl p-4"
           style={{
             backgroundColor: 'rgba(26, 127, 55, 0.06)',
@@ -120,12 +98,8 @@ export default function TokenLifecycleDiagram({ className }: TokenLifecycleDiagr
           </div>
           <div className="flex flex-col gap-3">
             {boundSteps.map((step, idx) => (
-              <motion.div
+              <div
                 key={step.label}
-                initial={{ opacity: 0, y: 12 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, ease: easeOutExpo, delay: 0.35 + idx * 0.1 }}
                 className="flex items-center gap-3 rounded-lg px-3 py-2.5"
                 style={{
                   backgroundColor: 'var(--surface-base)',
@@ -141,32 +115,22 @@ export default function TokenLifecycleDiagram({ className }: TokenLifecycleDiagr
                 >
                   {step.label}
                 </span>
-              </motion.div>
+              </div>
             ))}
           </div>
-        </motion.div>
+        </div>
       </div>
 
       {/* Rotation Timeline Visual */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.5, delay: 0.9 }}
-        className="mt-6 flex flex-col items-center"
-      >
+      <div className="mt-6 flex flex-col items-center">
         <div className="text-xs font-medium mb-2" style={{ color: 'var(--text-secondary)' }}>
           Bound token auto-rotation timeline
         </div>
         <div className="flex items-center gap-1 max-w-sm w-full">
           {[0, 1, 2, 3, 4, 5].map((i) => (
-            <motion.div
+            <div
               key={i}
-              initial={{ opacity: 0, scaleY: 0 }}
-              whileInView={{ opacity: 1, scaleY: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.3, delay: 1.0 + i * 0.08 }}
-              className="flex-1 rounded-sm origin-bottom"
+              className="flex-1 rounded-sm"
               style={{
                 height: `${16 + Math.sin(i * 1.2) * 10}px`,
                 backgroundColor: i % 2 === 0 ? 'var(--accent-sage)' : 'var(--accent-primary)',
@@ -180,15 +144,9 @@ export default function TokenLifecycleDiagram({ className }: TokenLifecycleDiagr
           <span>1h (rotation)</span>
           <span>2h</span>
         </div>
-      </motion.div>
+      </div>
 
-      <motion.div
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.5, delay: 1.2 }}
-        className="mt-5 text-center"
-      >
+      <div className="mt-5 text-center">
         <span
           className="text-xs font-bold px-3 py-1 rounded-md inline-block"
           style={{
@@ -198,7 +156,7 @@ export default function TokenLifecycleDiagram({ className }: TokenLifecycleDiagr
         >
           Since Kubernetes 1.24 — Legacy tokens are deprecated
         </span>
-      </motion.div>
+      </div>
     </div>
   )
 }

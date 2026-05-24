@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import {
   ChevronLeft,
   ChevronRight,
@@ -19,14 +18,11 @@ import {
 import { Switch } from '@/components/ui/switch';
 import { quickRecallCards, quickRecallCategories } from '@/data/quickRecallData';
 
-const easeOutExpo = [0.16, 1, 0.3, 1] as [number, number, number, number];
-
 export default function QuickRecall() {
   const [category, setCategory] = useState<string>('All');
   const [shuffled, setShuffled] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [flipped, setFlipped] = useState(false);
-  const [direction, setDirection] = useState(0);
 
   const filteredCards = useMemo(() => {
     const base =
@@ -49,7 +45,6 @@ export default function QuickRecall() {
 
   const goNext = useCallback(() => {
     if (currentIndex < total - 1) {
-      setDirection(1);
       setFlipped(false);
       setCurrentIndex((prev) => prev + 1);
     }
@@ -57,7 +52,6 @@ export default function QuickRecall() {
 
   const goPrev = useCallback(() => {
     if (currentIndex > 0) {
-      setDirection(-1);
       setFlipped(false);
       setCurrentIndex((prev) => prev - 1);
     }
@@ -70,7 +64,6 @@ export default function QuickRecall() {
   const reset = useCallback(() => {
     setCurrentIndex(0);
     setFlipped(false);
-    setDirection(0);
   }, []);
 
   useEffect(() => {
@@ -206,94 +199,82 @@ export default function QuickRecall() {
               }
             }}
           >
-            <AnimatePresence mode="wait" initial={false}>
-              <motion.div
-                key={card?.id ?? 'empty'}
-                initial={{ opacity: 0, x: direction * 40 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: direction * -40 }}
-                transition={{ duration: 0.25, ease: easeOutExpo }}
-                className="relative"
-                style={{ transformStyle: 'preserve-3d' }}
-              >
-                <motion.div
-                  animate={{ rotateY: flipped ? 180 : 0 }}
-                  transition={{ duration: 0.45, ease: easeOutExpo }}
-                  style={{ transformStyle: 'preserve-3d' }}
+            <div
+              key={card?.id ?? 'empty'}
+              className="relative"
+            >
+              {/* Front */}
+              {!flipped && (
+                <div
+                  className="rounded-xl p-8 md:p-12 min-h-[320px] flex flex-col items-center justify-center text-center"
+                  style={{
+                    backgroundColor: 'var(--surface-elevated)',
+                    border: '1px solid var(--border-subtle)',
+                  }}
                 >
-                  {/* Front */}
-                  <div
-                    className="rounded-xl p-8 md:p-12 min-h-[320px] flex flex-col items-center justify-center text-center"
+                  <span
+                    className="text-xs font-semibold uppercase tracking-[0.06em] mb-6 px-3 py-1 rounded-full"
                     style={{
-                      backgroundColor: 'var(--surface-elevated)',
-                      border: '1px solid var(--border-subtle)',
-                      backfaceVisibility: 'hidden',
+                      backgroundColor: 'var(--surface-base)',
+                      color: 'var(--text-tertiary)',
                     }}
                   >
-                    <span
-                      className="text-xs font-semibold uppercase tracking-[0.06em] mb-6 px-3 py-1 rounded-full"
-                      style={{
-                        backgroundColor: 'var(--surface-base)',
-                        color: 'var(--text-tertiary)',
-                      }}
-                    >
-                      {card?.category ?? '—'}
-                    </span>
-                    <p
-                      className="text-xl md:text-2xl font-medium leading-relaxed"
-                      style={{ color: 'var(--text-primary)' }}
-                    >
-                      {card?.front ?? 'No cards available'}
-                    </p>
-                    <p
-                      className="text-sm mt-8"
-                      style={{ color: 'var(--text-tertiary)' }}
-                    >
-                      Click or press Space to flip
-                    </p>
-                  </div>
+                    {card?.category ?? '—'}
+                  </span>
+                  <p
+                    className="text-xl md:text-2xl font-medium leading-relaxed"
+                    style={{ color: 'var(--text-primary)' }}
+                  >
+                    {card?.front ?? 'No cards available'}
+                  </p>
+                  <p
+                    className="text-sm mt-8"
+                    style={{ color: 'var(--text-tertiary)' }}
+                  >
+                    Click or press Space to flip
+                  </p>
+                </div>
+              )}
 
-                  {/* Back */}
-                  <div
-                    className="absolute inset-0 rounded-xl p-8 md:p-12 min-h-[320px] flex flex-col items-center justify-center text-center"
+              {/* Back */}
+              {flipped && (
+                <div
+                  className="rounded-xl p-8 md:p-12 min-h-[320px] flex flex-col items-center justify-center text-center"
+                  style={{
+                    backgroundColor: 'var(--surface-elevated)',
+                    border: '1px solid var(--border-subtle)',
+                  }}
+                >
+                  <span
+                    className="text-xs font-semibold uppercase tracking-[0.06em] mb-6 px-3 py-1 rounded-full"
                     style={{
-                      backgroundColor: 'var(--surface-elevated)',
-                      border: '1px solid var(--border-subtle)',
-                      backfaceVisibility: 'hidden',
-                      transform: 'rotateY(180deg)',
+                      backgroundColor: 'var(--accent-lavender-soft)',
+                      color: 'var(--accent-lavender)',
                     }}
                   >
-                    <span
-                      className="text-xs font-semibold uppercase tracking-[0.06em] mb-6 px-3 py-1 rounded-full"
+                    Answer
+                  </span>
+                  <p
+                    className="text-xl md:text-2xl font-medium leading-relaxed"
+                    style={{ color: 'var(--text-primary)' }}
+                  >
+                    {card?.back ?? '—'}
+                  </p>
+                  {card?.hint && (
+                    <div
+                      className="mt-6 px-4 py-3 rounded-lg text-sm max-w-[90%]"
                       style={{
-                        backgroundColor: 'var(--accent-lavender-soft)',
+                        backgroundColor: 'rgba(130, 87, 229, 0.08)',
                         color: 'var(--accent-lavender)',
+                        borderLeft: '3px solid var(--accent-lavender)',
                       }}
                     >
-                      Answer
-                    </span>
-                    <p
-                      className="text-xl md:text-2xl font-medium leading-relaxed"
-                      style={{ color: 'var(--text-primary)' }}
-                    >
-                      {card?.back ?? '—'}
-                    </p>
-                    {card?.hint && (
-                      <div
-                        className="mt-6 px-4 py-3 rounded-lg text-sm max-w-[90%]"
-                        style={{
-                          backgroundColor: 'rgba(130, 87, 229, 0.08)',
-                          color: 'var(--accent-lavender)',
-                          borderLeft: '3px solid var(--accent-lavender)',
-                        }}
-                      >
-                        <span className="font-semibold">Hint:</span> {card.hint}
-                      </div>
-                    )}
-                  </div>
-                </motion.div>
-              </motion.div>
-            </AnimatePresence>
+                      <span className="font-semibold">Hint:</span> {card.hint}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Navigation */}

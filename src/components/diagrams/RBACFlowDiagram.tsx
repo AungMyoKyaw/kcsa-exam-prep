@@ -1,7 +1,4 @@
-import { motion } from 'framer-motion'
 import type { ReactNode } from 'react'
-
-const easeOutExpo = [0.16, 1, 0.3, 1] as [number, number, number, number]
 
 interface FlowStepProps {
   label: string
@@ -12,15 +9,9 @@ interface FlowStepProps {
   children?: ReactNode
 }
 
-function FlowStep({ label, sublabel, color, highlight, index, children }: FlowStepProps) {
+function FlowStep({ label, sublabel, color, highlight, children }: FlowStepProps) {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.5 }}
-      transition={{ duration: 0.5, ease: easeOutExpo, delay: index * 0.12 }}
-      className="relative flex flex-col items-center"
-    >
+    <div className="relative flex flex-col items-center">
       <div
         className="rounded-xl px-4 py-3 text-center font-semibold text-sm min-w-[100px] shadow-sm"
         style={{
@@ -37,19 +28,13 @@ function FlowStep({ label, sublabel, color, highlight, index, children }: FlowSt
         )}
       </div>
       {children}
-    </motion.div>
+    </div>
   )
 }
 
-function Arrow({ index }: { index: number }) {
+function Arrow() {
   return (
-    <motion.div
-      initial={{ opacity: 0, scaleX: 0 }}
-      whileInView={{ opacity: 1, scaleX: 1 }}
-      viewport={{ once: true, amount: 0.5 }}
-      transition={{ duration: 0.4, ease: easeOutExpo, delay: 0.3 + index * 0.12 }}
-      className="flex items-center mx-1"
-    >
+    <div className="flex items-center mx-1">
       <svg width="32" height="16" viewBox="0 0 32 16" fill="none" className="flex-shrink-0">
         <path
           d="M0 8h28m0 0l-6-5m6 5l-6 5"
@@ -59,7 +44,7 @@ function Arrow({ index }: { index: number }) {
           strokeLinejoin="round"
         />
       </svg>
-    </motion.div>
+    </div>
   )
 }
 
@@ -92,13 +77,7 @@ export default function RBACFlowDiagram({ className }: RBACFlowDiagramProps) {
               index={idx}
             >
               {step.label === 'AuthZ / RBAC' && (
-                <motion.div
-                  initial={{ opacity: 0, y: 8 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.4, ease: easeOutExpo, delay: 0.8 }}
-                  className="absolute top-full mt-2 left-1/2 -translate-x-1/2 flex flex-col items-center"
-                >
+                <div className="absolute top-full mt-2 left-1/2 -translate-x-1/2 flex flex-col items-center">
                   <div
                     className="rounded-lg px-3 py-2 text-xs font-medium whitespace-nowrap shadow-sm"
                     style={{
@@ -115,24 +94,17 @@ export default function RBACFlowDiagram({ className }: RBACFlowDiagramProps) {
                       </span>
                     ))}
                   </div>
-                </motion.div>
+                </div>
               )}
             </FlowStep>
-            {idx < steps.length - 1 && <Arrow index={idx} />}
+            {idx < steps.length - 1 && <Arrow />}
           </div>
         ))}
       </div>
 
-      <motion.div
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.5, delay: 1.2 }}
-        className="mt-12 text-center text-xs"
-        style={{ color: 'var(--text-tertiary)' }}
-      >
+      <div className="mt-12 text-center text-xs" style={{ color: 'var(--text-tertiary)' }}>
         Request authorization flow — AuthZ/RBAC is the most exam-relevant step
-      </motion.div>
+      </div>
     </div>
   )
 }

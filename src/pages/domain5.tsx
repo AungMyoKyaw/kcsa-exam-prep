@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import { motion } from 'framer-motion'
 import { Link } from 'react-router'
 import {
   BookOpen,
@@ -26,9 +25,6 @@ import QuizComponent from '@/components/QuizComponent'
 import type { QuizQuestion } from '@/components/QuizComponent'
 import MemoryHook from '@/components/MemoryHook'
 import SupplyChainDiagram from '@/components/diagrams/SupplyChainDiagram'
-
-
-
 
 /* ------------------------------------------------------------------ */
 /*  DATA                                                               */
@@ -198,16 +194,14 @@ export default function Domain5Page() {
         className="fixed top-[60px] left-0 right-0 h-[3px] z-30"
         style={{ backgroundColor: 'var(--border-subtle)' }}
       >
-        <motion.div
+        <div
           className="h-full"
-          style={{ background: 'var(--accent-gradient)' }}
-          animate={{ width: `${scrollProgress}%` }}
+          style={{ background: 'var(--accent-gradient)', width: `${scrollProgress}%` }}
         />
       </div>
 
       {/* Breadcrumb */}
       <nav
-        
         className="flex items-center gap-2 mb-6 text-sm"
       >
         <Link
@@ -222,7 +216,7 @@ export default function Domain5Page() {
       </nav>
 
       {/* Chapter Header */}
-      <header  className="mb-10">
+      <header className="mb-10">
         <div
           className="mb-2 text-xs font-semibold uppercase tracking-[0.06em]"
           style={{ color: 'var(--text-tertiary)' }}
@@ -273,7 +267,7 @@ export default function Domain5Page() {
       </header>
 
       {/* Section 5.1 — Supply Chain Security */}
-      <section  className="mb-12">
+      <section className="mb-12">
         <div className="flex items-center gap-3 mb-4">
           <div
             className="w-10 h-10 rounded-lg flex items-center justify-center"
@@ -315,7 +309,6 @@ export default function Domain5Page() {
           {slsaLevels.map((l) => (
             <div
               key={l.level}
-              
               className="flex items-start gap-4 p-4 rounded-xl"
               style={{
                 backgroundColor: 'var(--surface-base)',
@@ -425,7 +418,7 @@ export default function Domain5Page() {
       <SupplyChainDiagram />
 
       {/* Section 5.2 — Image Repository Security */}
-      <section  className="mb-12">
+      <section className="mb-12">
         <div className="flex items-center gap-3 mb-4">
           <div
             className="w-10 h-10 rounded-lg flex items-center justify-center"
@@ -463,9 +456,8 @@ export default function Domain5Page() {
             { tool: 'Snyk', vendor: 'Snyk', scope: 'Commercial platform with K8s API integration' },
             { tool: 'Clair', vendor: 'Red Hat', scope: 'Container images only (PostgreSQL required)' },
           ].map((scanner) => (
-            <motion.div
+            <div
               key={scanner.tool}
-              whileHover={{ y: -2 }}
               className="p-4 rounded-xl"
               style={{
                 backgroundColor: 'var(--surface-base)',
@@ -481,7 +473,7 @@ export default function Domain5Page() {
               <div className="text-xs" style={{ color: 'var(--text-secondary)' }}>
                 {scanner.scope}
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
 
@@ -581,7 +573,7 @@ cosign attest --predicate sbom.spdx.json \\
       </section>
 
       {/* Section 5.3 — Observability */}
-      <section  className="mb-12">
+      <section className="mb-12">
         <div className="flex items-center gap-3 mb-4">
           <div
             className="w-10 h-10 rounded-lg flex items-center justify-center"
@@ -612,9 +604,8 @@ cosign attest --predicate sbom.spdx.json \\
             { name: 'Logs', icon: BookOpen, desc: 'Text records of events — application, audit, and system logs' },
             { name: 'Traces', icon: Network, desc: 'Request flow across services — distributed tracing' },
           ].map((pillar) => (
-            <motion.div
+            <div
               key={pillar.name}
-              whileHover={{ y: -2 }}
               className="p-4 rounded-xl text-center"
               style={{
                 backgroundColor: 'var(--surface-base)',
@@ -628,7 +619,7 @@ cosign attest --predicate sbom.spdx.json \\
               <div className="text-xs leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
                 {pillar.desc}
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
 
@@ -706,7 +697,7 @@ cosign attest --predicate sbom.spdx.json \\
       </section>
 
       {/* Section 5.3b — Runtime Security Tools */}
-      <section  className="mb-12">
+      <section className="mb-12">
         <div className="flex items-center gap-3 mb-4">
           <div
             className="w-10 h-10 rounded-lg flex items-center justify-center"
@@ -777,7 +768,7 @@ cosign attest --predicate sbom.spdx.json \\
       </section>
 
       {/* Section 5.4 — Service Mesh */}
-      <section  className="mb-12">
+      <section className="mb-12">
         <div className="flex items-center gap-3 mb-4">
           <div
             className="w-10 h-10 rounded-lg flex items-center justify-center"
@@ -804,8 +795,7 @@ cosign attest --predicate sbom.spdx.json \\
 
         {/* Istio vs Linkerd */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-          <motion.div
-            whileHover={{ y: -2 }}
+          <div
             className="p-5 rounded-xl"
             style={{
               backgroundColor: 'var(--surface-base)',
@@ -830,9 +820,8 @@ cosign attest --predicate sbom.spdx.json \\
                 </li>
               ))}
             </ul>
-          </motion.div>
-          <motion.div
-            whileHover={{ y: -2 }}
+          </div>
+          <div
             className="p-5 rounded-xl"
             style={{
               backgroundColor: 'var(--surface-base)',
@@ -857,7 +846,7 @@ cosign attest --predicate sbom.spdx.json \\
                 </li>
               ))}
             </ul>
-          </motion.div>
+          </div>
         </div>
 
         <h3
@@ -927,12 +916,12 @@ spec:
     to:
     - operation:
         methods: ["GET"]
-        ports: ["8080"]`}
+        ports: ["8080"]}`}
         />
       </section>
 
       {/* Section 5.5 — PKI */}
-      <section  className="mb-12">
+      <section className="mb-12">
         <div className="flex items-center gap-3 mb-4">
           <div
             className="w-10 h-10 rounded-lg flex items-center justify-center"
@@ -958,9 +947,8 @@ spec:
 
         <div className="space-y-3 mb-6">
           {pkiComponents.map((comp) => (
-            <motion.div
+            <div
               key={comp.name}
-              whileHover={{ x: 4 }}
               className="flex items-start gap-4 p-4 rounded-xl"
               style={{
                 backgroundColor: 'var(--surface-base)',
@@ -976,7 +964,7 @@ spec:
                   {comp.desc}
                 </div>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
 
@@ -1053,7 +1041,7 @@ spec:
       </section>
 
       {/* Section 5.6 — Connectivity */}
-      <section  className="mb-12">
+      <section className="mb-12">
         <div className="flex items-center gap-3 mb-4">
           <div
             className="w-10 h-10 rounded-lg flex items-center justify-center"
@@ -1102,9 +1090,8 @@ spec:
               ],
             },
           ].map((card) => (
-            <motion.div
+            <div
               key={card.title}
-              whileHover={{ y: -2 }}
               className="p-5 rounded-xl"
               style={{
                 backgroundColor: 'var(--surface-base)',
@@ -1123,13 +1110,13 @@ spec:
                   </li>
                 ))}
               </ul>
-            </motion.div>
+            </div>
           ))}
         </div>
       </section>
 
       {/* Section 5.7 — Admission Control */}
-      <section  className="mb-12">
+      <section className="mb-12">
         <div className="flex items-center gap-3 mb-4">
           <div
             className="w-10 h-10 rounded-lg flex items-center justify-center"
@@ -1227,8 +1214,7 @@ spec:
           OPA Gatekeeper vs. Kyverno
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-          <motion.div
-            whileHover={{ y: -2 }}
+          <div
             className="p-5 rounded-xl"
             style={{
               backgroundColor: 'var(--surface-base)',
@@ -1246,6 +1232,7 @@ spec:
                 'Very flexible, multi-cluster support',
                 'Large policy library available',
                 'Rego has a learning curve',
+
                 'Separate component to manage',
               ].map((item, i) => (
                 <li key={i} className="flex items-start gap-2 text-xs leading-relaxed">
@@ -1254,9 +1241,8 @@ spec:
                 </li>
               ))}
             </ul>
-          </motion.div>
-          <motion.div
-            whileHover={{ y: -2 }}
+          </div>
+          <div
             className="p-5 rounded-xl"
             style={{
               backgroundColor: 'var(--surface-base)',
@@ -1282,7 +1268,7 @@ spec:
                 </li>
               ))}
             </ul>
-          </motion.div>
+          </div>
         </div>
 
         <CalloutBox variant="exam">
@@ -1340,7 +1326,7 @@ spec:
       </section>
 
       {/* Quiz */}
-      <section  className="mb-12">
+      <section className="mb-12">
         <h2
           className="text-2xl font-normal mb-6"
           style={{
@@ -1355,7 +1341,6 @@ spec:
 
       {/* Chapter Footer */}
       <footer
-        
         className="flex items-center justify-between py-6"
         style={{ borderTop: '1px solid var(--border-subtle)' }}
       >

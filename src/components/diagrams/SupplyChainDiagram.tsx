@@ -1,7 +1,4 @@
-import { motion } from 'framer-motion'
 import { GitBranch, Hammer, Package, ShieldCheck, Server, AlertTriangle } from 'lucide-react'
-
-const easeOutExpo = [0.16, 1, 0.3, 1] as [number, number, number, number]
 
 interface SupplyChainDiagramProps {
   className?: string
@@ -60,11 +57,7 @@ export default function SupplyChainDiagram({ className }: SupplyChainDiagramProp
         {stages.map((stage, idx) => (
           <div key={stage.label} className="flex flex-col items-center w-full">
             {/* Stage Box */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true, amount: 0.5 }}
-              transition={{ duration: 0.5, ease: easeOutExpo, delay: idx * 0.15 }}
+            <div
               className="flex items-center gap-3 rounded-xl px-5 py-3 shadow-sm w-full max-w-sm"
               style={{
                 backgroundColor: 'var(--surface-elevated)',
@@ -89,28 +82,20 @@ export default function SupplyChainDiagram({ className }: SupplyChainDiagramProp
                   {stage.label === 'Runtime' && 'Production cluster'}
                 </span>
               </div>
-            </motion.div>
+            </div>
 
             {/* Arrow */}
             {idx < arrows.length && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                whileInView={{ opacity: 1, height: 'auto' }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.35, ease: easeOutExpo, delay: 0.25 + idx * 0.15 }}
+              <div
                 className="flex flex-col items-center py-2"
               >
                 <div className="relative flex items-center gap-2">
                   {arrows[idx].attackPoint && (
-                    <motion.div
-                      initial={{ opacity: 0, scale: 0 }}
-                      whileInView={{ opacity: 1, scale: 1 }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 0.3, ease: easeOutExpo, delay: 0.6 + idx * 0.2 }}
+                    <div
                       className="absolute -left-7 top-1/2 -translate-y-1/2 flex items-center justify-center"
                     >
                       <AlertTriangle size={14} style={{ color: 'var(--accent-coral)' }} />
-                    </motion.div>
+                    </div>
                   )}
                   <span
                     className="text-xs font-medium px-2 py-0.5 rounded"
@@ -136,17 +121,13 @@ export default function SupplyChainDiagram({ className }: SupplyChainDiagramProp
                     strokeLinejoin="round"
                   />
                 </svg>
-              </motion.div>
+              </div>
             )}
           </div>
         ))}
       </div>
 
-      <motion.div
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.5, delay: 1.2 }}
+      <div
         className="mt-4 text-center text-xs max-w-lg mx-auto"
         style={{ color: 'var(--text-tertiary)' }}
       >
@@ -154,7 +135,7 @@ export default function SupplyChainDiagram({ className }: SupplyChainDiagramProp
           🔺 Attack points
         </span>{' '}
         exist at every stage — provenance, SBOM, signing, and admission verification each close a gap.
-      </motion.div>
+      </div>
     </div>
   )
 }

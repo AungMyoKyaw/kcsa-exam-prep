@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import {
   Palette,
   BarChart3,
@@ -10,8 +9,6 @@ import {
   RotateCcw,
 } from 'lucide-react';
 import { domains } from '@/lib/domainData';
-
-const easeOutExpo = [0.16, 1, 0.3, 1] as [number, number, number, number];
 
 const settingsTabs = [
   { id: 'appearance', label: 'Appearance', icon: Palette },
@@ -179,12 +176,9 @@ function ProgressTab() {
     <div className="space-y-8">
       {/* Statistics Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {stats.map((stat, i) => (
-          <motion.div
+        {stats.map((stat) => (
+          <div
             key={stat.label}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.08, duration: 0.4, ease: easeOutExpo }}
             className="p-6 rounded-[20px] border"
             style={{ backgroundColor: 'var(--surface-base)', borderColor: 'var(--border-subtle)' }}
           >
@@ -203,7 +197,7 @@ function ProgressTab() {
             <p className="text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>
               {stat.context}
             </p>
-          </motion.div>
+          </div>
         ))}
       </div>
 
@@ -219,13 +213,8 @@ function ProgressTab() {
           Domain Progress
         </h3>
         <div className="space-y-4">
-          {domains.map((domain, i) => (
-            <motion.div
-              key={domain.id}
-              initial={{ opacity: 0, x: -10 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: i * 0.08 }}
-            >
+          {domains.map((domain) => (
+            <div key={domain.id}>
               <div className="flex items-center justify-between mb-1">
                 <div className="flex items-center gap-2">
                   <span className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>
@@ -243,15 +232,12 @@ function ProgressTab() {
                 </span>
               </div>
               <div className="h-2 rounded-full overflow-hidden" style={{ backgroundColor: 'var(--border-subtle)' }}>
-                <motion.div
+                <div
                   className="h-full rounded-full"
-                  style={{ background: 'var(--accent-gradient)' }}
-                  initial={{ width: 0 }}
-                  animate={{ width: `${35 + i * 5}%` }}
-                  transition={{ duration: 0.8, ease: easeOutExpo, delay: 0.1 + i * 0.08 }}
+                  style={{ background: 'var(--accent-gradient)', width: `${35 + (domain.id - 1) * 5}%` }}
                 />
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>
@@ -289,72 +275,63 @@ function ProgressTab() {
       </div>
 
       {/* Reset Confirmation Dialog */}
-      <AnimatePresence>
-        {showResetDialog && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4"
-            style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
-            onClick={(e) => {
-              if (e.target === e.currentTarget) {setShowResetDialog(false);}
-            }}
+      {showResetDialog && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {setShowResetDialog(false);}
+          }}
+        >
+          <div
+            className="w-full max-w-md p-6 rounded-[20px]"
+            style={{ backgroundColor: 'var(--surface-base)', border: '1px solid var(--border-subtle)' }}
           >
-            <motion.div
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-              transition={{ duration: 0.2, ease: easeOutExpo }}
-              className="w-full max-w-md p-6 rounded-[20px]"
-              style={{ backgroundColor: 'var(--surface-base)', border: '1px solid var(--border-subtle)' }}
-            >
-              <div className="flex items-center gap-3 mb-4">
-                <AlertTriangle size={24} style={{ color: 'var(--accent-coral)' }} />
-                <h3 className="text-lg font-bold" style={{ color: 'var(--text-primary)' }}>
-                  Are you sure?
-                </h3>
-              </div>
-              <p className="text-sm mb-4" style={{ color: 'var(--text-secondary)' }}>
-                All your progress will be permanently deleted. Type <strong style={{ color: 'var(--accent-coral)' }}>RESET</strong> to confirm.
-              </p>
-              <input
-                type="text"
-                value={resetConfirm}
-                onChange={(e) => setResetConfirm(e.target.value)}
-                placeholder="Type RESET to confirm"
-                className="w-full h-11 px-4 rounded-xl text-sm mb-4 outline-none"
+            <div className="flex items-center gap-3 mb-4">
+              <AlertTriangle size={24} style={{ color: 'var(--accent-coral)' }} />
+              <h3 className="text-lg font-bold" style={{ color: 'var(--text-primary)' }}>
+                Are you sure?
+              </h3>
+            </div>
+            <p className="text-sm mb-4" style={{ color: 'var(--text-secondary)' }}>
+              All your progress will be permanently deleted. Type <strong style={{ color: 'var(--accent-coral)' }}>RESET</strong> to confirm.
+            </p>
+            <input
+              type="text"
+              value={resetConfirm}
+              onChange={(e) => setResetConfirm(e.target.value)}
+              placeholder="Type RESET to confirm"
+              className="w-full h-11 px-4 rounded-xl text-sm mb-4 outline-none"
+              style={{
+                backgroundColor: 'var(--surface-elevated)',
+                border: '1px solid var(--border-medium)',
+                color: 'var(--text-primary)',
+                fontFamily: 'var(--font-mono)',
+              }}
+            />
+            <div className="flex gap-3">
+              <button
+                onClick={() => { setShowResetDialog(false); setResetConfirm(''); }}
+                className="flex-1 py-2.5 rounded-xl text-sm font-medium transition-colors duration-200"
+                style={{ color: 'var(--text-secondary)', backgroundColor: 'var(--surface-elevated)' }}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleReset}
+                disabled={resetConfirm !== 'RESET'}
+                className="flex-1 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 disabled:opacity-40"
                 style={{
-                  backgroundColor: 'var(--surface-elevated)',
-                  border: '1px solid var(--border-medium)',
-                  color: 'var(--text-primary)',
-                  fontFamily: 'var(--font-mono)',
+                  backgroundColor: 'var(--accent-coral)',
+                  color: '#fff',
                 }}
-              />
-              <div className="flex gap-3">
-                <button
-                  onClick={() => { setShowResetDialog(false); setResetConfirm(''); }}
-                  className="flex-1 py-2.5 rounded-xl text-sm font-medium transition-colors duration-200"
-                  style={{ color: 'var(--text-secondary)', backgroundColor: 'var(--surface-elevated)' }}
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleReset}
-                  disabled={resetConfirm !== 'RESET'}
-                  className="flex-1 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 disabled:opacity-40"
-                  style={{
-                    backgroundColor: 'var(--accent-coral)',
-                    color: '#fff',
-                  }}
-                >
-                  Reset Everything
-                </button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+              >
+                Reset Everything
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -396,13 +373,8 @@ function ShortcutsTab() {
 
   return (
     <div className="space-y-8">
-      {shortcutGroups.map((group, gi) => (
-        <motion.div
-          key={group.title}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: gi * 0.1, duration: 0.4, ease: easeOutExpo }}
-        >
+      {shortcutGroups.map((group) => (
+        <div key={group.title}>
           <h3
             className="text-lg font-bold mb-4"
             style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-body)' }}
@@ -414,11 +386,8 @@ function ShortcutsTab() {
             style={{ backgroundColor: 'var(--surface-base)', borderColor: 'var(--border-subtle)' }}
           >
             {group.shortcuts.map((s, i) => (
-              <motion.div
+              <div
                 key={s.action}
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: gi * 0.1 + i * 0.04 }}
                 className="flex items-center gap-4 px-5 py-3 transition-colors duration-150 hover:bg-[var(--surface-elevated)]"
                 style={{
                   borderBottom: i < group.shortcuts.length - 1 ? '1px solid var(--border-subtle)' : 'none',
@@ -448,10 +417,10 @@ function ShortcutsTab() {
                 <span className="text-sm" style={{ color: 'var(--text-primary)' }}>
                   {s.action}
                 </span>
-              </motion.div>
+              </div>
             ))}
           </div>
-        </motion.div>
+        </div>
       ))}
     </div>
   );
@@ -472,11 +441,7 @@ function AboutTab() {
   return (
     <div className="space-y-8">
       {/* Book Information */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, ease: easeOutExpo }}
-      >
+      <div>
         <h3
           className="text-xl font-bold mb-3"
           style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-body)' }}
@@ -494,13 +459,10 @@ function AboutTab() {
           </span>
           <span>Last Updated: January 2025</span>
         </div>
-      </motion.div>
+      </div>
 
       {/* Exam Information */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1, duration: 0.4, ease: easeOutExpo }}
+      <div
         className="pt-6"
         style={{ borderTop: '1px solid var(--border-subtle)' }}
       >
@@ -556,13 +518,10 @@ function AboutTab() {
             </a>
           </div>
         </div>
-      </motion.div>
+      </div>
 
       {/* Resources */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2, duration: 0.4, ease: easeOutExpo }}
+      <div
         className="pt-6"
         style={{ borderTop: '1px solid var(--border-subtle)' }}
       >
@@ -573,12 +532,9 @@ function AboutTab() {
           Additional Resources
         </h3>
         <div className="space-y-2">
-          {resources.map((res, i) => (
-            <motion.a
+          {resources.map((res) => (
+            <a
               key={res.name}
-              initial={{ opacity: 0, x: -10 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.2 + i * 0.04 }}
               href={res.url}
               target="_blank"
               rel="noopener noreferrer"
@@ -591,16 +547,13 @@ function AboutTab() {
             >
               <ExternalLink size={14} className="flex-shrink-0" />
               <span className="font-medium">{res.name}</span>
-            </motion.a>
+            </a>
           ))}
         </div>
-      </motion.div>
+      </div>
 
       {/* Disclaimer */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3, duration: 0.4 }}
+      <div
         className="pt-6"
         style={{ borderTop: '1px solid var(--border-subtle)' }}
       >
@@ -610,7 +563,7 @@ function AboutTab() {
           of The Linux Foundation. All content is based on publicly available exam objectives and 
           industry best practices.
         </p>
-      </motion.div>
+      </div>
     </div>
   );
 }
@@ -634,10 +587,7 @@ export default function Settings() {
     <div className="min-h-[calc(100dvh-60px)] px-4 py-8 md:px-8">
       <div className="max-w-[800px] mx-auto">
         {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: easeOutExpo }}
+        <div
           className="mb-8"
         >
           <h1
@@ -646,13 +596,10 @@ export default function Settings() {
           >
             Settings
           </h1>
-        </motion.div>
+        </div>
 
         {/* Tabs */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, ease: easeOutExpo, delay: 0.1 }}
+        <div
           className="mb-8 overflow-x-auto"
         >
           <div className="flex gap-2 pb-2">
@@ -672,20 +619,14 @@ export default function Settings() {
               </button>
             ))}
           </div>
-        </motion.div>
+        </div>
 
         {/* Tab Content */}
-        <AnimatePresence mode="wait">
-          <motion.div
+          <div
             key={activeTab}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
           >
             {renderTabContent()}
-          </motion.div>
-        </AnimatePresence>
+          </div>
       </div>
     </div>
   );

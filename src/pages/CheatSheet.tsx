@@ -1,5 +1,4 @@
 import { useState, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import {
   EthernetPort,
   Shield,
@@ -33,8 +32,6 @@ import {
   examTipsData,
   timeManagementTips,
 } from '@/data/cheatSheetData';
-
-const easeOutExpo = [0.16, 1, 0.3, 1] as [number, number, number, number];
 
 const tabs = [
   { id: 'ports', label: 'Ports', icon: EthernetPort },
@@ -108,12 +105,9 @@ function PortsTab({ copiedMap, handleCopy }: { copiedMap: Record<string, boolean
             </tr>
           </thead>
           <tbody>
-            {portsData.map((row, i) => (
-              <motion.tr
+            {portsData.map((row) => (
+              <tr
                 key={row.port + row.component}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.04 }}
                 style={{
                   borderBottom: '1px solid var(--border-subtle)',
                   backgroundColor: row.danger === true ? 'rgba(232,122,93,0.06)' : 'transparent',
@@ -138,7 +132,7 @@ function PortsTab({ copiedMap, handleCopy }: { copiedMap: Record<string, boolean
                 </td>
                 <td className="py-3 px-4 font-mono" style={{ color: 'var(--text-secondary)' }}>{row.protocol}</td>
                 <td className="py-3 px-4" style={{ color: 'var(--text-secondary)' }}>{row.notes}</td>
-              </motion.tr>
+              </tr>
             ))}
           </tbody>
         </table>
@@ -165,12 +159,9 @@ function PSSTab({ copiedMap, handleCopy }: { copiedMap: Record<string, boolean>;
             </tr>
           </thead>
           <tbody>
-            {pssComparisonData.map((row, i) => (
-              <motion.tr
+            {pssComparisonData.map((row) => (
+              <tr
                 key={row.restriction}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.04 }}
                 style={{ borderBottom: '1px solid var(--border-subtle)' }}
               >
                 <td className="py-3 px-4 font-medium" style={{ color: 'var(--text-primary)' }}>{row.restriction}</td>
@@ -186,7 +177,7 @@ function PSSTab({ copiedMap, handleCopy }: { copiedMap: Record<string, boolean>;
                 >
                   {row.restricted}
                 </td>
-              </motion.tr>
+              </tr>
             ))}
           </tbody>
         </table>
@@ -247,12 +238,9 @@ function RBACTab() {
             </tr>
           </thead>
           <tbody>
-            {rbacVerbsData.map((v, i) => (
-              <motion.tr
+            {rbacVerbsData.map((v) => (
+              <tr
                 key={v.verb}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.04 }}
                 style={{ borderBottom: '1px solid var(--border-subtle)' }}
               >
                 <td className="py-3 px-4">
@@ -275,7 +263,7 @@ function RBACTab() {
                     {v.dangerLevel}
                   </span>
                 </td>
-              </motion.tr>
+              </tr>
             ))}
           </tbody>
         </table>
@@ -310,24 +298,21 @@ function EncryptionTab() {
         Encryption provider chain for etcd encryption at rest, from least to most secure.
       </p>
       <div className="flex flex-wrap items-center gap-2">
-        {encryptionChain.map((item, i) => (
-          <motion.div
+        {encryptionChain.map((item) => (
+          <div
             key={item.provider}
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.06 }}
             className="flex items-center gap-2"
           >
             <div
               className="px-4 py-3 rounded-xl border text-center"
               style={{
-                backgroundColor: i === encryptionChain.length - 1 ? 'rgba(4,80,54,0.08)' : 'var(--surface-elevated)',
-                borderColor: i === encryptionChain.length - 1 ? 'var(--accent-primary)' : 'var(--border-subtle)',
+                backgroundColor: item.provider === encryptionChain[encryptionChain.length - 1].provider ? 'rgba(4,80,54,0.08)' : 'var(--surface-elevated)',
+                borderColor: item.provider === encryptionChain[encryptionChain.length - 1].provider ? 'var(--accent-primary)' : 'var(--border-subtle)',
               }}
             >
               <div
                 className="font-mono text-sm font-semibold"
-                style={{ color: i === encryptionChain.length - 1 ? 'var(--accent-primary)' : 'var(--text-primary)' }}
+                style={{ color: item.provider === encryptionChain[encryptionChain.length - 1].provider ? 'var(--accent-primary)' : 'var(--text-primary)' }}
               >
                 {item.provider}
               </div>
@@ -335,10 +320,10 @@ function EncryptionTab() {
                 {item.description}
               </div>
             </div>
-            {i < encryptionChain.length - 1 && (
+            {encryptionChain.indexOf(item) < encryptionChain.length - 1 && (
               <span className="text-lg" style={{ color: 'var(--text-tertiary)' }}>&rarr;</span>
             )}
-          </motion.div>
+          </div>
         ))}
       </div>
 
@@ -367,16 +352,13 @@ function NetworkTab({ copiedMap, handleCopy }: { copiedMap: Record<string, boole
       </p>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         {networkPolicyFacts.map((fact, i) => (
-          <motion.div
+          <div
             key={i}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.05 }}
             className="p-4 rounded-xl border"
             style={{ backgroundColor: 'var(--surface-elevated)', borderColor: 'var(--border-subtle)' }}
           >
             <p className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>{fact}</p>
-          </motion.div>
+          </div>
         ))}
       </div>
 
@@ -419,12 +401,9 @@ function CommandsTab({ copiedMap, handleCopy }: { copiedMap: Record<string, bool
             </tr>
           </thead>
           <tbody>
-            {kubectlCommands.map((cmd, i) => (
-              <motion.tr
+            {kubectlCommands.map((cmd) => (
+              <tr
                 key={cmd.command}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.04 }}
                 style={{ borderBottom: '1px solid var(--border-subtle)' }}
               >
                 <td className="py-3 px-4">
@@ -433,7 +412,7 @@ function CommandsTab({ copiedMap, handleCopy }: { copiedMap: Record<string, bool
                   </code>
                 </td>
                 <td className="py-3 px-4" style={{ color: 'var(--text-secondary)' }}>{cmd.purpose}</td>
-              </motion.tr>
+              </tr>
             ))}
           </tbody>
         </table>
@@ -474,11 +453,8 @@ function ComponentsTab() {
         </h3>
         <div className="space-y-2">
           {authMethods.map((a, i) => (
-            <motion.div
+            <div
               key={a.method}
-              initial={{ opacity: 0, x: -10 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: i * 0.05 }}
               className="flex items-center gap-3 p-3 rounded-xl border"
               style={{
                 backgroundColor: a.secure ? 'rgba(10,123,62,0.04)' : 'rgba(232,122,93,0.04)',
@@ -498,7 +474,7 @@ function ComponentsTab() {
                   </span>
                 )}
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>
@@ -509,12 +485,9 @@ function ComponentsTab() {
           Authorization Modes
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          {authorizationModes.map((m, i) => (
-            <motion.div
+          {authorizationModes.map((m) => (
+            <div
               key={m.mode}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.05 }}
               className="p-4 rounded-xl border"
               style={{
                 backgroundColor: m.mode === 'RBAC' ? 'rgba(4,80,54,0.06)' : 'var(--surface-elevated)',
@@ -538,7 +511,7 @@ function ComponentsTab() {
                 )}
               </div>
               <p className="text-sm mt-2" style={{ color: 'var(--text-secondary)' }}>{m.use}</p>
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>
@@ -549,12 +522,9 @@ function ComponentsTab() {
           Runtime Security Features
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          {runtimeSecurity.map((r, i) => (
-            <motion.div
+          {runtimeSecurity.map((r) => (
+            <div
               key={r.feature}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.05 }}
               className="p-4 rounded-xl border"
               style={{ backgroundColor: 'var(--surface-elevated)', borderColor: 'var(--border-subtle)' }}
             >
@@ -565,7 +535,7 @@ function ComponentsTab() {
                 {r.feature}
               </span>
               <p className="text-sm mt-2" style={{ color: 'var(--text-secondary)' }}>{r.description}</p>
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>
@@ -581,12 +551,9 @@ function TipsTab() {
           Top 10 High-Yield Facts
         </h3>
         <div className="space-y-3">
-          {examTipsData.map((tip, i) => (
-            <motion.div
+          {examTipsData.map((tip) => (
+            <div
               key={tip.number}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.05 }}
               className="flex gap-4 p-4 rounded-xl border"
               style={{ backgroundColor: 'var(--surface-elevated)', borderColor: 'var(--border-subtle)' }}
             >
@@ -600,7 +567,7 @@ function TipsTab() {
                 <p className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>{tip.title}</p>
                 <p className="text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>{tip.detail}</p>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>
@@ -657,10 +624,7 @@ export default function CheatSheet() {
     <div className="min-h-[calc(100dvh-60px)] px-4 py-8 md:px-8">
       <div className="max-w-[1000px] mx-auto">
         {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: easeOutExpo }}
+        <div
           className="mb-8"
         >
           <div className="flex flex-wrap items-start justify-between gap-4">
@@ -687,13 +651,10 @@ export default function CheatSheet() {
               <Printer size={16} /> Print Friendly
             </button>
           </div>
-        </motion.div>
+        </div>
 
         {/* Category Tabs */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, ease: easeOutExpo, delay: 0.1 }}
+        <div
           className="mb-8 overflow-x-auto print:hidden"
         >
           <div className="flex gap-2 pb-2">
@@ -713,16 +674,11 @@ export default function CheatSheet() {
               </button>
             ))}
           </div>
-        </motion.div>
+        </div>
 
         {/* Tab Content */}
-        <AnimatePresence mode="wait">
-          <motion.div
+          <div
             key={activeTab}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
             className="p-6 md:p-8 rounded-[20px] border"
             style={{
               backgroundColor: 'var(--surface-base)',
@@ -730,8 +686,7 @@ export default function CheatSheet() {
             }}
           >
             {renderTabContent()}
-          </motion.div>
-        </AnimatePresence>
+          </div>
       </div>
     </div>
   );

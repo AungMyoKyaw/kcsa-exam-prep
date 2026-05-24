@@ -1,5 +1,3 @@
-import { motion } from 'framer-motion';
-
 interface TableColumn {
   key: string;
   header: string;
@@ -12,8 +10,6 @@ interface ComparisonTableProps {
   highlightRow?: (row: Record<string, string>) => string | null;
 }
 
-const easeOutExpo = [0.16, 1, 0.3, 1] as [number, number, number, number];
-
 export default function ComparisonTable({ columns, rows, highlightRow }: ComparisonTableProps) {
   const getHighlightColor = (row: Record<string, string>) => {
     if (!highlightRow) {return null;}
@@ -21,11 +17,7 @@ export default function ComparisonTable({ columns, rows, highlightRow }: Compari
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 15 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.2 }}
-      transition={{ duration: 0.6, ease: easeOutExpo }}
+    <div
       className="my-6 overflow-x-auto rounded-xl"
       style={{
         border: '1px solid var(--border-subtle)',
@@ -58,12 +50,8 @@ export default function ComparisonTable({ columns, rows, highlightRow }: Compari
           {rows.map((row, idx) => {
             const highlightColor = getHighlightColor(row);
             return (
-              <motion.tr
+              <tr
                 key={idx}
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.3, delay: idx * 0.05, ease: easeOutExpo }}
                 style={{
                   borderBottom:
                     idx < rows.length - 1
@@ -98,11 +86,11 @@ export default function ComparisonTable({ columns, rows, highlightRow }: Compari
                     {row[col.key]}
                   </td>
                 ))}
-              </motion.tr>
+              </tr>
             );
           })}
         </tbody>
       </table>
-    </motion.div>
+    </div>
   );
 }

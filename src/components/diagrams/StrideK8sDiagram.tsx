@@ -1,7 +1,3 @@
-import { motion } from 'framer-motion'
-
-const easeOutExpo = [0.16, 1, 0.3, 1] as [number, number, number, number]
-
 interface StrideK8sDiagramProps {
   className?: string
 }
@@ -89,11 +85,7 @@ export default function StrideK8sDiagram({ className }: StrideK8sDiagramProps) {
 
   return (
     <div className={`my-8 flex flex-col items-center ${className ?? ''}`}>
-      <motion.div
-        initial={{ opacity: 0, rotate: -10 }}
-        whileInView={{ opacity: 1, rotate: 0 }}
-        viewport={{ once: true, amount: 0.3 }}
-        transition={{ duration: 0.8, ease: easeOutExpo }}
+      <div
         className="w-full max-w-[500px]"
       >
         <svg viewBox="0 0 400 400" className="w-full">
@@ -110,7 +102,7 @@ export default function StrideK8sDiagram({ className }: StrideK8sDiagramProps) {
           />
 
           {/* Segments */}
-          {segments.map((seg, idx) => {
+          {segments.map((seg) => {
             const startAngle = seg.angle - 28
             const endAngle = seg.angle + 28
             const midAngle = seg.angle
@@ -118,13 +110,7 @@ export default function StrideK8sDiagram({ className }: StrideK8sDiagramProps) {
             const midInner = polar(midAngle, innerR + 25)
 
             return (
-              <motion.g
-                key={seg.letter}
-                initial={{ opacity: 0, scale: 0.8 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, ease: easeOutExpo, delay: idx * 0.1 }}
-              >
+              <g key={seg.letter}>
                 <path
                   d={segmentPath(startAngle, endAngle)}
                   fill={seg.color}
@@ -168,17 +154,12 @@ export default function StrideK8sDiagram({ className }: StrideK8sDiagramProps) {
                 >
                   {seg.k8sExample}
                 </text>
-              </motion.g>
+              </g>
             )
           })}
 
           {/* Center circle */}
-          <motion.g
-            initial={{ scale: 0, opacity: 0 }}
-            whileInView={{ scale: 1, opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, ease: easeOutExpo, delay: 0.6 }}
-          >
+          <g>
             <circle
               cx={cx}
               cy={cy}
@@ -208,7 +189,7 @@ export default function StrideK8sDiagram({ className }: StrideK8sDiagramProps) {
             >
               → Kubernetes
             </text>
-          </motion.g>
+          </g>
 
           {/* Connection arrows between segments */}
           {segments.map((seg, idx) => {
@@ -216,33 +197,26 @@ export default function StrideK8sDiagram({ className }: StrideK8sDiagramProps) {
             const p1 = polar(seg.angle + 28, (outerR + innerR) / 2)
             const p2 = polar(next.angle - 28, (outerR + innerR) / 2)
             return (
-              <motion.path
+              <path
                 key={`arrow-${seg.letter}`}
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 0.3 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: 0.8 + idx * 0.05 }}
                 d={`M ${p1.x},${p1.y} A ${(outerR + innerR) / 2},${(outerR + innerR) / 2} 0 0,1 ${p2.x},${p2.y}`}
                 fill="none"
                 stroke="var(--text-secondary)"
                 strokeWidth="1"
                 strokeDasharray="3,3"
+                opacity="0.3"
               />
             )
           })}
         </svg>
-      </motion.div>
+      </div>
 
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.5, delay: 1.0 }}
+      <div
         className="mt-2 text-center text-xs"
         style={{ color: 'var(--text-tertiary)' }}
       >
         STRIDE threat model mapped to Kubernetes — circular flow back to Spoofing
-      </motion.div>
+      </div>
     </div>
   )
 }

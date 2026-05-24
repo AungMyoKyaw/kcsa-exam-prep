@@ -221,7 +221,6 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
             className="fixed left-0 top-[56px] bottom-0 z-40 w-[280px] lg:hidden overflow-hidden"
             style={{
               borderRight: '1px solid var(--border-subtle)',
-              animation: 'sidebarSlideIn 0.2s ease',
             }}
           >
             {sidebarContent}

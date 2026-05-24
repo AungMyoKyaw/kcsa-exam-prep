@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import {
   Clock,
   FileQuestion,
@@ -19,8 +18,6 @@ import {
 import { getShuffledQuestions } from '@/data/examQuestions';
 import type { ExamQuestion } from '@/data/examQuestions';
 import { domains } from '@/lib/domainData';
-
-const easeOutExpo = [0.16, 1, 0.3, 1] as [number, number, number, number];
 
 const TOTAL_TIME = 90 * 60; // 90 minutes in seconds
 const WARNING_TIME = 15 * 60; // 15 minutes in seconds
@@ -53,10 +50,7 @@ function StartScreen({ onStart }: { onStart: () => void }) {
 
   return (
     <div className="min-h-[calc(100dvh-60px)] flex flex-col items-center justify-center px-4 py-12">
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: easeOutExpo }}
+      <div
         className="text-center mb-10"
       >
         <h1
@@ -68,25 +62,19 @@ function StartScreen({ onStart }: { onStart: () => void }) {
         <p className="text-lg" style={{ color: 'var(--text-secondary)' }}>
           60 Questions &bull; 90 Minutes &bull; Simulated Environment
         </p>
-      </motion.div>
+      </div>
 
       {/* Info Cards */}
-      <motion.div
-        initial={{ opacity: 0, y: 40 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, ease: easeOutExpo, delay: 0.12 }}
+      <div
         className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-[720px] w-full mb-10"
       >
         {[
           { icon: Clock, title: '90 Minutes', desc: 'Same time limit as the real exam. Timer starts when you begin.' },
           { icon: FileQuestion, title: '60 Questions', desc: 'Covers all 6 exam domains weighted by official exam percentages.' },
           { icon: BarChart3, title: 'Detailed Results', desc: 'Get domain-by-domain breakdown with correct answers and explanations.' },
-        ].map((card, i) => (
-          <motion.div
+        ].map((card) => (
+          <div
             key={card.title}
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, ease: easeOutExpo, delay: 0.12 + i * 0.12 }}
             className="p-6 rounded-[20px] border"
             style={{
               backgroundColor: 'var(--surface-base)',
@@ -100,29 +88,23 @@ function StartScreen({ onStart }: { onStart: () => void }) {
             <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
               {card.desc}
             </p>
-          </motion.div>
+          </div>
         ))}
-      </motion.div>
+      </div>
 
       {/* Domain Distribution */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, ease: easeOutExpo, delay: 0.4 }}
+      <div
         className="w-full max-w-[600px] mb-10"
       >
         <h3 className="text-sm font-semibold uppercase tracking-[0.06em] mb-4" style={{ color: 'var(--text-tertiary)' }}>
           Domain Distribution
         </h3>
         <div className="space-y-3">
-          {domainDistribution.map((d, i) => {
+          {domainDistribution.map((d) => {
             const domainInfo = domains.find((dm) => dm.id === d.domain);
             return (
-              <motion.div
+              <div
                 key={d.domain}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.5, ease: easeOutExpo, delay: 0.5 + i * 0.1 }}
               >
                 <div className="flex justify-between items-center mb-1">
                   <span className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>
@@ -138,25 +120,19 @@ function StartScreen({ onStart }: { onStart: () => void }) {
                   </div>
                 </div>
                 <div className="h-2 rounded-full overflow-hidden" style={{ backgroundColor: 'var(--border-subtle)' }}>
-                  <motion.div
+                  <div
                     className="h-full rounded-full"
-                    style={{ background: 'var(--accent-gradient)' }}
-                    initial={{ width: 0 }}
-                    animate={{ width: `${domainInfo?.weight ?? 0}%` }}
-                    transition={{ duration: 0.8, ease: easeOutExpo, delay: 0.6 + i * 0.1 }}
+                    style={{ background: 'var(--accent-gradient)', width: `${domainInfo?.weight ?? 0}%` }}
                   />
                 </div>
-              </motion.div>
+              </div>
             );
           })}
         </div>
-      </motion.div>
+      </div>
 
       {/* Start Button */}
-      <motion.button
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, ease: easeOutExpo, delay: 0.4 }}
+      <button
         onClick={onStart}
         className="px-10 py-4 rounded-xl text-xl font-semibold transition-all duration-200 hover:scale-[1.03] active:scale-[0.98]"
         style={{
@@ -166,18 +142,15 @@ function StartScreen({ onStart }: { onStart: () => void }) {
         }}
       >
         Start Practice Exam
-      </motion.button>
+      </button>
 
-      <motion.p
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.4, delay: 0.5 }}
+      <p
         className="mt-6 text-sm text-center max-w-md"
         style={{ color: 'var(--text-tertiary)' }}
       >
         This practice exam is designed to simulate the KCSA certification experience.
         Questions are based on official exam objectives and industry best practices.
-      </motion.p>
+      </p>
     </div>
   );
 }
@@ -289,10 +262,7 @@ function ExamInProgress({
   return (
     <div className="min-h-[calc(100dvh-60px)] flex flex-col">
       {/* Top Bar */}
-      <motion.div
-        initial={{ y: -52, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.3, ease: easeOutExpo }}
+      <div
         className="sticky top-[60px] z-10 h-[52px] flex items-center justify-between px-4 md:px-8 border-b"
         style={{
           backgroundColor: 'var(--surface-elevated)',
@@ -332,121 +302,155 @@ function ExamInProgress({
             <span className="hidden sm:inline">Review</span>
           </button>
         </div>
-      </motion.div>
+      </div>
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col lg:flex-row">
         {/* Question Area */}
         <div className="flex-1 p-4 md:p-8">
-          <AnimatePresence mode="wait">
-            {showReview ? (
-              <ReviewPanel
-                key="review"
-                questions={questions}
-                answers={answers}
-                flagged={flagged}
-                onGoTo={goToQuestion}
-                onFinish={handleFinish}
-                onClose={() => setShowReview(false)}
-              />
-            ) : (
-              <motion.div
-                key={question.id}
-                initial={{ opacity: 0, x: 30 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -30 }}
-                transition={{ duration: 0.3 }}
-                className="max-w-[720px] mx-auto"
+          {showReview ? (
+            <ReviewPanel
+              key="review"
+              questions={questions}
+              answers={answers}
+              flagged={flagged}
+              onGoTo={goToQuestion}
+              onFinish={handleFinish}
+              onClose={() => setShowReview(false)}
+            />
+          ) : (
+            <div
+              className="max-w-[720px] mx-auto"
+            >
+              {/* Question Card */}
+              <div
+                className="rounded-[28px] border p-6 md:p-8"
+                style={{
+                  backgroundColor: 'var(--surface-base)',
+                  borderColor: 'var(--border-subtle)',
+                  boxShadow: '0 4px 24px rgba(0,0,0,0.06)',
+                }}
               >
-                {/* Question Card */}
-                <div
-                  className="rounded-[28px] border p-6 md:p-8"
-                  style={{
-                    backgroundColor: 'var(--surface-base)',
-                    borderColor: 'var(--border-subtle)',
-                    boxShadow: '0 4px 24px rgba(0,0,0,0.06)',
-                  }}
-                >
-                  {/* Badges */}
-                  <div className="flex items-center gap-3 mb-4 flex-wrap">
-                    <span
-                      className="text-xs font-semibold px-3 py-1 rounded-full"
-                      style={{
-                        backgroundColor: 'rgba(4,80,54,0.1)',
-                        color: 'var(--accent-primary)',
-                      }}
-                    >
-                      Q{question.id}
-                    </span>
-                    <span
-                      className="text-xs font-medium px-3 py-1 rounded-full"
-                      style={{
-                        backgroundColor: 'var(--accent-lavender-soft)',
-                        color: 'var(--accent-lavender)',
-                      }}
-                    >
-                      Domain {question.domain}: {question.domainName}
-                    </span>
-                    <span
-                      className="text-xs font-medium px-2 py-0.5 rounded"
-                      style={(() => {
-                        const backgroundColor = (() => {
-                          if (question.difficulty === 'Easy') { return 'rgba(10,123,62,0.1)' }
-                          if (question.difficulty === 'Medium') { return 'rgba(242,196,77,0.15)' }
-                          return 'rgba(232,122,93,0.1)'
-                        })()
-                        const color = (() => {
-                          if (question.difficulty === 'Easy') { return 'var(--success)' }
-                          if (question.difficulty === 'Medium') { return 'var(--warning)' }
-                          return 'var(--danger)'
-                        })()
-                        return { backgroundColor, color }
-                      })()}
-                    >
-                      {question.difficulty}
-                    </span>
-                  </div>
-
-                  {/* Question Text */}
-                  <h2
-                    className="text-xl font-semibold mb-4 leading-relaxed"
-                    style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-body)' }}
+                {/* Badges */}
+                <div className="flex items-center gap-3 mb-4 flex-wrap">
+                  <span
+                    className="text-xs font-semibold px-3 py-1 rounded-full"
+                    style={{
+                      backgroundColor: 'rgba(4,80,54,0.1)',
+                      color: 'var(--accent-primary)',
+                    }}
                   >
-                    {question.question}
-                  </h2>
+                    Q{question.id}
+                  </span>
+                  <span
+                    className="text-xs font-medium px-3 py-1 rounded-full"
+                    style={{
+                      backgroundColor: 'var(--accent-lavender-soft)',
+                      color: 'var(--accent-lavender)',
+                    }}
+                  >
+                    Domain {question.domain}: {question.domainName}
+                  </span>
+                  <span
+                    className="text-xs font-medium px-2 py-0.5 rounded"
+                    style={(() => {
+                      const backgroundColor = (() => {
+                        if (question.difficulty === 'Easy') { return 'rgba(10,123,62,0.1)' }
+                        if (question.difficulty === 'Medium') { return 'rgba(242,196,77,0.15)' }
+                        return 'rgba(232,122,93,0.1)'
+                      })()
+                      const color = (() => {
+                        if (question.difficulty === 'Easy') { return 'var(--success)' }
+                        if (question.difficulty === 'Medium') { return 'var(--warning)' }
+                        return 'var(--danger)'
+                      })()
+                      return { backgroundColor, color }
+                    })()}
+                  >
+                    {question.difficulty}
+                  </span>
+                </div>
 
-                  {/* Code Snippet */}
-                  {question.codeSnippet != null && (
-                    <pre
-                      className="p-4 rounded-xl mb-6 overflow-x-auto"
-                      style={{
-                        backgroundColor: 'var(--surface-code)',
-                        fontFamily: 'var(--font-mono)',
-                        fontSize: '0.875rem',
-                        lineHeight: 1.6,
-                        color: 'var(--text-primary)',
-                      }}
-                    >
-                      <code>{question.codeSnippet}</code>
-                    </pre>
-                  )}
+                {/* Question Text */}
+                <h2
+                  className="text-xl font-semibold mb-4 leading-relaxed"
+                  style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-body)' }}
+                >
+                  {question.question}
+                </h2>
 
-                  {/* Options */}
-                  <div className="space-y-3 mb-6">
-                    {question.options.map((option, i) => {
-                      const letter = String.fromCharCode(65 + i);
-                      const isSelected = answers[currentIndex] === i;
-                      const isSubmitted = submitted[currentIndex];
-                      const isCorrect = question.correctAnswer === i;
-                      const showCorrect = isSubmitted && isCorrect;
-                      const showIncorrect = isSubmitted && isSelected && !isCorrect;
+                {/* Code Snippet */}
+                {question.codeSnippet != null && (
+                  <pre
+                    className="p-4 rounded-xl mb-6 overflow-x-auto"
+                    style={{
+                      backgroundColor: 'var(--surface-code)',
+                      fontFamily: 'var(--font-mono)',
+                      fontSize: '0.875rem',
+                      lineHeight: 1.6,
+                      color: 'var(--text-primary)',
+                    }}
+                  >
+                    <code>{question.codeSnippet}</code>
+                  </pre>
+                )}
 
-                      return (
-                        <button
-                          key={i}
-                          onClick={() => handleSelect(i)}
-                          disabled={isSubmitted}
-                          className="w-full flex items-start gap-3 p-4 rounded-xl border text-left transition-all duration-200"
+                {/* Options */}
+                <div className="space-y-3 mb-6">
+                  {question.options.map((option, i) => {
+                    const letter = String.fromCharCode(65 + i);
+                    const isSelected = answers[currentIndex] === i;
+                    const isSubmitted = submitted[currentIndex];
+                    const isCorrect = question.correctAnswer === i;
+                    const showCorrect = isSubmitted && isCorrect;
+                    const showIncorrect = isSubmitted && isSelected && !isCorrect;
+
+                    return (
+                      <button
+                        key={i}
+                        onClick={() => handleSelect(i)}
+                        disabled={isSubmitted}
+                        className="w-full flex items-start gap-3 p-4 rounded-xl border text-left transition-all duration-200"
+                        style={(() => {
+                          const borderColor = (() => {
+                            if (showCorrect) { return 'var(--accent-sage)' }
+                            if (showIncorrect) { return 'var(--accent-coral)' }
+                            if (isSelected) { return 'var(--accent-primary)' }
+                            return 'var(--border-medium)'
+                          })()
+                          const backgroundColor = (() => {
+                            if (showCorrect) { return 'rgba(163,196,168,0.1)' }
+                            if (showIncorrect) { return 'rgba(232,122,93,0.1)' }
+                            if (isSelected) { return 'rgba(4,80,54,0.08)' }
+                            return 'var(--surface-base)'
+                          })()
+                          return {
+                            borderColor,
+                            backgroundColor,
+                            opacity: isSubmitted && !isSelected && !isCorrect ? 0.6 : 1,
+                            cursor: isSubmitted ? 'default' : 'pointer',
+                          }
+                        })()}
+                        onMouseEnter={(e) => {
+                          if (!isSubmitted) {
+                            (e.currentTarget as HTMLElement).style.borderColor = 'var(--accent-primary)';
+                            (e.currentTarget as HTMLElement).style.backgroundColor = 'rgba(4,80,54,0.05)';
+                          }
+                        }}
+                        onMouseLeave={(e) => {
+                          if (!isSubmitted) {
+                            (e.currentTarget as HTMLElement).style.borderColor = isSelected
+                              ? 'var(--accent-primary)'
+                              : 'var(--border-medium)';
+                            (e.currentTarget as HTMLElement).style.backgroundColor = isSelected
+                              ? 'rgba(4,80,54,0.08)'
+                              : 'var(--surface-base)';
+                          }
+                        }}
+                      >
+                        {/* Radio circle */}
+                        <div
+                          className="w-5 h-5 rounded-full border-2 flex-shrink-0 mt-0.5 flex items-center justify-center"
                           style={(() => {
                             const borderColor = (() => {
                               if (showCorrect) { return 'var(--accent-sage)' }
@@ -455,170 +459,123 @@ function ExamInProgress({
                               return 'var(--border-medium)'
                             })()
                             const backgroundColor = (() => {
-                              if (showCorrect) { return 'rgba(163,196,168,0.1)' }
-                              if (showIncorrect) { return 'rgba(232,122,93,0.1)' }
-                              if (isSelected) { return 'rgba(4,80,54,0.08)' }
-                              return 'var(--surface-base)'
+                              if (!isSelected && !showCorrect && !showIncorrect) { return 'transparent' }
+                              if (showCorrect) { return 'var(--accent-sage)' }
+                              if (showIncorrect) { return 'var(--accent-coral)' }
+                              return 'var(--accent-primary)'
                             })()
-                            return {
-                              borderColor,
-                              backgroundColor,
-                              opacity: isSubmitted && !isSelected && !isCorrect ? 0.6 : 1,
-                              cursor: isSubmitted ? 'default' : 'pointer',
-                            }
+                            return { borderColor, backgroundColor }
                           })()}
-                          onMouseEnter={(e) => {
-                            if (!isSubmitted) {
-                              (e.currentTarget as HTMLElement).style.borderColor = 'var(--accent-primary)';
-                              (e.currentTarget as HTMLElement).style.backgroundColor = 'rgba(4,80,54,0.05)';
-                            }
-                          }}
-                          onMouseLeave={(e) => {
-                            if (!isSubmitted) {
-                              (e.currentTarget as HTMLElement).style.borderColor = isSelected
-                                ? 'var(--accent-primary)'
-                                : 'var(--border-medium)';
-                              (e.currentTarget as HTMLElement).style.backgroundColor = isSelected
-                                ? 'rgba(4,80,54,0.08)'
-                                : 'var(--surface-base)';
-                            }
-                          }}
                         >
-                          {/* Radio circle */}
-                          <div
-                            className="w-5 h-5 rounded-full border-2 flex-shrink-0 mt-0.5 flex items-center justify-center"
-                            style={(() => {
-                              const borderColor = (() => {
-                                if (showCorrect) { return 'var(--accent-sage)' }
-                                if (showIncorrect) { return 'var(--accent-coral)' }
-                                if (isSelected) { return 'var(--accent-primary)' }
-                                return 'var(--border-medium)'
-                              })()
-                              const backgroundColor = (() => {
-                                if (!isSelected && !showCorrect && !showIncorrect) { return 'transparent' }
-                                if (showCorrect) { return 'var(--accent-sage)' }
-                                if (showIncorrect) { return 'var(--accent-coral)' }
-                                return 'var(--accent-primary)'
-                              })()
-                              return { borderColor, backgroundColor }
-                            })()}
+                          {(isSelected || showCorrect || showIncorrect) && (
+                            <div className="w-2 h-2 rounded-full bg-white" />
+                          )}
+                        </div>
+                        <div className="flex items-start gap-2 flex-1">
+                          <span
+                            className="font-mono text-sm font-medium flex-shrink-0"
+                            style={{ color: 'var(--text-secondary)' }}
                           >
-                            {(isSelected || showCorrect || showIncorrect) && (
-                              <div className="w-2 h-2 rounded-full bg-white" />
-                            )}
-                          </div>
-                          <div className="flex items-start gap-2 flex-1">
-                            <span
-                              className="font-mono text-sm font-medium flex-shrink-0"
-                              style={{ color: 'var(--text-secondary)' }}
-                            >
-                              {letter}.
-                            </span>
-                            <span className="text-sm md:text-base" style={{ color: 'var(--text-primary)' }}>
-                              {option}
-                            </span>
-                          </div>
-                          {showCorrect && <CheckCircle2 size={18} style={{ color: 'var(--accent-sage)' }} className="flex-shrink-0 mt-0.5" />}
-                          {showIncorrect && <XCircle size={18} style={{ color: 'var(--accent-coral)' }} className="flex-shrink-0 mt-0.5" />}
-                        </button>
-                      );
-                    })}
+                            {letter}.
+                          </span>
+                          <span className="text-sm md:text-base" style={{ color: 'var(--text-primary)' }}>
+                            {option}
+                          </span>
+                        </div>
+                        {showCorrect && <CheckCircle2 size={18} style={{ color: 'var(--accent-sage)' }} className="flex-shrink-0 mt-0.5" />}
+                        {showIncorrect && <XCircle size={18} style={{ color: 'var(--accent-coral)' }} className="flex-shrink-0 mt-0.5" />}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Explanation */}
+                {submitted[currentIndex] && (
+                  <div
+                    className="p-4 rounded-xl border-l-4 mb-6"
+                    style={{
+                      backgroundColor: 'rgba(4,80,54,0.05)',
+                      borderLeftColor: 'var(--accent-sage)',
+                    }}
+                  >
+                    <h4
+                      className="text-sm font-semibold mb-2"
+                      style={{ color: 'var(--accent-sage)' }}
+                    >
+                      Explanation
+                    </h4>
+                    <p className="text-sm leading-relaxed" style={{ color: 'var(--text-primary)' }}>
+                      {question.explanation}
+                    </p>
                   </div>
+                )}
 
-                  {/* Explanation */}
-                  {submitted[currentIndex] && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
-                      transition={{ duration: 0.35 }}
-                      className="p-4 rounded-xl border-l-4 mb-6"
-                      style={{
-                        backgroundColor: 'rgba(4,80,54,0.05)',
-                        borderLeftColor: 'var(--accent-sage)',
-                      }}
-                    >
-                      <h4
-                        className="text-sm font-semibold mb-2"
-                        style={{ color: 'var(--accent-sage)' }}
-                      >
-                        Explanation
-                      </h4>
-                      <p className="text-sm leading-relaxed" style={{ color: 'var(--text-primary)' }}>
-                        {question.explanation}
-                      </p>
-                    </motion.div>
-                  )}
+                {/* Navigation Buttons */}
+                <div className="flex items-center justify-between">
+                  <button
+                    onClick={() => setCurrentIndex((p) => Math.max(0, p - 1))}
+                    disabled={currentIndex === 0}
+                    className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 disabled:opacity-40"
+                    style={{
+                      border: '1px solid var(--border-medium)',
+                      color: 'var(--text-primary)',
+                      backgroundColor: 'var(--surface-base)',
+                    }}
+                  >
+                    <ChevronLeft size={16} /> Previous
+                  </button>
 
-                  {/* Navigation Buttons */}
-                  <div className="flex items-center justify-between">
-                    <button
-                      onClick={() => setCurrentIndex((p) => Math.max(0, p - 1))}
-                      disabled={currentIndex === 0}
-                      className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 disabled:opacity-40"
-                      style={{
-                        border: '1px solid var(--border-medium)',
-                        color: 'var(--text-primary)',
-                        backgroundColor: 'var(--surface-base)',
-                      }}
-                    >
-                      <ChevronLeft size={16} /> Previous
-                    </button>
-
-                    {(() => {
-                      if (!submitted[currentIndex]) {
-                        return (
-                          <button
-                            onClick={handleSubmit}
-                            disabled={answers[currentIndex] === null}
-                            className="px-6 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 disabled:opacity-40 hover:scale-[1.02] active:scale-[0.98]"
-                            style={{
-                              backgroundColor: 'var(--accent-primary)',
-                              color: '#fff',
-                            }}
-                          >
-                            Submit Answer
-                          </button>
-                        )
-                      }
-                      if (currentIndex < questions.length - 1) {
-                        return (
-                          <button
-                            onClick={() => setCurrentIndex((p) => p + 1)}
-                            className="flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
-                            style={{
-                              backgroundColor: 'var(--accent-primary)',
-                              color: '#fff',
-                            }}
-                          >
-                            Next <ChevronRight size={16} />
-                          </button>
-                        )
-                      }
+                  {(() => {
+                    if (!submitted[currentIndex]) {
                       return (
                         <button
-                          onClick={handleFinish}
-                          className="flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+                          onClick={handleSubmit}
+                          disabled={answers[currentIndex] === null}
+                          className="px-6 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 disabled:opacity-40 hover:scale-[1.02] active:scale-[0.98]"
                           style={{
-                            backgroundColor: 'var(--accent-coral)',
+                            backgroundColor: 'var(--accent-primary)',
                             color: '#fff',
                           }}
                         >
-                          <Flag size={14} /> Finish Exam
+                          Submit Answer
                         </button>
                       )
-                    })()}
-                  </div>
+                    }
+                    if (currentIndex < questions.length - 1) {
+                      return (
+                        <button
+                          onClick={() => setCurrentIndex((p) => p + 1)}
+                          className="flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+                          style={{
+                            backgroundColor: 'var(--accent-primary)',
+                            color: '#fff',
+                          }}
+                        >
+                          Next <ChevronRight size={16} />
+                        </button>
+                      )
+                    }
+                    return (
+                      <button
+                        onClick={handleFinish}
+                        className="flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+                        style={{
+                          backgroundColor: 'var(--accent-coral)',
+                          color: '#fff',
+                        }}
+                      >
+                        <Flag size={14} /> Finish Exam
+                      </button>
+                    )
+                  })()}
                 </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Sidebar Navigation */}
-        <motion.div
-          initial={{ x: 30, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          transition={{ duration: 0.4, ease: easeOutExpo, delay: 0.2 }}
+        <div
           className="hidden lg:block w-[280px] border-l p-4 overflow-y-auto"
           style={{
             backgroundColor: 'var(--surface-base)',
@@ -719,7 +676,7 @@ function ExamInProgress({
           >
             Submit Exam
           </button>
-        </motion.div>
+        </div>
       </div>
     </div>
   );
@@ -745,11 +702,7 @@ function ReviewPanel({
   const flaggedCount = flagged.filter((f) => f).length;
 
   return (
-    <motion.div
-      initial={{ opacity: 0, x: 30 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: -30 }}
-      transition={{ duration: 0.3 }}
+    <div
       className="max-w-[720px] mx-auto"
     >
       <div
@@ -859,7 +812,7 @@ function ReviewPanel({
           Submit Exam Now
         </button>
       </div>
-    </motion.div>
+    </div>
   );
 }
 
@@ -967,16 +920,13 @@ function ResultsScreen({
           </div>
 
           <div className="space-y-4">
-            {filtered.map((q, idx) => {
+            {filtered.map((q) => {
               const originalIndex = questions.findIndex((oq) => oq.id === q.id);
               const userAnswer = answers[originalIndex];
               const isCorrect = userAnswer === q.correctAnswer;
               return (
-                <motion.div
+                <div
                   key={q.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: idx * 0.03 }}
                   className="p-6 rounded-[20px] border"
                   style={{
                     backgroundColor: 'var(--surface-base)',
@@ -1034,7 +984,7 @@ function ResultsScreen({
                     <p className="text-xs font-semibold mb-1" style={{ color: 'var(--accent-sage)' }}>Explanation</p>
                     <p className="text-sm" style={{ color: 'var(--text-primary)' }}>{q.explanation}</p>
                   </div>
-                </motion.div>
+                </div>
               );
             })}
           </div>
@@ -1047,16 +997,10 @@ function ResultsScreen({
     <div className="min-h-[calc(100dvh-60px)] px-4 py-8">
       <div className="max-w-[720px] mx-auto">
         {/* Score Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: easeOutExpo }}
+        <div
           className="text-center mb-10"
         >
-          <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ duration: 0.5, ease: easeOutExpo, delay: 1.5 }}
+          <div
             className="inline-block mb-4"
           >
             <span
@@ -1068,12 +1012,9 @@ function ResultsScreen({
             >
               {passed ? 'PASSED' : 'NEEDS MORE STUDY'}
             </span>
-          </motion.div>
+          </div>
 
-          <motion.h1
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.3 }}
+          <h1
             className="text-6xl md:text-7xl font-normal mb-2"
             style={{
               fontFamily: 'var(--font-display)',
@@ -1081,7 +1022,7 @@ function ResultsScreen({
             }}
           >
             {score}%
-          </motion.h1>
+          </h1>
 
           <p className="text-lg mb-2" style={{ color: 'var(--text-secondary)' }}>
             You answered {correctCount} out of {questions.length} questions correctly
@@ -1089,13 +1030,10 @@ function ResultsScreen({
           <p className="text-sm font-mono" style={{ color: 'var(--text-tertiary)' }}>
             Time: {formatTime(timeSpent)} / {formatTime(TOTAL_TIME)}
           </p>
-        </motion.div>
+        </div>
 
         {/* Domain Breakdown */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4, duration: 0.5 }}
+        <div
           className="mb-8"
         >
           <h2
@@ -1105,14 +1043,11 @@ function ResultsScreen({
             Domain Breakdown
           </h2>
           <div className="space-y-4">
-            {Object.entries(domainScores).map(([id, data], i) => {
+            {Object.entries(domainScores).map(([id, data]) => {
               const pct = Math.round((data.correct / data.total) * 100);
               return (
-                <motion.div
+                <div
                   key={id}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.5 + i * 0.1 }}
                 >
                   <div className="flex items-center justify-between mb-1">
                     <span className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>
@@ -1123,31 +1058,26 @@ function ResultsScreen({
                     </span>
                   </div>
                   <div className="h-3 rounded-full overflow-hidden" style={{ backgroundColor: 'var(--border-subtle)' }}>
-                    <motion.div
+                    <div
                       className="h-full rounded-full"
                       style={{
                         background: pct >= 75
                           ? 'linear-gradient(90deg, var(--accent-sage), #5C9B6B)'
                           : 'linear-gradient(90deg, var(--accent-sage) 0%, var(--accent-sage)) var(--accent-coral)',
                         backgroundColor: pct >= 75 ? 'var(--accent-sage)' : 'var(--accent-coral)',
+                        width: `${pct}%`,
                       }}
-                      initial={{ width: 0 }}
-                      animate={{ width: `${pct}%` }}
-                      transition={{ duration: 0.8, ease: easeOutExpo, delay: 0.6 + i * 0.1 }}
                     />
                   </div>
-                </motion.div>
+                </div>
               );
             })}
           </div>
-        </motion.div>
+        </div>
 
         {/* Weak Areas */}
         {weakAreas.some((a) => a.pct < 75) && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.8 }}
+          <div
             className="mb-8 p-5 rounded-[20px] border-l-4"
             style={{
               backgroundColor: 'var(--surface-base)',
@@ -1180,14 +1110,11 @@ function ResultsScreen({
                 </div>
               ))}
             </div>
-          </motion.div>
+          </div>
         )}
 
         {/* Action Buttons */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1 }}
+        <div
           className="flex flex-wrap gap-3 justify-center"
         >
           <button
@@ -1211,7 +1138,7 @@ function ResultsScreen({
           >
             <Eye size={16} /> Review Answers
           </button>
-        </motion.div>
+        </div>
       </div>
     </div>
   );
@@ -1230,6 +1157,7 @@ export default function PracticeExam() {
   const handleStart = useCallback(() => {
     const shuffled = getShuffledQuestions();
     setQuestions(shuffled);
+
     setAnswers(new Array(shuffled.length).fill(null));
     setFlagged(new Array(shuffled.length).fill(false));
     setMode('exam');
@@ -1254,47 +1182,27 @@ export default function PracticeExam() {
 
   return (
     <div>
-      <AnimatePresence mode="wait">
-        {mode === 'start' && (
-          <motion.div
-            key="start"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            <StartScreen onStart={handleStart} />
-          </motion.div>
-        )}
-        {mode === 'exam' && (
-          <motion.div
-            key="exam"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.4, ease: easeOutExpo }}
-          >
-            <ExamInProgress questions={questions} onFinish={handleFinish} />
-          </motion.div>
-        )}
-        {mode === 'results' && (
-          <motion.div
-            key="results"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.5, ease: easeOutExpo }}
-          >
-            <ResultsScreen
-              questions={questions}
-              answers={answers}
-              flagged={flagged}
-              timeSpent={timeSpent}
-              onRetake={handleRetake}
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {mode === 'start' && (
+        <div>
+          <StartScreen onStart={handleStart} />
+        </div>
+      )}
+      {mode === 'exam' && (
+        <div>
+          <ExamInProgress questions={questions} onFinish={handleFinish} />
+        </div>
+      )}
+      {mode === 'results' && (
+        <div>
+          <ResultsScreen
+            questions={questions}
+            answers={answers}
+            flagged={flagged}
+            timeSpent={timeSpent}
+            onRetake={handleRetake}
+          />
+        </div>
+      )}
     </div>
   );
 }

@@ -1,11 +1,9 @@
 import { useState, useMemo, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { Search, ChevronDown } from 'lucide-react';
 import Fuse from 'fuse.js';
 import { glossaryTerms, getAllLetters } from '@/data/glossaryTerms';
 import type { GlossaryTerm } from '@/data/glossaryTerms';
 
-const easeOutExpo = [0.16, 1, 0.3, 1] as [number, number, number, number];
 const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
 function getTermsGroupedByLetter(terms: GlossaryTerm[]): Record<string, GlossaryTerm[]> {
@@ -95,10 +93,7 @@ export default function Glossary() {
     <div className="min-h-[calc(100dvh-60px)] px-4 py-8 md:px-8">
       <div className="max-w-[800px] mx-auto">
         {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: easeOutExpo }}
+        <div
           className="text-center mb-8"
         >
           <h1
@@ -110,13 +105,10 @@ export default function Glossary() {
           <p className="text-base" style={{ color: 'var(--text-secondary)' }}>
             Searchable definitions of every term in the KCSA curriculum
           </p>
-        </motion.div>
+        </div>
 
         {/* Search */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, ease: easeOutExpo, delay: 0.1 }}
+        <div
           className="relative max-w-[600px] mx-auto mb-8"
         >
           <Search
@@ -143,14 +135,11 @@ export default function Glossary() {
               (e.target as HTMLInputElement).style.borderColor = 'var(--border-medium)';
             }}
           />
-        </motion.div>
+        </div>
 
         {/* Alphabet Navigation */}
         {searchQuery.trim().length === 0 && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.2 }}
+          <div
             className="sticky top-[60px] z-10 py-3 mb-6 overflow-x-auto"
             style={{ backgroundColor: 'var(--page-bg)' }}
           >
@@ -179,7 +168,7 @@ export default function Glossary() {
                 );
               })}
             </div>
-          </motion.div>
+          </div>
         )}
 
         {/* Term List */}
@@ -194,12 +183,9 @@ export default function Glossary() {
             {Object.entries(groupedTerms)
               .sort(([a], [b]) => a.localeCompare(b))
               .map(([letter, terms]) => (
-                <motion.div
+                <div
                   key={letter}
                   ref={(el) => { letterRefs.current[letter] = el; }}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4, ease: easeOutExpo }}
                 >
                   {/* Section Header */}
                   <div
@@ -219,14 +205,11 @@ export default function Glossary() {
 
                   {/* Terms */}
                   <div className="space-y-1">
-                    {terms.map((term, i) => {
+                    {terms.map((term) => {
                       const isExpanded = expandedTerms.has(term.term);
                       return (
-                        <motion.div
+                        <div
                           key={term.term}
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          transition={{ delay: i * 0.03 }}
                           className="rounded-xl transition-colors duration-150"
                           style={{
                             backgroundColor: isExpanded ? 'var(--surface-elevated)' : 'transparent',
@@ -276,80 +259,68 @@ export default function Glossary() {
                                 </p>
                               )}
                             </div>
-                            <motion.div
-                              animate={{ rotate: isExpanded ? 180 : 0 }}
-                              transition={{ duration: 0.2 }}
+                            <div
                               className="flex-shrink-0 mt-1"
+                              style={{ transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}
                             >
                               <ChevronDown size={16} style={{ color: 'var(--text-tertiary)' }} />
-                            </motion.div>
+                            </div>
                           </button>
 
-                          <AnimatePresence>
-                            {isExpanded && (
-                              <motion.div
-                                initial={{ height: 0, opacity: 0 }}
-                                animate={{ height: 'auto', opacity: 1 }}
-                                exit={{ height: 0, opacity: 0 }}
-                                transition={{ duration: 0.25, ease: easeOutExpo }}
-                                className="overflow-hidden"
-                              >
-                                <div className="px-4 pb-4">
-                                  <p
-                                    className="text-sm leading-relaxed mb-3"
-                                    style={{ color: 'var(--text-primary)' }}
-                                  >
-                                    {term.definition}
-                                  </p>
-                                  {term.relatedTerms !== undefined && term.relatedTerms.length > 0 && (
-                                    <div className="flex items-center flex-wrap gap-2">
-                                      <span
-                                        className="text-xs font-semibold uppercase tracking-[0.06em]"
-                                        style={{ color: 'var(--text-tertiary)' }}
+                          {isExpanded && (
+                            <div className="overflow-hidden">
+                              <div className="px-4 pb-4">
+                                <p
+                                  className="text-sm leading-relaxed mb-3"
+                                  style={{ color: 'var(--text-primary)' }}
+                                >
+                                  {term.definition}
+                                </p>
+                                {term.relatedTerms !== undefined && term.relatedTerms.length > 0 && (
+                                  <div className="flex items-center flex-wrap gap-2">
+                                    <span
+                                      className="text-xs font-semibold uppercase tracking-[0.06em]"
+                                      style={{ color: 'var(--text-tertiary)' }}
+                                    >
+                                      See also:
+                                    </span>
+                                    {term.relatedTerms.map((rt) => (
+                                      <button
+                                        key={rt}
+                                        onClick={() => {
+                                          handleSearchChange(rt);
+                                        }}
+                                        className="text-xs px-2.5 py-1 rounded-full transition-colors duration-200 hover:opacity-80"
+                                        style={{
+                                          backgroundColor: 'var(--accent-lavender-soft)',
+                                          color: 'var(--accent-lavender)',
+                                        }}
                                       >
-                                        See also:
-                                      </span>
-                                      {term.relatedTerms.map((rt) => (
-                                        <button
-                                          key={rt}
-                                          onClick={() => {
-                                            handleSearchChange(rt);
-                                          }}
-                                          className="text-xs px-2.5 py-1 rounded-full transition-colors duration-200 hover:opacity-80"
-                                          style={{
-                                            backgroundColor: 'var(--accent-lavender-soft)',
-                                            color: 'var(--accent-lavender)',
-                                          }}
-                                        >
-                                          {rt}
-                                        </button>
-                                      ))}
-                                    </div>
-                                  )}
-                                </div>
-                              </motion.div>
-                            )}
-                          </AnimatePresence>
-                        </motion.div>
+                                        {rt}
+                                      </button>
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          )}
+                        </div>
                       );
                     })}
                   </div>
-                </motion.div>
+                </div>
               ))}
           </div>
         )}
 
         {/* Stats footer */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
+        <div
           className="mt-12 text-center pb-8"
         >
           <p className="text-sm" style={{ color: 'var(--text-tertiary)' }}>
             {glossaryTerms.length} terms across {Object.keys(getTermsGroupedByLetter(glossaryTerms)).length} letters
           </p>
-        </motion.div>
+        </div>
       </div>
     </div>
   );

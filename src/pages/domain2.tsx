@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router';
-import { useInView, motion } from 'framer-motion';
 import {
   Server,
   Database,
@@ -31,8 +30,7 @@ import EncryptionChainDiagram from '@/components/diagrams/EncryptionChainDiagram
 import TokenLifecycleDiagram from '@/components/diagrams/TokenLifecycleDiagram'
 
 
-/* ────────────────────── Animated Section Wrapper ────────────────────── */
-/* ── Simple Section Wrapper ── */
+/* ────────────────────── Simple Section Wrapper ────────────────────── */
 function Section({ children, id, className = '' }: { children: React.ReactNode; id?: string; className?: string }) {
   return (
     <section id={id} className={`mb-16 ${className}`}>
@@ -117,9 +115,6 @@ function StickyPortsBar() {
 
 /* ────────────────────── Architecture Diagram ────────────────────── */
 function ArchitectureDiagram() {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: '-10% 0px' });
-
   const controlPlane = [
     { name: 'etcd', ports: '2379 / 2380', detail: 'All cluster state', color: 'var(--accent-primary)', x: 10, y: 10 },
     { name: 'kube-apiserver', ports: '6443', detail: 'Central management', color: 'var(--accent-lavender)', x: 40, y: 10, highlight: true },
@@ -149,7 +144,7 @@ function ArchitectureDiagram() {
   ];
 
   return (
-    <div ref={ref} className="max-w-[900px] mx-auto my-10">
+    <div className="max-w-[900px] mx-auto my-10">
       <div
         className="relative rounded-xl p-6 overflow-hidden"
         style={{
@@ -170,9 +165,8 @@ function ArchitectureDiagram() {
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {controlPlane.map((comp, _i) => (
-              <motion.div
+              <div
                 key={comp.name}
-                animate={isInView ? { opacity: 1, y: 0 } : {}}
                 className="rounded-lg p-3 text-center transition-all duration-200 hover:scale-105"
                 style={{
                   backgroundColor: comp.highlight === true ? `${comp.color}20` : 'var(--surface-elevated)',
@@ -191,29 +185,27 @@ function ArchitectureDiagram() {
                 <div className="text-xs mt-1" style={{ color: 'var(--text-tertiary)' }}>
                   {comp.detail}
                 </div>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>
 
         {/* Connection arrows */}
         <div className="flex justify-center my-2">
-          <motion.div
-            animate={isInView ? { opacity: 1 } : {}}
+          <div
             className="text-xs flex items-center gap-1 px-3 py-1 rounded-full"
             style={{ backgroundColor: 'var(--surface-elevated)', color: 'var(--text-tertiary)' }}
           >
             <Network size={12} />
             HTTPS / mTLS
-          </motion.div>
+          </div>
         </div>
 
         {/* Worker Nodes Zone */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {workerNodes.map((node, _ni) => (
-            <motion.div
+            <div
               key={node.name}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
               className="rounded-lg p-4"
               style={{
                 backgroundColor: 'rgba(4,80,54,0.04)',
@@ -256,13 +248,12 @@ function ArchitectureDiagram() {
                   </div>
                 </div>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
 
         {/* External Client */}
-        <motion.div
-          animate={isInView ? { opacity: 1 } : {}}
+        <div
           className="flex items-center justify-center gap-2 mt-4 px-4 py-2 rounded-lg mx-auto w-fit"
           style={{ backgroundColor: 'var(--surface-elevated)', border: '1px solid var(--border-subtle)' }}
         >
@@ -270,7 +261,7 @@ function ArchitectureDiagram() {
           <span className="text-xs" style={{ color: 'var(--text-tertiary)' }}>
             kubectl → API Server:6443 (HTTPS)
           </span>
-        </motion.div>
+        </div>
       </div>
     </div>
   );
@@ -1155,6 +1146,7 @@ mv /tmp/kube-apiserver.yaml /etc/kubernetes/manifests/`}
                 ))}
               </tr>
             </thead>
+
             <tbody>
               {[
                 { flag: '--anonymous-auth', value: 'false', purpose: 'Disable anonymous access' },

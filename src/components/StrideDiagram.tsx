@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { motion } from 'framer-motion';
 
 interface StrideHex {
   letter: string;
@@ -37,8 +36,6 @@ const hexagons: StrideHex[] = [
   },
 ];
 
-const easeOutExpo = [0.16, 1, 0.3, 1] as [number, number, number, number];
-
 interface StrideDiagramProps {
   onHover?: (letter: string | null) => void;
 }
@@ -56,20 +53,11 @@ export default function StrideDiagram({ onHover }: StrideDiagramProps) {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      whileInView={{ opacity: 1 }}
-      viewport={{ once: true, amount: 0.3 }}
-      transition={{ duration: 0.8, ease: easeOutExpo }}
-      className="my-8 flex flex-col items-center"
+    <div className="my-8 flex flex-col items-center"
     >
       <svg viewBox="0 0 400 400" className="w-full max-w-[500px]">
         {/* Center cluster icon */}
-        <motion.g
-          initial={{ scale: 0, opacity: 0 }}
-          whileInView={{ scale: 1, opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.4, ease: easeOutExpo }}
+        <g
         >
           <circle cx="200" cy="180" r="30" fill="var(--accent-primary)" opacity="0.15" />
           <text
@@ -91,7 +79,7 @@ export default function StrideDiagram({ onHover }: StrideDiagramProps) {
           >
             Cluster
           </text>
-        </motion.g>
+        </g>
 
         {/* Connection lines */}
         {hexagons.map((h) => (
@@ -107,15 +95,11 @@ export default function StrideDiagram({ onHover }: StrideDiagramProps) {
         ))}
 
         {/* Hexagons */}
-        {hexagons.map((h, idx) => {
+        {hexagons.map((h) => {
           const isHovered = hovered === h.letter;
           return (
-            <motion.g
+            <g
               key={h.letter}
-              initial={{ scale: 0, opacity: 0 }}
-              whileInView={{ scale: 1, opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.3, ease: easeOutExpo, delay: 0.1 + idx * 0.1 }}
               onMouseEnter={() => {
                 setHovered(h.letter);
                 onHover?.(h.letter);
@@ -169,18 +153,14 @@ export default function StrideDiagram({ onHover }: StrideDiagramProps) {
                   {h.label.split('\n')[1]}
                 </text>
               )}
-            </motion.g>
+            </g>
           );
         })}
       </svg>
 
       {/* Tooltip */}
       {hovered != null && (
-        <motion.div
-          initial={{ opacity: 0, y: 5 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: 5 }}
-          transition={{ duration: 0.2 }}
+        <div
           className="text-center px-4 py-2 rounded-lg max-w-md mx-auto"
           style={{
             backgroundColor: 'var(--surface-elevated)',
@@ -190,8 +170,8 @@ export default function StrideDiagram({ onHover }: StrideDiagramProps) {
           <p className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>
             {hexagons.find(h => h.letter === hovered)?.k8sExample}
           </p>
-        </motion.div>
+        </div>
       )}
-    </motion.div>
+    </div>
   );
 }

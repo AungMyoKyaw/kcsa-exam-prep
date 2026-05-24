@@ -1,5 +1,4 @@
 import { useState, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Check, X, RotateCcw, ChevronDown } from 'lucide-react';
 
 export interface QuizQuestion {
@@ -14,8 +13,6 @@ interface QuizComponentProps {
   questions: QuizQuestion[];
   domainId: string;
 }
-
-const easeOutExpo = [0.16, 1, 0.3, 1] as [number, number, number, number];
 
 export default function QuizComponent({ questions, domainId }: QuizComponentProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -88,10 +85,7 @@ export default function QuizComponent({ questions, domainId }: QuizComponentProp
     const isPassing = percentage >= 75;
 
     return (
-      <motion.div
-        initial={{ opacity: 0, y: 40 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: easeOutExpo }}
+      <div
         className="rounded-xl p-8 max-w-[720px] mx-auto"
         style={{
           backgroundColor: 'var(--surface-base)',
@@ -100,10 +94,7 @@ export default function QuizComponent({ questions, domainId }: QuizComponentProp
         }}
       >
         <div className="text-center">
-          <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ duration: 0.5, ease: easeOutExpo, delay: 0.2 }}
+          <div
             className="inline-flex items-center justify-center w-16 h-16 rounded-full mb-4"
             style={{
               backgroundColor: isPassing
@@ -116,7 +107,7 @@ export default function QuizComponent({ questions, domainId }: QuizComponentProp
             ) : (
               <RotateCcw size={32} style={{ color: 'var(--accent-coral)' }} />
             )}
-          </motion.div>
+          </div>
 
           <h3
             className="text-xl font-semibold mb-2"
@@ -159,7 +150,7 @@ export default function QuizComponent({ questions, domainId }: QuizComponentProp
             >
               {isPassing
                 ? 'Passing score! Great job!'
-                : 'Keep studying - you\'ll get there!'}
+                : "Keep studying - you'll get there!"}
             </span>
           </div>
 
@@ -177,15 +168,12 @@ export default function QuizComponent({ questions, domainId }: QuizComponentProp
             </button>
           </div>
         </div>
-      </motion.div>
+      </div>
     );
   }
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 40 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, ease: easeOutExpo }}
+    <div
       className="rounded-xl max-w-[720px] mx-auto"
       style={{
         backgroundColor: 'var(--surface-base)',
@@ -217,162 +205,129 @@ export default function QuizComponent({ questions, domainId }: QuizComponentProp
 
       {/* Question */}
       <div className="px-6 pt-6 pb-4">
-        <AnimatePresence mode="wait">
-          <motion.h3
-            key={currentQuestion.id}
-            initial={{ opacity: 0, x: 30 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -30 }}
-            transition={{ duration: 0.4, ease: easeOutExpo }}
-            className="text-lg font-semibold leading-relaxed"
-            style={{ color: 'var(--text-primary)' }}
-          >
-            {currentQuestion.question}
-          </motion.h3>
-        </AnimatePresence>
+        <h3
+          key={currentQuestion.id}
+          className="text-lg font-semibold leading-relaxed"
+          style={{ color: 'var(--text-primary)' }}
+        >
+          {currentQuestion.question}
+        </h3>
       </div>
 
       {/* Options */}
       <div className="px-6 pb-4 space-y-2.5">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={currentQuestion.id}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className="space-y-2.5"
-          >
-            {currentQuestion.options.map((option, index) => {
-              const isSelected = selectedIndex === index;
-              const isCorrect = index === currentQuestion.correctIndex;
-              const showCorrect = submitted && isCorrect;
-              const showIncorrect = submitted && isSelected && !isCorrect;
+        <div
+          key={currentQuestion.id}
+          className="space-y-2.5"
+        >
+          {currentQuestion.options.map((option, index) => {
+            const isSelected = selectedIndex === index;
+            const isCorrect = index === currentQuestion.correctIndex;
+            const showCorrect = submitted && isCorrect;
+            const showIncorrect = submitted && isSelected && !isCorrect;
 
-              let borderColor = 'var(--border-medium)';
-              let bgColor = 'var(--surface-base)';
+            let borderColor = 'var(--border-medium)';
+            let bgColor = 'var(--surface-base)';
 
-              if (showCorrect) {
-                borderColor = 'var(--accent-sage)';
-                bgColor = 'rgba(163,196,168,0.1)';
-              } else if (showIncorrect) {
-                borderColor = 'var(--accent-coral)';
-                bgColor = 'rgba(232,122,93,0.1)';
-              } else if (isSelected && !submitted) {
-                borderColor = 'var(--accent-primary)';
-                bgColor = 'rgba(4,80,54,0.08)';
-              }
+            if (showCorrect) {
+              borderColor = 'var(--accent-sage)';
+              bgColor = 'rgba(163,196,168,0.1)';
+            } else if (showIncorrect) {
+              borderColor = 'var(--accent-coral)';
+              bgColor = 'rgba(232,122,93,0.1)';
+            } else if (isSelected && !submitted) {
+              borderColor = 'var(--accent-primary)';
+              bgColor = 'rgba(4,80,54,0.08)';
+            }
 
-              return (
-                <motion.button
-                  key={index}
-                  onClick={() => handleSelect(index)}
-                  disabled={submitted}
-                  className="w-full flex items-start gap-3 px-4 py-3.5 rounded-xl text-left transition-all duration-200"
+            return (
+              <button
+                key={index}
+                onClick={() => handleSelect(index)}
+                disabled={submitted}
+                className="w-full flex items-start gap-3 px-4 py-3.5 rounded-xl text-left transition-all duration-200"
+                style={{
+                  border: `1.5px solid ${borderColor}`,
+                  backgroundColor: bgColor,
+                  cursor: submitted ? 'default' : 'pointer',
+                  opacity: submitted && !isSelected && !isCorrect ? 0.6 : 1,
+                }}
+              >
+                <div
+                  className="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center mt-0.5 text-xs font-semibold"
                   style={{
-                    border: `1.5px solid ${borderColor}`,
-                    backgroundColor: bgColor,
-                    cursor: submitted ? 'default' : 'pointer',
-                    opacity: submitted && !isSelected && !isCorrect ? 0.6 : 1,
+                    backgroundColor: (() => {
+                      if (showCorrect) { return 'var(--accent-sage)' }
+                      if (showIncorrect) { return 'var(--accent-coral)' }
+                      if (isSelected) { return 'var(--accent-primary)' }
+                      return 'var(--surface-elevated)'
+                    })(),
+                    color: isSelected || showCorrect || showIncorrect
+                      ? '#fff'
+                      : 'var(--text-secondary)',
+                    border: `1px solid ${(() => {
+                      if (showCorrect) { return 'var(--accent-sage)' }
+                      if (showIncorrect) { return 'var(--accent-coral)' }
+                      if (isSelected) { return 'var(--accent-primary)' }
+                      return 'var(--border-medium)'
+                    })()}`,
                   }}
-                  whileHover={!submitted ? { scale: 1.01, borderColor: 'var(--accent-primary)' } : {}}
-                  whileTap={!submitted ? { scale: 0.99 } : {}}
                 >
-                  <div
-                    className="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center mt-0.5 text-xs font-semibold"
-                    style={{
-                      backgroundColor: (() => {
-                        if (showCorrect) { return 'var(--accent-sage)' }
-                        if (showIncorrect) { return 'var(--accent-coral)' }
-                        if (isSelected) { return 'var(--accent-primary)' }
-                        return 'var(--surface-elevated)'
-                      })(),
-                      color: isSelected || showCorrect || showIncorrect
-                        ? '#fff'
-                        : 'var(--text-secondary)',
-                      border: `1px solid ${(() => {
-                        if (showCorrect) { return 'var(--accent-sage)' }
-                        if (showIncorrect) { return 'var(--accent-coral)' }
-                        if (isSelected) { return 'var(--accent-primary)' }
-                        return 'var(--border-medium)'
-                      })()}`,
-                    }}
-                  >
-                    {(() => {
-                      if (showCorrect) { return <Check size={14} /> }
-                      if (showIncorrect) { return <X size={14} /> }
-                      return String.fromCharCode(65 + index)
-                    })()}
-                  </div>
-                  <span
-                    className="text-sm leading-relaxed"
-                    style={{ color: 'var(--text-primary)' }}
-                  >
-                    {option}
-                  </span>
-                </motion.button>
-              );
-            })}
-          </motion.div>
-        </AnimatePresence>
+                  {(() => {
+                    if (showCorrect) { return <Check size={14} /> }
+                    if (showIncorrect) { return <X size={14} /> }
+                    return String.fromCharCode(65 + index)
+                  })()}
+                </div>
+                <span
+                  className="text-sm leading-relaxed"
+                  style={{ color: 'var(--text-primary)' }}
+                >
+                  {option}
+                </span>
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {/* Explanation */}
-      <AnimatePresence>
-        {submitted && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.35, ease: easeOutExpo }}
-            className="overflow-hidden"
+      {submitted && (
+        <div className="overflow-hidden">
+          <div
+            className="mx-6 mb-4 rounded-lg px-4 py-3"
+            style={{
+              backgroundColor: 'var(--surface-elevated)',
+              border: '1px solid var(--border-subtle)',
+            }}
           >
-            <div
-              className="mx-6 mb-4 rounded-lg px-4 py-3"
-              style={{
-                backgroundColor: 'var(--surface-elevated)',
-                border: '1px solid var(--border-subtle)',
-              }}
+            <button
+              onClick={() => setShowExplanation(!showExplanation)}
+              className="flex items-center justify-between w-full"
             >
-              <button
-                onClick={() => setShowExplanation(!showExplanation)}
-                className="flex items-center justify-between w-full"
+              <span
+                className="text-sm font-semibold"
+                style={{ color: 'var(--accent-primary)' }}
               >
-                <span
-                  className="text-sm font-semibold"
-                  style={{ color: 'var(--accent-primary)' }}
+                Explanation
+              </span>
+              <div>
+                <ChevronDown size={16} style={{ color: 'var(--text-secondary)' }} />
+              </div>
+            </button>
+            {showExplanation && (
+              <div className="overflow-hidden">
+                <p
+                  className="text-sm leading-relaxed pt-3"
+                  style={{ color: 'var(--text-secondary)' }}
                 >
-                  Explanation
-                </span>
-                <motion.div
-                  animate={{ rotate: showExplanation ? 180 : 0 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <ChevronDown size={16} style={{ color: 'var(--text-secondary)' }} />
-                </motion.div>
-              </button>
-              <AnimatePresence>
-                {showExplanation && (
-                  <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: 'auto', opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.3 }}
-                    className="overflow-hidden"
-                  >
-                    <p
-                      className="text-sm leading-relaxed pt-3"
-                      style={{ color: 'var(--text-secondary)' }}
-                    >
-                      {currentQuestion.explanation}
-                    </p>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+                  {currentQuestion.explanation}
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Navigation */}
       <div
@@ -418,6 +373,6 @@ export default function QuizComponent({ questions, domainId }: QuizComponentProp
           </button>
         )}
       </div>
-    </motion.div>
+    </div>
   );
 }

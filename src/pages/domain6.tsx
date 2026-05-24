@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import { motion } from 'framer-motion'
 import { Link } from 'react-router'
 import {
   ArrowLeft,
@@ -23,9 +22,6 @@ import CalloutBox from '@/components/CalloutBox'
 import CodeBlock from '@/components/CodeBlock'
 import QuizComponent from '@/components/QuizComponent'
 import type { QuizQuestion } from '@/components/QuizComponent'
-
-
-
 
 /* ------------------------------------------------------------------ */
 /*  DATA                                                               */
@@ -288,10 +284,9 @@ export default function Domain6Page() {
         className="fixed top-[60px] left-0 right-0 h-[3px] z-30"
         style={{ backgroundColor: 'var(--border-subtle)' }}
       >
-        <motion.div
+        <div
           className="h-full"
-          style={{ background: 'var(--accent-gradient)' }}
-          animate={{ width: `${scrollProgress}%` }}
+          style={{ background: 'var(--accent-gradient)', width: `${scrollProgress}%` }}
         />
       </div>
 
@@ -538,9 +533,8 @@ export default function Domain6Page() {
               items: ['Data subject rights (access, erasure)', 'Data Protection by Design', 'DPIAs for high-risk processing', '72-hour breach notification'],
             },
           ].map((card) => (
-            <motion.div
+            <div
               key={card.title}
-              whileHover={{ y: -2 }}
               className="p-4 rounded-xl"
               style={{
                 backgroundColor: 'var(--surface-base)',
@@ -559,7 +553,7 @@ export default function Domain6Page() {
                   </li>
                 ))}
               </ul>
-            </motion.div>
+            </div>
           ))}
         </div>
       </section>
@@ -1052,9 +1046,8 @@ kube-bench run --json > kube-bench-results.json`}
               desc: 'Documenting every transformation from source to runtime. Required by regulations like US EO 14028 for government software procurement.',
             },
           ].map((card) => (
-            <motion.div
+            <div
               key={card.title}
-              whileHover={{ y: -2 }}
               className="p-4 rounded-xl"
               style={{ backgroundColor: 'var(--surface-base)', border: '1px solid var(--border-subtle)' }}
             >
@@ -1065,7 +1058,7 @@ kube-bench run --json > kube-bench-results.json`}
               <p className="text-xs leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
                 {card.desc}
               </p>
-            </motion.div>
+            </div>
           ))}
         </div>
       </section>
