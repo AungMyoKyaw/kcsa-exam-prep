@@ -13,7 +13,6 @@ import {
   Network,
   Container,
   Eye,
-  Flame,
   Check,
 } from 'lucide-react';
 import CalloutBox from '@/components/CalloutBox';
@@ -28,12 +27,13 @@ import RBACFlowDiagram from '@/components/diagrams/RBACFlowDiagram'
 import AdmissionPipelineDiagram from '@/components/diagrams/AdmissionPipelineDiagram'
 import EncryptionChainDiagram from '@/components/diagrams/EncryptionChainDiagram'
 import TokenLifecycleDiagram from '@/components/diagrams/TokenLifecycleDiagram'
+import PortMemorySystem from '@/components/PortMemorySystem'
 
 
 /* ────────────────────── Simple Section Wrapper ────────────────────── */
-function Section({ children, id, className = '' }: { children: React.ReactNode; id?: string; className?: string }) {
+function Section({ children, id, className = '', color = 'var(--accent-sage)' }: { children: React.ReactNode; id?: string; className?: string; color?: string }) {
   return (
-    <section id={id} className={`mb-16 ${className}`}>
+    <section id={id} className={`mb-16 pl-4 ${className}`} style={{ borderLeft: `3px solid ${color}20` }}>
       {children}
     </section>
   );
@@ -712,6 +712,8 @@ export default function Domain2Page() {
           <strong>10259</strong> (Scheduler), <strong>10249</strong> (Kube-proxy metrics). These are
           heavily tested on the exam.
         </CalloutBox>
+
+        <PortMemorySystem />
       </Section>
 
       {/* ══════════ Section 2.1: API Server ══════════ */}
