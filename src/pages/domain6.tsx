@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { motion } from 'framer-motion'
 import { Link } from 'react-router'
 import {
   ArrowLeft,
@@ -287,7 +288,7 @@ export default function Domain6Page() {
         className="fixed top-[60px] left-0 right-0 h-[3px] z-30"
         style={{ backgroundColor: 'var(--border-subtle)' }}
       >
-        <div
+        <motion.div
           className="h-full"
           style={{ background: 'var(--accent-gradient)' }}
           animate={{ width: `${scrollProgress}%` }}
@@ -354,7 +355,7 @@ export default function Domain6Page() {
           </span>
         </div>
 
-        <CalloutBox variant="exam-focus">
+        <CalloutBox variant="exam">
           <strong>10% of exam (~8 questions).</strong> CIS Benchmark sections, kube-bench usage, and
           MITRE ATT&CK for containers are the most frequently tested topics in this domain. Know the
           NIST CSF 2.0 six functions cold — especially the new <strong>GOVERN</strong> function.
@@ -460,7 +461,7 @@ export default function Domain6Page() {
           ))}
         </div>
 
-        <CalloutBox variant="exam-focus">
+        <CalloutBox variant="exam">
           <strong>NIST CSF 2.0 has 6 functions.</strong> The newest is{' '}
           <strong>GOVERN (GV)</strong>, added in 2024. The full list: Govern, Identify, Protect,
           Detect, Respond, Recover. Kubernetes compliance maps to all six: Identify (asset
@@ -537,7 +538,7 @@ export default function Domain6Page() {
               items: ['Data subject rights (access, erasure)', 'Data Protection by Design', 'DPIAs for high-risk processing', '72-hour breach notification'],
             },
           ].map((card) => (
-            <div
+            <motion.div
               key={card.title}
               whileHover={{ y: -2 }}
               className="p-4 rounded-xl"
@@ -558,7 +559,7 @@ export default function Domain6Page() {
                   </li>
                 ))}
               </ul>
-            </div>
+            </motion.div>
           ))}
         </div>
       </section>
@@ -589,7 +590,7 @@ export default function Domain6Page() {
           configuring clusters and workloads. Available for vanilla Kubernetes, EKS, AKS, and GKE.
         </p>
 
-        <CalloutBox variant="exam-focus">
+        <CalloutBox variant="exam">
           <strong>CIS Benchmark recommendations are organized across 3 levels:</strong> Cluster-Level
           Security (infrastructure, components), Node OS-Level Security (OS hardening), and
           Workload-Level Security (containers, code, registries).
@@ -1051,7 +1052,7 @@ kube-bench run --json > kube-bench-results.json`}
               desc: 'Documenting every transformation from source to runtime. Required by regulations like US EO 14028 for government software procurement.',
             },
           ].map((card) => (
-            <div
+            <motion.div
               key={card.title}
               whileHover={{ y: -2 }}
               className="p-4 rounded-xl"
@@ -1064,7 +1065,7 @@ kube-bench run --json > kube-bench-results.json`}
               <p className="text-xs leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
                 {card.desc}
               </p>
-            </div>
+            </motion.div>
           ))}
         </div>
       </section>

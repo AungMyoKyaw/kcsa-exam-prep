@@ -84,7 +84,7 @@ function StickyPortsBar() {
           <span className="text-xs font-semibold mr-2" style={{ color: 'var(--text-tertiary)' }}>
             Ports:
           </span>
-          {portsData.map((p, i) => (
+          {portsData.map((p, _i) => (
             <div
               key={p.port}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs cursor-default transition-all duration-200 hover:scale-105"
@@ -161,7 +161,7 @@ function ArchitectureDiagram() {
             </span>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            {controlPlane.map((comp, i) => (
+            {controlPlane.map((comp, _i) => (
               <motion.div
                 key={comp.name}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
@@ -202,7 +202,7 @@ function ArchitectureDiagram() {
 
         {/* Worker Nodes Zone */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {workerNodes.map((node, ni) => (
+          {workerNodes.map((node, _ni) => (
             <motion.div
               key={node.name}
               animate={isInView ? { opacity: 1, y: 0 } : {}}

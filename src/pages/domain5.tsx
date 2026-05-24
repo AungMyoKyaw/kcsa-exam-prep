@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { motion } from 'framer-motion'
 import { Link } from 'react-router'
 import {
   BookOpen,
@@ -193,7 +194,7 @@ export default function Domain5Page() {
         className="fixed top-[60px] left-0 right-0 h-[3px] z-30"
         style={{ backgroundColor: 'var(--border-subtle)' }}
       >
-        <div
+        <motion.div
           className="h-full"
           style={{ background: 'var(--accent-gradient)' }}
           animate={{ width: `${scrollProgress}%` }}
@@ -260,7 +261,7 @@ export default function Domain5Page() {
           </span>
         </div>
 
-        <CalloutBox variant="exam-focus">
+        <CalloutBox variant="exam">
           <strong>16% of exam (~13 questions).</strong> SLSA levels, admission controller differences
           (OPA vs Kyverno vs built-in), and PKI/cert-manager concepts are frequently tested. Pay
           special attention to the mutating vs. validating admission controller distinction.
@@ -335,7 +336,7 @@ export default function Domain5Page() {
           ))}
         </div>
 
-        <CalloutBox variant="exam-focus">
+        <CalloutBox variant="exam">
           <strong>SLSA has 4 levels (1-4).</strong> Level 1 = provenance exists. Level 2 = signed
           provenance + hosted build. Level 3 = hardened build platform + hermetic builds. Level 4 =
           two-person review + reproducible builds. Higher levels = more security guarantees.
@@ -424,7 +425,7 @@ export default function Domain5Page() {
             { tool: 'Snyk', vendor: 'Snyk', scope: 'Commercial platform with K8s API integration' },
             { tool: 'Clair', vendor: 'Red Hat', scope: 'Container images only (PostgreSQL required)' },
           ].map((scanner) => (
-            <div
+            <motion.div
               key={scanner.tool}
               whileHover={{ y: -2 }}
               className="p-4 rounded-xl"
@@ -442,7 +443,7 @@ export default function Domain5Page() {
               <div className="text-xs" style={{ color: 'var(--text-secondary)' }}>
                 {scanner.scope}
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
 
@@ -542,7 +543,7 @@ trivy image --format spdx-json --output sbom.json myregistry.io/app:v1.0.0`}
             { name: 'Logs', icon: BookOpen, desc: 'Text records of events — application, audit, and system logs' },
             { name: 'Traces', icon: Network, desc: 'Request flow across services — distributed tracing' },
           ].map((pillar) => (
-            <div
+            <motion.div
               key={pillar.name}
               whileHover={{ y: -2 }}
               className="p-4 rounded-xl text-center"
@@ -558,7 +559,7 @@ trivy image --format spdx-json --output sbom.json myregistry.io/app:v1.0.0`}
               <div className="text-xs leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
                 {pillar.desc}
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
 
@@ -663,7 +664,7 @@ trivy image --format spdx-json --output sbom.json myregistry.io/app:v1.0.0`}
 
         {/* Istio vs Linkerd */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-          <div
+          <motion.div
             whileHover={{ y: -2 }}
             className="p-5 rounded-xl"
             style={{
@@ -689,8 +690,8 @@ trivy image --format spdx-json --output sbom.json myregistry.io/app:v1.0.0`}
                 </li>
               ))}
             </ul>
-          </div>
-          <div
+          </motion.div>
+          <motion.div
             whileHover={{ y: -2 }}
             className="p-5 rounded-xl"
             style={{
@@ -716,7 +717,7 @@ trivy image --format spdx-json --output sbom.json myregistry.io/app:v1.0.0`}
                 </li>
               ))}
             </ul>
-          </div>
+          </motion.div>
         </div>
 
         <h3
@@ -817,7 +818,7 @@ spec:
 
         <div className="space-y-3 mb-6">
           {pkiComponents.map((comp) => (
-            <div
+            <motion.div
               key={comp.name}
               whileHover={{ x: 4 }}
               className="flex items-start gap-4 p-4 rounded-xl"
@@ -835,7 +836,7 @@ spec:
                   {comp.desc}
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
 
@@ -961,7 +962,7 @@ spec:
               ],
             },
           ].map((card) => (
-            <div
+            <motion.div
               key={card.title}
               whileHover={{ y: -2 }}
               className="p-5 rounded-xl"
@@ -982,7 +983,7 @@ spec:
                   </li>
                 ))}
               </ul>
-            </div>
+            </motion.div>
           ))}
         </div>
       </section>
@@ -1014,7 +1015,7 @@ spec:
           <strong>Validating</strong> (can only approve or reject).
         </p>
 
-        <CalloutBox variant="exam-focus">
+        <CalloutBox variant="exam">
           <strong>Request lifecycle order:</strong> 1. Authentication → 2. Authorization/RBAC → 3.
           Admission Control (mutating first, then validating) → 4. Persistence to etcd. If any
           controller rejects the request, it fails immediately.
@@ -1086,7 +1087,7 @@ spec:
           OPA Gatekeeper vs. Kyverno
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-          <div
+          <motion.div
             whileHover={{ y: -2 }}
             className="p-5 rounded-xl"
             style={{
@@ -1113,8 +1114,8 @@ spec:
                 </li>
               ))}
             </ul>
-          </div>
-          <div
+          </motion.div>
+          <motion.div
             whileHover={{ y: -2 }}
             className="p-5 rounded-xl"
             style={{
@@ -1141,10 +1142,10 @@ spec:
                 </li>
               ))}
             </ul>
-          </div>
+          </motion.div>
         </div>
 
-        <CalloutBox variant="exam-focus">
+        <CalloutBox variant="exam">
           <strong>Know the difference:</strong> OPA Gatekeeper uses the Rego policy language (very
           flexible). Kyverno uses Kubernetes-native YAML policies (easier to learn). Both enforce
           policies at admission time. The built-in PodSecurity admission controller enforces PSS.

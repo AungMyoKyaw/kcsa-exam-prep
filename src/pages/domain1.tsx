@@ -131,35 +131,35 @@ function SharedResponsibilityTable() {
 /* ── Quiz Questions ── */
 const domain1Questions = [
   {
-    id: 'd1-q1',
+    id: 1,
     question: 'What are the four layers of the 4Cs of Cloud Native Security model?',
     options: ['Cloud, Cluster, Container, Code', 'Cloud, Cluster, Compute, Code', 'Cloud, Control Plane, Container, Code', 'Cloud, Cluster, Container, Configuration'],
     correctIndex: 0,
     explanation: 'The 4Cs model consists of Cloud (infrastructure), Cluster (Kubernetes), Container (runtime), and Code (application).',
   },
   {
-    id: 'd1-q2',
+    id: 2,
     question: 'Which standard provides prescriptive recommendations for Kubernetes hardening?',
     options: ['ISO 27001', 'NIST 800-53', 'CIS Kubernetes Benchmark', 'SOC 2'],
     correctIndex: 2,
     explanation: 'The CIS Kubernetes Benchmark is the industry standard for Kubernetes hardening, providing specific configuration recommendations.',
   },
   {
-    id: 'd1-q3',
+    id: 3,
     question: 'What is the primary purpose of Pod Security Standards?',
     options: ['Encrypt secrets at rest', 'Restrict what pods can do in a cluster', 'Monitor pod network traffic', 'Automatically update pod images'],
     correctIndex: 1,
     explanation: 'Pod Security Standards define three policies (Privileged, Baseline, Restricted) that restrict what pods can do in a cluster.',
   },
   {
-    id: 'd1-q4',
+    id: 4,
     question: 'In a managed Kubernetes service, who is typically responsible for securing the control plane?',
     options: ['The customer', 'The cloud provider', 'Both equally', 'Neither'],
     correctIndex: 1,
     explanation: 'In managed Kubernetes (EKS, GKE, AKS), the cloud provider manages and secures the control plane components.',
   },
   {
-    id: 'd1-q5',
+    id: 5,
     question: 'What does "shifting left" mean in DevSecOps?',
     options: ['Moving workloads to the left in a cluster diagram', 'Integrating security earlier in the development lifecycle', 'Deploying to western data centers', 'Using left-handed security tools'],
     correctIndex: 1,

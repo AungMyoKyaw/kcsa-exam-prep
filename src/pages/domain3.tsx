@@ -747,7 +747,7 @@ Identity established → Pass to Authorization → RBAC check`}
 
         <Callout variant="info">
           A <strong>RoleBinding</strong> can reference a <strong>ClusterRole</strong> — this grants
-          ClusterRole permissions scoped to the RoleBinding's namespace. This is a common pattern for
+          ClusterRole permissions scoped to the RoleBinding&apos;s namespace. This is a common pattern for
           reusing role definitions across namespaces.
         </Callout>
 
@@ -802,7 +802,7 @@ kubectl auth can-i create secrets --all-namespaces`}
         />
 
         <Callout variant="exam">
-          RBAC permissions are <strong>purely additive</strong> — there are NO "deny" rules.
+          RBAC permissions are <strong>purely additive</strong> — there are NO &quot;deny&quot; rules.
           <strong> system:masters</strong> bypasses ALL authorization. The{' '}
           <code>roleRef</code> in a binding is <strong>immutable</strong>. subresources (pods/log,
           pods/exec) require explicit permissions — they are NOT included in the parent resource.
@@ -851,7 +851,13 @@ kubectl auth can-i create secrets --all-namespaces`}
             { name: 'secretbox', desc: 'XSalsa20 and Poly1305', status: 'Strong, not FIPS' },
             { name: 'kms v1', desc: 'Envelope encryption', status: 'Deprecated since v1.28' },
             { name: 'kms v2', desc: 'Envelope encryption', status: 'Recommended (v1.29+)' },
-          ].map((p) => (
+          ].map((p) => {
+            const statusColor = (() => {
+              if (p.name === 'kms v2') return 'var(--accent-sage)'
+              if (p.status.includes('Not') || p.status.includes('Deprecated')) return 'var(--accent-coral)'
+              return 'var(--text-tertiary)'
+            })()
+            return (
             <div
               key={p.name}
               className="p-3 rounded-lg"
@@ -865,13 +871,13 @@ kubectl auth can-i create secrets --all-namespaces`}
               <div
                 className="text-xs mt-1 font-medium"
                 style={{
-                  color: p.name === 'kms v2' ? 'var(--accent-sage)' : p.status.includes('Not') || p.status.includes('Deprecated') ? 'var(--accent-coral)' : 'var(--text-tertiary)',
+                  color: statusColor,
                 }}
               >
                 {p.status}
               </div>
             </div>
-          ))}
+          )})}
         </div>
 
         <CodeBlock
@@ -1301,7 +1307,7 @@ spec:
         </div>
 
         <Callout variant="exam">
-          Remember: <strong>Both</strong> the source pod's egress policy AND the destination pod's
+          Remember: <strong>Both</strong> the source pod&apos;s egress policy AND the destination pod&apos;s
           ingress policy must allow the connection for traffic to flow. NetworkPolicies are{' '}
           <strong>additive</strong> — there is no explicit DENY, only allow-by-default or allow-by-policy.
         </Callout>
