@@ -9,6 +9,7 @@ import type { QuizQuestion } from '@/components/Quiz';
 import SectionHeader from '@/components/SectionHeader';
 import ComparisonTable from '@/components/ComparisonTable';
 import StrideDiagram from '@/components/StrideDiagram';
+import StrideK8sDiagram from '@/components/diagrams/StrideK8sDiagram'
 
 const DOMAIN_ID = 'domain4';
 
@@ -386,6 +387,8 @@ export default function Domain4Page() {
           {' '} = container escape/RBAC abuse.
         </Callout>
       </section>
+
+      <StrideK8sDiagram />
 
       {/* ─── Section 4.3: Persistence Mechanisms ─── */}
       <section id="persistence">

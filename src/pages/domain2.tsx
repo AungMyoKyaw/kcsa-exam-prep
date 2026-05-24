@@ -23,6 +23,12 @@ import CodeBlock from '@/components/CodeBlock';
 import ComparisonTable from '@/components/ComparisonTable';
 import QuizComponent from '@/components/QuizComponent';
 import { useProgress } from '@/hooks/useProgress';
+import MemoryHook from '@/components/MemoryHook'
+import ExamTrap from '@/components/ExamTrap'
+import RBACFlowDiagram from '@/components/diagrams/RBACFlowDiagram'
+import AdmissionPipelineDiagram from '@/components/diagrams/AdmissionPipelineDiagram'
+import EncryptionChainDiagram from '@/components/diagrams/EncryptionChainDiagram'
+import TokenLifecycleDiagram from '@/components/diagrams/TokenLifecycleDiagram'
 
 
 /* ────────────────────── Animated Section Wrapper ────────────────────── */
@@ -846,6 +852,8 @@ rules:
         />
       </Section>
 
+      <AdmissionPipelineDiagram />
+
       {/* ══════════ Section 2.1b: API Server Request Lifecycle ══════════ */}
       <Section id="d2-apiserver-lifecycle">
         <div className="flex items-center gap-3 mb-4">
@@ -891,10 +899,12 @@ rules:
           ))}
         </div>
 
-        <Callout variant="tip">
+        <MemoryHook title="AuthN vs AuthZ vs Admission">
           AuthN knows your NAME. AuthZ knows your ROLE. Admission can CHANGE your request.
-        </Callout>
+        </MemoryHook>
       </Section>
+
+      <RBACFlowDiagram />
 
       {/* ══════════ Section 2.2: etcd ══════════ */}
       <Section id="d2-etcd">
@@ -993,6 +1003,8 @@ resources:
         />
       </Section>
 
+      <EncryptionChainDiagram />
+
       {/* ══════════ Section 2.2b: etcd Backup & Restore Security ══════════ */}
       <Section id="d2-etcd-backup">
         <div className="flex items-center gap-3 mb-4">
@@ -1031,9 +1043,9 @@ etcdctl snapshot save /backup/etcd-snapshot.db \\
 gpg --symmetric --cipher-algo AES256 /backup/etcd-snapshot.db`}
         />
 
-        <Callout variant="warning">
+        <ExamTrap title="etcd Snapshots">
           Never store etcd snapshots in plaintext. A snapshot contains every Secret, ConfigMap, and cluster credential. Treat it like a raw database dump — encrypt it before backup.
-        </Callout>
+        </ExamTrap>
 
         <h3 className="text-lg font-semibold mb-3" style={{ color: 'var(--text-primary)' }}>
           Restoring from Snapshot
@@ -1062,9 +1074,9 @@ mv /tmp/kube-apiserver.yaml /etc/kubernetes/manifests/`}
           Restoring etcd reverts ALL cluster state, not just what you wanted. Plan accordingly.
         </Callout>
 
-        <Callout variant="tip">
+        <MemoryHook title="etcd Backup">
           etcd backup = cluster state. Encrypt it like you&apos;d encrypt a database dump.
-        </Callout>
+        </MemoryHook>
       </Section>
 
       {/* ══════════ Section 2.3: Kubelet ══════════ */}
@@ -1191,9 +1203,9 @@ curl http://localhost:10255/pods
 # Should fail: connection refused`}
         />
 
-        <Callout variant="warning">
+        <ExamTrap title="Kubelet Read-Only Port">
           Anyone on the node network can read pod specs, env vars, and node metrics via port 10255. This is a direct path to secret leakage. Always set --read-only-port=0 in production.
-        </Callout>
+        </ExamTrap>
 
         <h3 className="text-lg font-semibold mb-3" style={{ color: 'var(--text-primary)' }}>
           NodeRestriction Admission Plugin
@@ -1416,9 +1428,9 @@ curl http://localhost:10255/pods
           ]}
         />
 
-        <Callout variant="tip">
+        <MemoryHook title="seccomp Profiles">
           RuntimeDefault = sandbox. Unconfined = no walls. Localhost = custom walls.
-        </Callout>
+        </MemoryHook>
 
         <h3 className="text-lg font-semibold mb-3" style={{ color: 'var(--text-primary)' }}>
           AppArmor Profile Loading
@@ -1876,10 +1888,12 @@ kubectl certificate deny <csr-name>`}
           </div>
         </div>
 
-        <Callout variant="warning">
+        <ExamTrap title="Anonymous Auth">
           Why <code>--anonymous-auth=false</code> matters: if left enabled, the API Server accepts anonymous requests. A rogue node or attacker could probe the API Server without credentials. Always disable anonymous authentication in production.
-        </Callout>
+        </ExamTrap>
       </Section>
+
+      <TokenLifecycleDiagram />
 
       {/* ══════════ Section 2.10: Storage ══════════ */}
       <Section id="d2-storage">

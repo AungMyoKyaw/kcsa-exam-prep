@@ -8,6 +8,8 @@ import Quiz from '@/components/Quiz';
 import type { QuizQuestion } from '@/components/Quiz';
 import SectionHeader from '@/components/SectionHeader';
 import ComparisonTable from '@/components/ComparisonTable';
+import MemoryHook from '@/components/MemoryHook'
+import ExamTrap from '@/components/ExamTrap'
 
 const DOMAIN_ID = 'domain3';
 
@@ -404,6 +406,12 @@ spec:
         />
       </section>
 
+      <MemoryHook title="13 Baseline Capabilities">
+        <strong>Baseline allows 13 capabilities:</strong> AUDIT_WRITE, CHOWN, DAC_OVERRIDE, FOWNER, FSETID, KILL, MKNOD, NET_BIND_SERVICE, SETFCAP, SETGID, SETPCAP, SETUID, SYS_CHROOT.
+        <br /><br />
+        <strong>Restricted drops ALL</strong> and only NET_BIND_SERVICE can be re-added.
+      </MemoryHook>
+
       {/* ─── Section 3.2: Pod Security Admission ─── */}
       <section id="psa">
         <SectionHeader number="3.2" title="Pod Security Admission (PSA)" />
@@ -713,11 +721,11 @@ Identity established → Pass to Authorization → RBAC check`}
 
         <ComparisonTable columns={rbacVerbsColumns} rows={rbacVerbsRows} />
 
-        <Callout variant="warning">
+        <ExamTrap title="Dangerous RBAC Verbs">
           <strong>Dangerous verbs:</strong> <code>bind</code> (can bind any role to self),{' '}
           <code>escalate</code> (can create roles with more permissions), and{' '}
           <code>impersonate</code> (can act as another user) — all can lead to privilege escalation.
-        </Callout>
+        </ExamTrap>
 
         <h3
           className="text-lg font-bold mb-3"
@@ -831,10 +839,10 @@ kubectl auth can-i create secrets --all-namespaces`}
 
         <ComparisonTable columns={secretTypesColumns} rows={secretTypesRows} />
 
-        <Callout variant="warning">
+        <ExamTrap title="Secrets are NOT Encrypted by Default">
           Base64 encoding is NOT encryption. Anyone with direct etcd access can read all secrets. You
           must enable encryption at rest via <code>--encryption-provider-config</code>.
-        </Callout>
+        </ExamTrap>
 
         <h3
           className="text-lg font-bold mb-3"
@@ -1316,6 +1324,14 @@ spec:
           <strong>additive</strong> — there is no explicit DENY, only allow-by-default or allow-by-policy.
         </Callout>
       </section>
+
+      <MemoryHook title="NetworkPolicy Default">
+        <strong>Default = allow ALL.</strong> Without any NetworkPolicy, all pods can talk to all pods across all namespaces.
+        <br /><br />
+        <strong>First policy = isolation.</strong> Once a pod is selected by any policy, default-allow stops for that traffic direction.
+        <br /><br />
+        <strong>Both directions must allow.</strong> Source egress policy AND destination ingress policy must permit the connection.
+      </MemoryHook>
 
       {/* ─── Quiz Section ─── */}
       <section id="quiz" className="mt-16 mb-8">

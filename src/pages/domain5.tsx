@@ -24,6 +24,8 @@ import CodeBlock from '@/components/CodeBlock'
 import ComparisonTable from '@/components/ComparisonTable'
 import QuizComponent from '@/components/QuizComponent'
 import type { QuizQuestion } from '@/components/QuizComponent'
+import MemoryHook from '@/components/MemoryHook'
+import SupplyChainDiagram from '@/components/diagrams/SupplyChainDiagram'
 
 
 
@@ -370,6 +372,12 @@ export default function Domain5Page() {
           two-person review + reproducible builds. Higher levels = more security guarantees.
         </CalloutBox>
 
+        <MemoryHook title="SLSA Safe">
+          <strong>SLSA mnemonic:</strong> 1=you wrote it, 2=you locked it, 3=vault, 4=two guards.
+          <br /><br />
+          Level 1 = provenance exists. Level 2 = signed provenance + hosted build. Level 3 = hardened build platform + hermetic builds. Level 4 = two-person review + reproducible builds.
+        </MemoryHook>
+
         <h3
           className="text-lg font-semibold mb-3 mt-8"
           style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-body)' }}
@@ -413,6 +421,8 @@ export default function Domain5Page() {
           ))}
         </ul>
       </section>
+
+      <SupplyChainDiagram />
 
       {/* Section 5.2 — Image Repository Security */}
       <section  className="mb-12">
