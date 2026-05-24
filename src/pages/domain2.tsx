@@ -707,10 +707,13 @@ export default function Domain2Page() {
         <PortsTable />
 
         <CalloutBox variant="exam">
-          Memorize these ports cold: <strong>6443</strong> (API Server), <strong>2379/2380</strong> (etcd
-          client/peer), <strong>10250</strong> (Kubelet), <strong>10257</strong> (Controller Manager),{' '}
-          <strong>10259</strong> (Scheduler), <strong>10249</strong> (Kube-proxy metrics). These are
-          heavily tested on the exam.
+          <strong>🎯 Exam Focus:</strong> Memorize these ports cold: <strong style={{ color: 'var(--accent-coral)' }}>6443</strong> (API
+          Server), <strong style={{ color: 'var(--accent-coral)' }}>2379/2380</strong> (etcd
+          client/peer), <strong style={{ color: 'var(--accent-coral)' }}>10250</strong> (Kubelet),{' '}
+          <strong style={{ color: 'var(--accent-coral)' }}>10257</strong> (Controller Manager),{' '}
+          <strong style={{ color: 'var(--accent-coral)' }}>10259</strong> (Scheduler),{' '}
+          <strong style={{ color: 'var(--accent-coral)' }}>10249</strong> (Kube-proxy metrics). These
+          are heavily tested on the exam.
         </CalloutBox>
 
         <PortMemorySystem />
