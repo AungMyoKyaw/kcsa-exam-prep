@@ -105,6 +105,24 @@ export default function QuickRecall() {
             </h1>
           </div>
 
+          {/* Quick category chips */}
+          <div className="flex flex-wrap items-center gap-2">
+            {['All', 'Ports', 'RBAC', 'Encryption', 'PSS'].map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setCategory(cat)}
+                className="text-xs font-semibold px-3 py-1.5 rounded-full transition-all duration-200 hover:opacity-90"
+                style={{
+                  backgroundColor: category === cat ? 'var(--accent-primary)' : 'var(--surface-elevated)',
+                  color: category === cat ? '#fff' : 'var(--text-secondary)',
+                  border: '1px solid var(--border-subtle)',
+                }}
+              >
+                {cat === 'All' ? 'All Categories' : cat === 'Ports' ? '🔥 Ports Only' : cat}
+              </button>
+            ))}
+          </div>
+
           <div className="flex flex-wrap items-center gap-3">
             {/* Category filter */}
             <div className="flex items-center gap-2">

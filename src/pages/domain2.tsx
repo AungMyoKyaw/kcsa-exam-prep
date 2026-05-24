@@ -633,8 +633,21 @@ export default function Domain2Page() {
 
       {/* ── Chapter Header ── */}
       <div
-        className="mb-10"
+        className="mb-10 p-6 rounded-xl border-l-4"
+        style={{
+          backgroundColor: 'var(--surface-elevated)',
+          borderLeftColor: '#1a7f37',
+        }}
       >
+        <div className="flex items-center gap-2 mb-2">
+          <Server size={20} style={{ color: '#1a7f37' }} />
+          <span className="text-sm font-bold" style={{ color: '#1a7f37', fontFamily: 'var(--font-mono)' }}>
+            Domain 2
+          </span>
+          <span className="text-xs px-2 py-0.5 rounded-full font-semibold" style={{ backgroundColor: '#dafbe1', color: '#1a7f37' }}>
+            22% exam weight — HIGHEST
+          </span>
+        </div>
         <h1
           className="text-3xl lg:text-4xl font-normal mb-4"
           style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-display)' }}
@@ -643,16 +656,6 @@ export default function Domain2Page() {
         </h1>
 
         <div className="flex flex-wrap items-center gap-3 mb-6">
-          <span
-            className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full"
-            style={{
-              backgroundColor: 'rgba(242,196,77,0.15)',
-              color: 'var(--accent-amber)',
-            }}
-          >
-            <Flame size={14} />
-            22% exam weight — HIGHEST
-          </span>
           <span className="text-xs" style={{ color: 'var(--text-secondary)' }}>
             ~65 min read
           </span>

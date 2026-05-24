@@ -45,7 +45,7 @@ export default function EncryptionChainDiagram({ className }: EncryptionChainDia
 
   return (
     <div className={`my-8 w-full flex flex-col items-center ${className ?? ''}`}>
-      <div className="flex flex-col items-center gap-3">
+      <div className="flex flex-col items-center gap-3 w-full max-w-sm">
         {layers.map((layer, idx) => (
           <div key={layer.label} className="flex flex-col items-center">
             {idx > 0 && (
@@ -68,7 +68,6 @@ export default function EncryptionChainDiagram({ className }: EncryptionChainDia
               className="relative flex flex-col items-center justify-center rounded-xl py-3 px-4 shadow-sm text-center"
               style={{
                 width: `${layer.width}px`,
-                maxWidth: '90vw',
                 backgroundColor: layer.bgColor,
                 border: `2px solid ${layer.color}`,
               }}
@@ -82,7 +81,7 @@ export default function EncryptionChainDiagram({ className }: EncryptionChainDia
 
               {layer.warning && (
                 <div
-                  className="absolute -right-3 -top-3 w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-sm"
+                  className="absolute right-0 top-0 translate-x-1/2 -translate-y-1/2 w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-sm"
                   style={{ backgroundColor: 'var(--accent-coral)' }}
                 >
                   ✕
@@ -91,10 +90,10 @@ export default function EncryptionChainDiagram({ className }: EncryptionChainDia
 
               {layer.highlight && (
                 <div
-                  className="absolute left-full ml-3 top-1/2 -translate-y-1/2 whitespace-nowrap"
+                  className="absolute left-1/2 -translate-x-1/2 top-full mt-2"
                 >
                   <span
-                    className="text-xs font-bold px-2 py-1 rounded-md"
+                    className="text-xs font-bold px-2 py-1 rounded-md whitespace-nowrap"
                     style={{
                       backgroundColor: 'var(--accent-sage)',
                       color: '#ffffff',

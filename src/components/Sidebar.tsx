@@ -1,14 +1,23 @@
-import { useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { Link, useLocation } from 'react-router'
 import {
-  ChevronRight,
+  Home,
+  Shield,
+  Server,
+  Lock,
+  Globe,
+  Database,
+  FileText,
   FlaskConical,
-  ClipboardList,
+  Layers,
   BookOpen,
   Settings,
-  Zap,
+  X,
   CheckCircle2,
-  Circle,
+  Clock,
+  BrainCircuit,
+  ChevronDown,
+  ChevronRight,
 } from 'lucide-react'
 import { domains } from '@/lib/domainData'
 
@@ -17,216 +26,338 @@ interface SidebarProps {
   onClose: () => void
 }
 
-const readChapters: Record<string, boolean> = {
-  'd1-c1': true,
-  'd1-c2': true,
-  'd1-c3': true,
-  'd2-c1': true,
-  'd2-c2': true,
-}
+const domainIcons = [
+  Shield,
+  Server,
+  Lock,
+  Globe,
+  Database,
+  FileText,
+]
+
+const domainColors = [
+  '#0969da',
+  '#1a7f37',
+  '#8257e5',
+  '#9a6700',
+  '#cf222e',
+  '#6a737d',
+]
 
 export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   const location = useLocation()
-  const [expandedDomains, setExpandedDomains] = useState<Record<number, boolean>>({
-    1: true,
-    2: true,
-    3: false,
-    4: false,
-    5: false,
-    6: false,
-  })
+  const [readChapters, setReadChapters] = useState<Record<string, string[]>>({})
+  const [expandedDomains, setExpandedDomains] = useState<Record<number, boolean>>({})
+  const [examDate, setExamDate] = useState<string | null>(null)
 
-  const toggleDomain = (domainId: number) => {
-    setExpandedDomains((prev) => ({ ...prev, [domainId]: !prev[domainId] }))
-  }
+  useEffect(() => {
+    const saved = localStorage.getItem('kcsa_read_chapters')
+    if (saved) setReadChapters(JSON.parse(saved))
+    const date = localStorage.getItem('kcsa_exam_date')
+    if (date) setExamDate(date)
 
-  const isActive = (path: string) => location.pathname === path
+    // Expand current domain
+    const match = location.pathname.match(/\/domain(\d)/)
+    if (match) {
+      setExpandedDomains((prev) => ({ ...prev, [Number(match[1])]: true }))
+    }
+  }, [location.pathname])
 
-  const sidebarContent = (
-    <div
-      className="h-full flex flex-col overflow-y-auto custom-scrollbar"
-      style={{ backgroundColor: 'var(--surface-base)' }}
-    >
-      {/* Header */}
-      <div className="px-4 pt-5 pb-3">
-        <span
-          className="text-xs font-semibold uppercase tracking-[0.06em]"
-          style={{ color: 'var(--text-tertiary)' }}
-        >
-          Chapters
-        </span>
-      </div>
+  const toggleDomain = useCallback((id: number) => {
+    setExpandedDomains((prev) => ({ ...prev, [id]: !prev[id] }))
+  }, [])
 
-      {/* Domain Groups */}
-      <div className="flex-1 px-2 pb-4">
-        {domains.map((domain) => {
-          const domainPath = `/domain${domain.id}`
-          const isExpanded = expandedDomains[domain.id]
-          const isDomainActive = isActive(domainPath)
-          const totalChapters = domain.chapters.length
-          const readCount = domain.chapters.filter((ch) => readChapters[ch.id]).length
-
-          return (
-            <div key={domain.id} className="mb-0.5">
-              {/* Domain Header */}
-              <button
-                onClick={() => toggleDomain(domain.id)}
-                className="w-full flex items-center gap-2 px-3 py-2 rounded-md text-left transition-colors duration-150 hover:bg-[var(--surface-elevated)]"
-                style={{
-                  backgroundColor: isDomainActive ? 'var(--surface-elevated)' : 'transparent',
-                  color: isDomainActive ? 'var(--accent-primary)' : 'var(--text-primary)',
-                }}
-              >
-                <ChevronRight
-                  size={14}
-                  style={{
-                    color: 'var(--text-tertiary)',
-                    transform: isExpanded ? 'rotate(90deg)' : 'rotate(0deg)',
-                    transition: 'transform 0.15s ease',
-                  }}
-                />
-                <Link
-                  to={domainPath}
-                  onClick={(e) => e.stopPropagation()}
-                  className="flex-1 flex items-center justify-between min-w-0 no-underline"
-                  onClickCapture={onClose}
-                >
-                  <span className="text-sm font-medium truncate">
-                    {domain.number}
-                  </span>
-                </Link>
-                <span
-                  className="flex-shrink-0 text-xs font-semibold px-1.5 py-0.5 rounded-full"
-                  style={{
-                    backgroundColor: 'var(--surface-elevated)',
-                    color: 'var(--text-tertiary)',
-                  }}
-                >
-                  {domain.weight}%
-                </span>
-              </button>
-
-              {/* Sub-chapters — no animation, instant toggle */}
-              {isExpanded && (
-                <div className="pl-8 pr-2 py-1">
-                  {domain.chapters.map((chapter) => {
-                    const chapterPath = `${domainPath}/${chapter.id}`
-                    const isRead = readChapters[chapter.id]
-                    return (
-                      <Link
-                        key={chapter.id}
-                        to={chapterPath}
-                        onClick={onClose}
-                        className="flex items-center gap-2 px-3 py-2 rounded-md text-sm transition-colors duration-150 no-underline hover:bg-[var(--surface-elevated)]"
-                        style={{ color: 'var(--text-secondary)' }}
-                      >
-                        {isRead ? (
-                          <CheckCircle2
-                            size={14}
-                            style={{ color: 'var(--accent-sage)' }}
-                            className="flex-shrink-0"
-                          />
-                        ) : (
-                          <Circle
-                            size={14}
-                            style={{ color: 'var(--text-tertiary)' }}
-                            className="flex-shrink-0"
-                          />
-                        )}
-                        <span className="truncate">{chapter.title}</span>
-                      </Link>
-                    )
-                  })}
-                  <div className="flex items-center gap-1.5 px-3 py-1.5 mt-1">
-                    <div
-                      className="flex-1 h-1 rounded-full overflow-hidden"
-                      style={{ backgroundColor: 'var(--border-subtle)' }}
-                    >
-                      <div
-                        className="h-full rounded-full"
-                        style={{
-                          width: `${(readCount / totalChapters) * 100}%`,
-                          backgroundColor: 'var(--accent-primary)',
-                        }}
-                      />
-                    </div>
-                    <span
-                      className="text-xs font-medium"
-                      style={{ color: 'var(--text-tertiary)' }}
-                    >
-                      {readCount}/{totalChapters}
-                    </span>
-                  </div>
-                </div>
-              )}
-            </div>
-          )
-        })}
-      </div>
-
-      {/* Utility Links */}
-      <div
-        className="px-2 py-3 mt-auto"
-        style={{ borderTop: '1px solid var(--border-subtle)' }}
-      >
-        {[
-          { to: '/quick-recall', icon: Zap, label: 'Quick Recall' },
-          { to: '/practice-exam', icon: FlaskConical, label: 'Practice Exam' },
-          { to: '/cheat-sheet', icon: ClipboardList, label: 'Cheat Sheet' },
-          { to: '/glossary', icon: BookOpen, label: 'Glossary' },
-          { to: '/settings', icon: Settings, label: 'Settings' },
-        ].map((item) => (
-          <Link
-            key={item.to}
-            to={item.to}
-            onClick={onClose}
-            className="flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium transition-colors duration-150 no-underline hover:bg-[var(--surface-elevated)]"
-            style={{
-              color: isActive(item.to) ? 'var(--accent-primary)' : 'var(--text-secondary)',
-              backgroundColor: isActive(item.to) ? 'var(--surface-elevated)' : 'transparent',
-            }}
-          >
-            <item.icon size={16} />
-            <span>{item.label}</span>
-          </Link>
-        ))}
-      </div>
-    </div>
+  const totalChapters = domains.reduce((sum, d) => sum + d.chapters.length, 0)
+  const completedChapters = Object.values(readChapters).reduce(
+    (sum, chapters) => sum + chapters.length,
+    0
   )
+  const overallPct = Math.round((completedChapters / totalChapters) * 100)
+
+  const daysUntilExam = examDate
+    ? Math.max(0, Math.ceil((new Date(examDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
+    : null
 
   return (
     <>
-      {/* Desktop Sidebar */}
+      {/* Mobile overlay */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 bg-black/30 z-30 lg:hidden"
+          onClick={onClose}
+        />
+      )}
+
       <aside
-        className="hidden lg:block fixed left-0 top-[56px] bottom-0 z-30 transition-all duration-200"
+        className="fixed top-14 left-0 bottom-0 z-30 w-[280px] overflow-y-auto border-r transition-transform duration-200 lg:translate-x-0"
         style={{
-          width: isOpen ? '280px' : '0px',
-          borderRight: isOpen ? '1px solid var(--border-subtle)' : 'none',
-          overflow: 'hidden',
-          opacity: isOpen ? 1 : 0,
+          backgroundColor: 'var(--surface-base)',
+          borderColor: 'var(--border-subtle)',
+          transform: isOpen ? 'translateX(0)' : 'translateX(-100%)',
         }}
       >
-        {sidebarContent}
-      </aside>
-
-      {/* Mobile/Tablet Sidebar Overlay */}
-      {isOpen && (
-        <>
-          <div
-            className="fixed inset-0 z-40 lg:hidden"
-            style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
+        <div className="p-4">
+          {/* Close button (mobile) */}
+          <button
             onClick={onClose}
-          />
-          <aside
-            className="fixed left-0 top-[56px] bottom-0 z-40 w-[280px] lg:hidden overflow-hidden"
-            style={{
-              borderRight: '1px solid var(--border-subtle)',
-            }}
+            className="lg:hidden absolute top-3 right-3 p-1.5 rounded-md"
+            style={{ color: 'var(--text-secondary)' }}
           >
-            {sidebarContent}
-          </aside>
-        </>
-      )}
+            <X size={18} />
+          </button>
+
+          {/* Exam Countdown Card */}
+          {daysUntilExam !== null && (
+            <div
+              className="mb-4 p-3 rounded-lg border"
+              style={{
+                backgroundColor: daysUntilExam <= 7 ? 'var(--accent-coral)' : 'var(--accent-lavender-soft)',
+                borderColor: daysUntilExam <= 7 ? 'var(--accent-coral)' : 'var(--accent-lavender)',
+              }}
+            >
+              <div className="flex items-center gap-2 mb-1">
+                <Clock size={14} style={{ color: daysUntilExam <= 7 ? '#fff' : 'var(--accent-lavender)' }} />
+                <span
+                  className="text-xs font-bold uppercase tracking-wide"
+                  style={{ color: daysUntilExam <= 7 ? '#fff' : 'var(--accent-lavender)' }}
+                >
+                  {daysUntilExam === 0 ? 'Exam Today!' : `${daysUntilExam} Days Left`}
+                </span>
+              </div>
+              <p
+                className="text-xs"
+                style={{ color: daysUntilExam <= 7 ? 'rgba(255,255,255,0.85)' : 'var(--accent-lavender)' }}
+              >
+                {daysUntilExam <= 7
+                  ? 'Final stretch — focus on weak areas!'
+                  : 'Stay consistent. Small daily wins add up.'}
+              </p>
+            </div>
+          )}
+
+          {/* Overall Progress */}
+          <div className="mb-5 p-3 rounded-lg" style={{ backgroundColor: 'var(--surface-elevated)' }}>
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs font-semibold uppercase tracking-wide" style={{ color: 'var(--text-secondary)' }}>
+                Overall Progress
+              </span>
+              <span className="text-xs font-bold" style={{ color: 'var(--accent-primary)' }}>
+                {overallPct}%
+              </span>
+            </div>
+            <div
+              className="h-3 rounded-full overflow-hidden"
+              style={{ backgroundColor: 'var(--surface-base)' }}
+            >
+              <div
+                className="h-full rounded-full transition-all duration-200"
+                style={{
+                  width: `${overallPct}%`,
+                  background: 'var(--accent-gradient)',
+                }}
+              />
+            </div>
+            <p className="text-xs mt-1.5" style={{ color: 'var(--text-tertiary)' }}>
+              {completedChapters} of {totalChapters} chapters completed
+            </p>
+          </div>
+
+          {/* Navigation */}
+          <nav className="space-y-1">
+            <Link
+              to="/"
+              onClick={onClose}
+              className="flex items-center gap-2.5 px-2.5 py-2 rounded-md text-sm transition-colors duration-150"
+              style={{
+                backgroundColor: location.pathname === '/' ? 'var(--surface-elevated)' : 'transparent',
+                color: location.pathname === '/' ? 'var(--text-primary)' : 'var(--text-secondary)',
+                fontWeight: location.pathname === '/' ? 600 : 400,
+              }}
+            >
+              <Home size={16} />
+              Home
+            </Link>
+
+            <div className="pt-2 pb-1">
+              <span className="px-2.5 text-[10px] font-semibold uppercase tracking-wider" style={{ color: 'var(--text-tertiary)' }}>
+                Domains
+              </span>
+            </div>
+
+            {domains.map((domain) => {
+              const Icon = domainIcons[domain.id - 1]
+              const color = domainColors[domain.id - 1]
+              const isActive = location.pathname.startsWith(`/domain${domain.id}`)
+              const isExpanded = expandedDomains[domain.id]
+              const readCount = readChapters[domain.id]?.length || 0
+              const totalCount = domain.chapters.length
+              const pct = Math.round((readCount / totalCount) * 100)
+              const isDone = pct === 100
+
+              return (
+                <div key={domain.id}>
+                  <button
+                    onClick={() => toggleDomain(domain.id)}
+                    className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-md text-sm transition-colors duration-150"
+                    style={{
+                      backgroundColor: isActive ? 'var(--surface-elevated)' : 'transparent',
+                      color: isActive ? 'var(--text-primary)' : 'var(--text-secondary)',
+                      fontWeight: isActive ? 600 : 400,
+                    }}
+                  >
+                    <Icon size={16} style={{ color: isActive ? color : 'var(--text-tertiary)' }} />
+                    <span className="flex-1 text-left truncate">
+                      D{domain.number}: {domain.title}
+                    </span>
+                    {isDone && (
+                      <CheckCircle2 size={14} style={{ color: 'var(--success)' }} />
+                    )}
+                    {isExpanded ? (
+                      <ChevronDown size={14} style={{ color: 'var(--text-tertiary)' }} />
+                    ) : (
+                      <ChevronRight size={14} style={{ color: 'var(--text-tertiary)' }} />
+                    )}
+                  </button>
+
+                  {isExpanded && (
+                    <div className="ml-6 mt-1 space-y-0.5">
+                      {domain.chapters.map((chapter) => {
+                        const isRead = readChapters[domain.id]?.includes(chapter.id)
+                        return (
+                          <Link
+                            key={chapter.id}
+                            to={`/domain${domain.id}/${chapter.id}`}
+                            onClick={onClose}
+                            className="flex items-center gap-2 px-2.5 py-1.5 rounded-md text-xs transition-colors duration-150"
+                            style={{
+                              backgroundColor: location.pathname === `/domain${domain.id}/${chapter.id}`
+                                ? 'var(--surface-elevated)'
+                                : 'transparent',
+                              color: location.pathname === `/domain${domain.id}/${chapter.id}`
+                                ? 'var(--text-primary)'
+                                : 'var(--text-secondary)',
+                            }}
+                          >
+                            <span
+                              className="w-1.5 h-1.5 rounded-full flex-shrink-0"
+                              style={{
+                                backgroundColor: isRead ? color : 'var(--border-medium)',
+                              }}
+                            />
+                            <span className="flex-1 truncate">{chapter.title}</span>
+                            {isRead && (
+                              <CheckCircle2 size={12} style={{ color: 'var(--success)', flexShrink: 0 }} />
+                            )}
+                          </Link>
+                        )
+                      })}
+                      {/* Mini progress bar per domain */}
+                      <div className="px-2.5 pt-1 pb-1">
+                        <div
+                          className="h-1.5 rounded-full overflow-hidden"
+                          style={{ backgroundColor: 'var(--surface-base)' }}
+                        >
+                          <div
+                            className="h-full rounded-full"
+                            style={{ width: `${pct}%`, backgroundColor: color }}
+                          />
+                        </div>
+                        <div className="flex justify-between mt-0.5">
+                          <span className="text-[10px]" style={{ color: 'var(--text-tertiary)' }}>
+                            {readCount}/{totalCount}
+                          </span>
+                          <span className="text-[10px] font-medium" style={{ color }}>
+                            {pct}%
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )
+            })}
+
+            <div className="pt-3 pb-1">
+              <span className="px-2.5 text-[10px] font-semibold uppercase tracking-wider" style={{ color: 'var(--text-tertiary)' }}>
+                Tools
+              </span>
+            </div>
+
+            <Link
+              to="/practice-exam"
+              onClick={onClose}
+              className="flex items-center gap-2.5 px-2.5 py-2 rounded-md text-sm transition-colors duration-150"
+              style={{
+                backgroundColor: location.pathname === '/practice-exam' ? 'var(--surface-elevated)' : 'transparent',
+                color: location.pathname === '/practice-exam' ? 'var(--text-primary)' : 'var(--text-secondary)',
+                fontWeight: location.pathname === '/practice-exam' ? 600 : 400,
+              }}
+            >
+              <FlaskConical size={16} />
+              Practice Exam
+            </Link>
+            <Link
+              to="/quick-recall"
+              onClick={onClose}
+              className="flex items-center gap-2.5 px-2.5 py-2 rounded-md text-sm transition-colors duration-150"
+              style={{
+                backgroundColor: location.pathname === '/quick-recall' ? 'var(--surface-elevated)' : 'transparent',
+                color: location.pathname === '/quick-recall' ? 'var(--text-primary)' : 'var(--text-secondary)',
+                fontWeight: location.pathname === '/quick-recall' ? 600 : 400,
+              }}
+            >
+              <BrainCircuit size={16} />
+              Quick Recall
+            </Link>
+            <Link
+              to="/cheat-sheet"
+              onClick={onClose}
+              className="flex items-center gap-2.5 px-2.5 py-2 rounded-md text-sm transition-colors duration-150"
+              style={{
+                backgroundColor: location.pathname === '/cheat-sheet' ? 'var(--surface-elevated)' : 'transparent',
+                color: location.pathname === '/cheat-sheet' ? 'var(--text-primary)' : 'var(--text-secondary)',
+                fontWeight: location.pathname === '/cheat-sheet' ? 600 : 400,
+              }}
+            >
+              <Layers size={16} />
+              Cheat Sheet
+            </Link>
+            <Link
+              to="/glossary"
+              onClick={onClose}
+              className="flex items-center gap-2.5 px-2.5 py-2 rounded-md text-sm transition-colors duration-150"
+              style={{
+                backgroundColor: location.pathname === '/glossary' ? 'var(--surface-elevated)' : 'transparent',
+                color: location.pathname === '/glossary' ? 'var(--text-primary)' : 'var(--text-secondary)',
+                fontWeight: location.pathname === '/glossary' ? 600 : 400,
+              }}
+            >
+              <BookOpen size={16} />
+              Glossary
+            </Link>
+
+            <div className="pt-3 pb-1">
+              <span className="px-2.5 text-[10px] font-semibold uppercase tracking-wider" style={{ color: 'var(--text-tertiary)' }}>
+                Settings
+              </span>
+            </div>
+
+            <Link
+              to="/settings"
+              onClick={onClose}
+              className="flex items-center gap-2.5 px-2.5 py-2 rounded-md text-sm transition-colors duration-150"
+              style={{
+                backgroundColor: location.pathname === '/settings' ? 'var(--surface-elevated)' : 'transparent',
+                color: location.pathname === '/settings' ? 'var(--text-primary)' : 'var(--text-secondary)',
+                fontWeight: location.pathname === '/settings' ? 600 : 400,
+              }}
+            >
+              <Settings size={16} />
+              Settings
+            </Link>
+          </nav>
+        </div>
+      </aside>
     </>
   )
 }

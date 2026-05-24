@@ -1,633 +1,357 @@
 import { useState, useEffect } from 'react';
 import {
-  Palette,
-  BarChart3,
-  Keyboard,
-  Info,
+  Moon,
+  Sun,
+  Trash2,
   AlertTriangle,
-  ExternalLink,
+  Keyboard,
+  BookOpen,
+  FlaskConical,
+  Layers,
+  BrainCircuit,
   RotateCcw,
+  Calendar,
+  CheckCircle2,
+  Info,
 } from 'lucide-react';
-import { domains } from '@/lib/domainData';
-
-const settingsTabs = [
-  { id: 'appearance', label: 'Appearance', icon: Palette },
-  { id: 'progress', label: 'Progress', icon: BarChart3 },
-  { id: 'shortcuts', label: 'Shortcuts', icon: Keyboard },
-  { id: 'about', label: 'About', icon: Info },
-];
-
-// ===== Tab 1: Appearance =====
-
-function AppearanceTab() {
-  const [codeFontSize, setCodeFontSize] = useState(14);
-  const [readingFontSize, setReadingFontSize] = useState(16);
-
-  useEffect(() => {
-    const codeSize = localStorage.getItem('kcsa-code-font-size');
-    if (codeSize != null) {
-      setTimeout(() => setCodeFontSize(parseInt(codeSize, 10)), 0);
-    }
-    const readSize = localStorage.getItem('kcsa-reading-font-size');
-    if (readSize != null) {
-      setTimeout(() => setReadingFontSize(parseInt(readSize, 10)), 0);
-    }
-  }, []);
-
-  const handleCodeFontChange = (size: number) => {
-    setCodeFontSize(size);
-    localStorage.setItem('kcsa-code-font-size', String(size));
-  };
-
-  const handleReadingFontChange = (size: number) => {
-    setReadingFontSize(size);
-    localStorage.setItem('kcsa-reading-font-size', String(size));
-    document.documentElement.style.setProperty('--reading-font-size', `${size}px`);
-  };
-
-  return (
-    <div className="space-y-8">
-      {/* Code Font Size */}
-      <div
-        className="pt-8"
-        style={{ borderTop: '1px solid var(--border-subtle)' }}
-      >
-        <h3 className="text-xl font-bold mb-1" style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-body)' }}>
-          Code Font Size
-        </h3>
-        <p className="text-sm mb-4" style={{ color: 'var(--text-secondary)' }}>
-          Adjust the size of code blocks and inline code
-        </p>
-        <div className="flex items-center gap-4">
-          <span className="text-xs" style={{ color: 'var(--text-tertiary)' }}>12px</span>
-          <input
-            type="range"
-            min={12}
-            max={18}
-            step={1}
-            value={codeFontSize}
-            onChange={(e) => handleCodeFontChange(parseInt(e.target.value, 10))}
-            className="flex-1 accent-primary"
-            style={{ accentColor: 'var(--accent-primary)' }}
-          />
-          <span className="text-xs" style={{ color: 'var(--text-tertiary)' }}>18px</span>
-          <span
-            className="text-sm font-semibold ml-2 px-2 py-1 rounded"
-            style={{ color: 'var(--accent-primary)', backgroundColor: 'rgba(4,80,54,0.08)' }}
-          >
-            {codeFontSize}px
-          </span>
-        </div>
-        <div className="mt-4 p-4 rounded-xl" style={{ backgroundColor: 'var(--surface-code)' }}>
-          <code
-            style={{
-              fontFamily: 'var(--font-mono)',
-              fontSize: `${codeFontSize}px`,
-              color: 'var(--text-primary)',
-            }}
-          >
-            apiVersion: v1
-            <br />
-            kind: Pod
-            <br />
-            metadata:
-            <br />
-            &nbsp;&nbsp;name: example
-          </code>
-        </div>
-      </div>
-
-      {/* Reading Font Size */}
-      <div
-        className="pt-8"
-        style={{ borderTop: '1px solid var(--border-subtle)' }}
-      >
-        <h3 className="text-xl font-bold mb-1" style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-body)' }}>
-          Reading Font Size
-        </h3>
-        <p className="text-sm mb-4" style={{ color: 'var(--text-secondary)' }}>
-          Adjust the size of body text
-        </p>
-        <div className="flex items-center gap-4">
-          <span className="text-xs" style={{ color: 'var(--text-tertiary)' }}>14px</span>
-          <input
-            type="range"
-            min={14}
-            max={20}
-            step={1}
-            value={readingFontSize}
-            onChange={(e) => handleReadingFontChange(parseInt(e.target.value, 10))}
-            className="flex-1"
-            style={{ accentColor: 'var(--accent-primary)' }}
-          />
-          <span className="text-xs" style={{ color: 'var(--text-tertiary)' }}>20px</span>
-          <span
-            className="text-sm font-semibold ml-2 px-2 py-1 rounded"
-            style={{ color: 'var(--accent-primary)', backgroundColor: 'rgba(4,80,54,0.08)' }}
-          >
-            {readingFontSize}px
-          </span>
-        </div>
-        <div className="mt-4 p-4 rounded-xl" style={{ backgroundColor: 'var(--surface-elevated)' }}>
-          <p
-            style={{
-              fontFamily: 'var(--font-body)',
-              fontSize: `${readingFontSize}px`,
-              color: 'var(--text-primary)',
-              lineHeight: 1.7,
-            }}
-          >
-            This is a sample paragraph to preview your reading font size. 
-            Kubernetes is an open-source container orchestration platform 
-            that automates the deployment, scaling, and management of containerized applications.
-          </p>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ===== Tab 2: Progress =====
-
-function ProgressTab() {
-  const [showResetDialog, setShowResetDialog] = useState(false);
-  const [resetConfirm, setResetConfirm] = useState('');
-
-  // Mock stats (in a real app these would be computed from localStorage)
-  const stats = [
-    { label: 'Overall Progress', value: '45%', context: '9 of 20 sections completed' },
-    { label: 'Quiz Average', value: '82%', context: 'Across all chapter quizzes' },
-    { label: 'Practice Exams', value: '2 taken', context: 'Best score: 78%' },
-    { label: 'Study Time', value: '12.5 hours', context: 'Estimated from reading progress' },
-  ];
-
-  const handleReset = () => {
-    if (resetConfirm === 'RESET') {
-      localStorage.removeItem('kcsa-progress');
-      localStorage.removeItem('kcsa-practice-exams');
-      localStorage.removeItem('kcsa-quiz-scores');
-      setShowResetDialog(false);
-      setResetConfirm('');
-      window.location.reload();
-    }
-  };
-
-  return (
-    <div className="space-y-8">
-      {/* Statistics Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {stats.map((stat) => (
-          <div
-            key={stat.label}
-            className="p-6 rounded-[20px] border"
-            style={{ backgroundColor: 'var(--surface-base)', borderColor: 'var(--border-subtle)' }}
-          >
-            <span
-              className="text-xs font-semibold uppercase tracking-[0.06em]"
-              style={{ color: 'var(--text-tertiary)' }}
-            >
-              {stat.label}
-            </span>
-            <p
-              className="text-3xl font-normal mt-2"
-              style={{ color: 'var(--accent-primary)', fontFamily: 'var(--font-display)' }}
-            >
-              {stat.value}
-            </p>
-            <p className="text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>
-              {stat.context}
-            </p>
-          </div>
-        ))}
-      </div>
-
-      {/* Domain Progress */}
-      <div
-        className="pt-8"
-        style={{ borderTop: '1px solid var(--border-subtle)' }}
-      >
-        <h3
-          className="text-xl font-bold mb-4"
-          style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-body)' }}
-        >
-          Domain Progress
-        </h3>
-        <div className="space-y-4">
-          {domains.map((domain) => (
-            <div key={domain.id}>
-              <div className="flex items-center justify-between mb-1">
-                <div className="flex items-center gap-2">
-                  <span className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>
-                    {domain.number}: {domain.shortName}
-                  </span>
-                  <span
-                    className="text-xs font-semibold px-1.5 py-0.5 rounded-full"
-                    style={{ backgroundColor: 'rgba(242,196,77,0.15)', color: 'var(--accent-amber)' }}
-                  >
-                    {domain.weight}%
-                  </span>
-                </div>
-                <span className="text-xs" style={{ color: 'var(--text-secondary)' }}>
-                  3/8 sections &bull; Quiz: 75%
-                </span>
-              </div>
-              <div className="h-2 rounded-full overflow-hidden" style={{ backgroundColor: 'var(--border-subtle)' }}>
-                <div
-                  className="h-full rounded-full"
-                  style={{ background: 'var(--accent-gradient)', width: `${35 + (domain.id - 1) * 5}%` }}
-                />
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Reset Section */}
-      <div
-        className="pt-8 rounded-[20px] p-6"
-        style={{
-          borderTop: '1px solid var(--border-subtle)',
-          backgroundColor: 'rgba(232,122,93,0.04)',
-          border: '1px solid rgba(232,122,93,0.2)',
-        }}
-      >
-        <h3
-          className="text-xl font-bold mb-2"
-          style={{ color: 'var(--accent-coral)' }}
-        >
-          Reset Progress
-        </h3>
-        <p className="text-sm mb-4" style={{ color: 'var(--accent-coral)', opacity: 0.8 }}>
-          This will delete all reading progress, quiz scores, and practice exam results. 
-          This action cannot be undone.
-        </p>
-        <button
-          onClick={() => setShowResetDialog(true)}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 hover:scale-[1.02]"
-          style={{
-            border: '1px solid var(--accent-coral)',
-            color: 'var(--accent-coral)',
-            backgroundColor: 'transparent',
-          }}
-        >
-          <RotateCcw size={14} /> Reset All Progress
-        </button>
-      </div>
-
-      {/* Reset Confirmation Dialog */}
-      {showResetDialog && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4"
-          style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
-          onClick={(e) => {
-            if (e.target === e.currentTarget) {setShowResetDialog(false);}
-          }}
-        >
-          <div
-            className="w-full max-w-md p-6 rounded-[20px]"
-            style={{ backgroundColor: 'var(--surface-base)', border: '1px solid var(--border-subtle)' }}
-          >
-            <div className="flex items-center gap-3 mb-4">
-              <AlertTriangle size={24} style={{ color: 'var(--accent-coral)' }} />
-              <h3 className="text-lg font-bold" style={{ color: 'var(--text-primary)' }}>
-                Are you sure?
-              </h3>
-            </div>
-            <p className="text-sm mb-4" style={{ color: 'var(--text-secondary)' }}>
-              All your progress will be permanently deleted. Type <strong style={{ color: 'var(--accent-coral)' }}>RESET</strong> to confirm.
-            </p>
-            <input
-              type="text"
-              value={resetConfirm}
-              onChange={(e) => setResetConfirm(e.target.value)}
-              placeholder="Type RESET to confirm"
-              className="w-full h-11 px-4 rounded-xl text-sm mb-4 outline-none"
-              style={{
-                backgroundColor: 'var(--surface-elevated)',
-                border: '1px solid var(--border-medium)',
-                color: 'var(--text-primary)',
-                fontFamily: 'var(--font-mono)',
-              }}
-            />
-            <div className="flex gap-3">
-              <button
-                onClick={() => { setShowResetDialog(false); setResetConfirm(''); }}
-                className="flex-1 py-2.5 rounded-xl text-sm font-medium transition-colors duration-200"
-                style={{ color: 'var(--text-secondary)', backgroundColor: 'var(--surface-elevated)' }}
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleReset}
-                disabled={resetConfirm !== 'RESET'}
-                className="flex-1 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 disabled:opacity-40"
-                style={{
-                  backgroundColor: 'var(--accent-coral)',
-                  color: '#fff',
-                }}
-              >
-                Reset Everything
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
-// ===== Tab 3: Shortcuts =====
-
-function ShortcutsTab() {
-  const shortcutGroups = [
-    {
-      title: 'Global Shortcuts',
-      shortcuts: [
-        { keys: ['Ctrl/Cmd', 'K'], action: 'Focus search input' },
-        { keys: ['Ctrl/Cmd', 'B'], action: 'Toggle sidebar' },
-        { keys: ['Ctrl/Cmd', 'Shift', 'L'], action: 'Toggle sidebar' },
-        { keys: ['?'], action: 'Show keyboard shortcuts help' },
-        { keys: ['Esc'], action: 'Close modal / search / sidebar' },
-      ],
-    },
-    {
-      title: 'Reading Shortcuts',
-      shortcuts: [
-        { keys: ['→'], action: 'Next chapter' },
-        { keys: ['←'], action: 'Previous chapter' },
-        { keys: ['↑ / ↓'], action: 'Scroll content' },
-      ],
-    },
-    {
-      title: 'Practice Exam Shortcuts',
-      shortcuts: [
-        { keys: ['1 – 4'], action: 'Select option A/B/C/D' },
-        { keys: ['F'], action: 'Flag current question' },
-        { keys: ['→ / N'], action: 'Next question' },
-        { keys: ['← / P'], action: 'Previous question' },
-        { keys: ['Enter'], action: 'Submit answer / go to next' },
-        { keys: ['R'], action: 'Open review screen' },
-      ],
-    },
-  ];
-
-  return (
-    <div className="space-y-8">
-      {shortcutGroups.map((group) => (
-        <div key={group.title}>
-          <h3
-            className="text-lg font-bold mb-4"
-            style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-body)' }}
-          >
-            {group.title}
-          </h3>
-          <div
-            className="rounded-[20px] border overflow-hidden"
-            style={{ backgroundColor: 'var(--surface-base)', borderColor: 'var(--border-subtle)' }}
-          >
-            {group.shortcuts.map((s, i) => (
-              <div
-                key={s.action}
-                className="flex items-center gap-4 px-5 py-3 transition-colors duration-150 hover:bg-[var(--surface-elevated)]"
-                style={{
-                  borderBottom: i < group.shortcuts.length - 1 ? '1px solid var(--border-subtle)' : 'none',
-                }}
-              >
-                <div className="flex items-center gap-1.5 flex-shrink-0 min-w-[180px]">
-                  {s.keys.map((key, ki) => (
-                    <span key={ki} className="flex items-center gap-1.5">
-                      <kbd
-                        className="px-2 py-1 rounded-md text-xs font-medium font-mono"
-                        style={{
-                          backgroundColor: 'var(--surface-elevated)',
-                          border: '1px solid var(--border-medium)',
-                          borderBottom: '2px solid var(--border-medium)',
-                          color: 'var(--text-primary)',
-                          boxShadow: '0 1px 0 var(--border-medium)',
-                        }}
-                      >
-                        {key}
-                      </kbd>
-                      {ki < s.keys.length - 1 && (
-                        <span className="text-xs" style={{ color: 'var(--text-tertiary)' }}>+</span>
-                      )}
-                    </span>
-                  ))}
-                </div>
-                <span className="text-sm" style={{ color: 'var(--text-primary)' }}>
-                  {s.action}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-// ===== Tab 4: About =====
-
-function AboutTab() {
-  const resources = [
-    { name: 'Official KCSA Exam Page (Linux Foundation)', url: 'https://training.linuxfoundation.org/certification/kubernetes-and-cloud-native-security-associate-kcsa/' },
-    { name: 'CNCF Curriculum Repository (GitHub)', url: 'https://github.com/cncf/curriculum' },
-    { name: 'Kubernetes Documentation', url: 'https://kubernetes.io/docs/' },
-    { name: 'Kubernetes Security Documentation', url: 'https://kubernetes.io/docs/concepts/security/' },
-    { name: 'NSA/CISA Kubernetes Hardening Guide', url: 'https://media.defense.gov/2022/Aug/29/2003066362/-1/-1/0/CTR_KUBERNETES_HARDENING_GUIDANCE_1.2_20220829.PDF' },
-    { name: 'CIS Kubernetes Benchmark', url: 'https://www.cisecurity.org/benchmark/kubernetes' },
-  ];
-
-  return (
-    <div className="space-y-8">
-      {/* Book Information */}
-      <div>
-        <h3
-          className="text-xl font-bold mb-3"
-          style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-body)' }}
-        >
-          About This Book
-        </h3>
-        <p className="text-sm leading-relaxed mb-4" style={{ color: 'var(--text-primary)' }}>
-          An interactive, comprehensive study guide for the Kubernetes and Cloud Native Security 
-          Associate (KCSA) certification exam. Built to cover every domain, every concept, and 
-          every detail you need to pass.
-        </p>
-        <div className="flex items-center gap-4 text-sm" style={{ color: 'var(--text-secondary)' }}>
-          <span>
-            Version: <code className="font-mono text-xs px-1.5 py-0.5 rounded" style={{ backgroundColor: 'var(--surface-code)' }}>v1.0</code>
-          </span>
-          <span>Last Updated: January 2025</span>
-        </div>
-      </div>
-
-      {/* Exam Information */}
-      <div
-        className="pt-6"
-        style={{ borderTop: '1px solid var(--border-subtle)' }}
-      >
-        <h3
-          className="text-xl font-bold mb-4"
-          style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-body)' }}
-        >
-          About the KCSA Exam
-        </h3>
-        <div
-          className="rounded-[20px] border overflow-hidden"
-          style={{ backgroundColor: 'var(--surface-base)', borderColor: 'var(--border-subtle)' }}
-        >
-          {[
-            { label: 'Exam Name', value: 'Kubernetes and Cloud Native Security Associate' },
-            { label: 'Issuing Organization', value: 'Cloud Native Computing Foundation (CNCF) / Linux Foundation' },
-            { label: 'Format', value: 'Multiple choice, online proctored' },
-            { label: 'Duration', value: '90 minutes' },
-            { label: 'Questions', value: '~60' },
-            { label: 'Passing Score', value: '75%' },
-            { label: 'Validity', value: '2 years' },
-            { label: 'Price', value: '~$250 USD (check Linux Foundation for current pricing)' },
-            { label: 'Prerequisites', value: 'None (Kubernetes knowledge strongly recommended)' },
-          ].map((item) => (
-            <div
-              key={item.label}
-              className="flex items-start gap-4 px-5 py-3"
-              style={{
-                borderBottom: '1px solid var(--border-subtle)',
-              }}
-            >
-              <span className="text-xs font-semibold uppercase tracking-wider w-36 flex-shrink-0 pt-0.5" style={{ color: 'var(--text-tertiary)' }}>
-                {item.label}
-              </span>
-              <span className="text-sm" style={{ color: 'var(--text-primary)' }}>
-                {item.value}
-              </span>
-            </div>
-          ))}
-          <div className="flex items-start gap-4 px-5 py-3">
-            <span className="text-xs font-semibold uppercase tracking-wider w-36 flex-shrink-0 pt-0.5" style={{ color: 'var(--text-tertiary)' }}>
-              Official Curriculum
-            </span>
-            <a
-              href="https://github.com/cncf/curriculum"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-sm inline-flex items-center gap-1 transition-colors duration-200"
-              style={{ color: 'var(--accent-primary)' }}
-            >
-              github.com/cncf/curriculum
-              <ExternalLink size={12} />
-            </a>
-          </div>
-        </div>
-      </div>
-
-      {/* Resources */}
-      <div
-        className="pt-6"
-        style={{ borderTop: '1px solid var(--border-subtle)' }}
-      >
-        <h3
-          className="text-xl font-bold mb-4"
-          style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-body)' }}
-        >
-          Additional Resources
-        </h3>
-        <div className="space-y-2">
-          {resources.map((res) => (
-            <a
-              key={res.name}
-              href={res.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-3 p-4 rounded-xl border text-sm transition-all duration-200 hover:scale-[1.01]"
-              style={{
-                backgroundColor: 'var(--surface-base)',
-                borderColor: 'var(--border-subtle)',
-                color: 'var(--accent-primary)',
-              }}
-            >
-              <ExternalLink size={14} className="flex-shrink-0" />
-              <span className="font-medium">{res.name}</span>
-            </a>
-          ))}
-        </div>
-      </div>
-
-      {/* Disclaimer */}
-      <div
-        className="pt-6"
-        style={{ borderTop: '1px solid var(--border-subtle)' }}
-      >
-        <p className="text-sm leading-relaxed" style={{ color: 'var(--text-tertiary)' }}>
-          This book is an independent study guide and is not affiliated with or endorsed by the 
-          CNCF, Linux Foundation, or Kubernetes project. Kubernetes&reg; is a registered trademark 
-          of The Linux Foundation. All content is based on publicly available exam objectives and 
-          industry best practices.
-        </p>
-      </div>
-    </div>
-  );
-}
-
-// ===== Main Settings Page =====
 
 export default function Settings() {
-  const [activeTab, setActiveTab] = useState('appearance');
-
-  const renderTabContent = () => {
-    switch (activeTab) {
-      case 'appearance': return <AppearanceTab />;
-      case 'progress': return <ProgressTab />;
-      case 'shortcuts': return <ShortcutsTab />;
-      case 'about': return <AboutTab />;
-      default: return null;
+  const [darkMode, setDarkMode] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('darkMode') === 'true';
     }
+    return false;
+  });
+
+  const [examDate, setExamDate] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('kcsa_exam_date') || '';
+    }
+    return '';
+  });
+
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
+  const [showDateSaved, setShowDateSaved] = useState(false);
+
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', darkMode);
+    localStorage.setItem('darkMode', String(darkMode));
+  }, [darkMode]);
+
+  const handleResetProgress = () => {
+    localStorage.removeItem('kcsa_read_chapters');
+    localStorage.removeItem('kcsa_quiz_scores');
+    localStorage.removeItem('kcsa_exam_results');
+    setShowResetConfirm(false);
+    window.dispatchEvent(new StorageEvent('storage', { key: 'kcsa_read_chapters' }));
   };
 
-  return (
-    <div className="min-h-[calc(100dvh-60px)] px-4 py-8 md:px-8">
-      <div className="max-w-[800px] mx-auto">
-        {/* Header */}
-        <div
-          className="mb-8"
-        >
-          <h1
-            className="text-4xl md:text-5xl font-normal"
-            style={{ fontFamily: 'var(--font-display)', color: 'var(--text-primary)' }}
-          >
-            Settings
-          </h1>
-        </div>
+  const handleSaveExamDate = () => {
+    if (examDate) {
+      localStorage.setItem('kcsa_exam_date', examDate);
+    } else {
+      localStorage.removeItem('kcsa_exam_date');
+    }
+    setShowDateSaved(true);
+    setTimeout(() => setShowDateSaved(false), 2000);
+  };
 
-        {/* Tabs */}
+  const daysUntilExam = examDate
+    ? Math.max(0, Math.ceil((new Date(examDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
+    : null;
+
+  return (
+    <div className="max-w-2xl">
+      <h1 className="text-3xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>
+        Settings
+      </h1>
+      <p className="mb-8" style={{ color: 'var(--text-secondary)' }}>
+        Customize your study experience and manage your data.
+      </p>
+
+      {/* Appearance */}
+      <section className="mb-8">
+        <h2 className="text-lg font-semibold mb-4 flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
+          <Moon size={18} style={{ color: 'var(--accent-primary)' }} />
+          Appearance
+        </h2>
         <div
-          className="mb-8 overflow-x-auto"
+          className="rounded-xl border p-4"
+          style={{ backgroundColor: 'var(--surface-base)', borderColor: 'var(--border-subtle)' }}
         >
-          <div className="flex gap-2 pb-2">
-            {settingsTabs.map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className="flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-200"
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              {darkMode ? (
+                <Moon size={20} style={{ color: 'var(--accent-lavender)' }} />
+              ) : (
+                <Sun size={20} style={{ color: 'var(--warning)' }} />
+              )}
+              <div>
+                <p className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>
+                  {darkMode ? 'Dark Mode' : 'Light Mode'}
+                </p>
+                <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>
+                  {darkMode
+                    ? 'Easier on the eyes for late-night study sessions.'
+                    : 'Clean, high-contrast interface for daytime reading.'}
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={() => setDarkMode((p) => !p)}
+              className="relative w-12 h-6 rounded-full transition-colors duration-200"
+              style={{
+                backgroundColor: darkMode ? 'var(--accent-lavender)' : 'var(--border-medium)',
+              }}
+            >
+              <div
+                className="absolute top-0.5 w-5 h-5 rounded-full bg-white shadow-sm transition-transform duration-200"
+                style={{ transform: darkMode ? 'translateX(26px)' : 'translateX(2px)' }}
+              />
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* Exam Date */}
+      <section className="mb-8">
+        <h2 className="text-lg font-semibold mb-4 flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
+          <Calendar size={18} style={{ color: 'var(--success)' }} />
+          Exam Date
+        </h2>
+        <div
+          className="rounded-xl border p-4"
+          style={{ backgroundColor: 'var(--surface-base)', borderColor: 'var(--border-subtle)' }}
+        >
+          <div className="flex flex-col sm:flex-row sm:items-end gap-4">
+            <div className="flex-1">
+              <label className="block text-xs font-medium mb-1.5" style={{ color: 'var(--text-secondary)' }}>
+                Target Exam Date
+              </label>
+              <input
+                type="date"
+                value={examDate}
+                onChange={(e) => setExamDate(e.target.value)}
+                className="w-full px-3 py-2 rounded-lg border text-sm outline-none focus:ring-2 focus:ring-opacity-20"
                 style={{
-                  backgroundColor: activeTab === tab.id ? 'var(--accent-primary)' : 'var(--surface-elevated)',
-                  color: activeTab === tab.id ? '#fff' : 'var(--text-secondary)',
-                  border: activeTab === tab.id ? 'none' : '1px solid var(--border-subtle)',
+                  backgroundColor: 'var(--surface-elevated)',
+                  borderColor: 'var(--border-subtle)',
+                  color: 'var(--text-primary)',
+                  '--tw-ring-color': 'var(--accent-primary)',
+                } as React.CSSProperties}
+              />
+            </div>
+            <button
+              onClick={handleSaveExamDate}
+              className="px-4 py-2 rounded-lg text-sm font-medium text-white transition-opacity duration-200 hover:opacity-90"
+              style={{ backgroundColor: 'var(--accent-primary)' }}
+            >
+              Save Date
+            </button>
+          </div>
+
+          {daysUntilExam !== null && examDate && (
+            <div
+              className="mt-3 flex items-center gap-2 px-3 py-2 rounded-lg text-sm"
+              style={{
+                backgroundColor: daysUntilExam <= 7 ? 'var(--accent-coral)' : 'var(--surface-elevated)',
+                color: daysUntilExam <= 7 ? '#fff' : 'var(--text-primary)',
+              }}
+            >
+              <Info size={16} />
+              {daysUntilExam === 0
+                ? 'Your exam is today. Good luck! 🎯'
+                : `${daysUntilExam} day${daysUntilExam !== 1 ? 's' : ''} until your exam.`}
+            </div>
+          )}
+
+          {showDateSaved && (
+            <div
+              className="mt-3 flex items-center gap-2 px-3 py-2 rounded-lg text-sm"
+              style={{ backgroundColor: 'var(--surface-elevated)', color: 'var(--success)' }}
+            >
+              <CheckCircle2 size={16} />
+              Exam date saved.
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* Progress */}
+      <section className="mb-8">
+        <h2 className="text-lg font-semibold mb-4 flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
+          <RotateCcw size={18} style={{ color: 'var(--accent-coral)' }} />
+          Progress
+        </h2>
+        <div
+          className="rounded-xl border p-4"
+          style={{ backgroundColor: 'var(--surface-base)', borderColor: 'var(--border-subtle)' }}
+        >
+          {!showResetConfirm ? (
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Trash2 size={20} style={{ color: 'var(--accent-coral)' }} />
+                <div>
+                  <p className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>
+                    Reset All Progress
+                  </p>
+                  <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>
+                    Clear all chapter reads, quiz scores, and exam history.
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowResetConfirm(true)}
+                className="px-3 py-1.5 rounded-lg text-sm font-medium border transition-opacity duration-200 hover:opacity-80"
+                style={{
+                  borderColor: 'var(--accent-coral)',
+                  color: 'var(--accent-coral)',
+                  backgroundColor: 'transparent',
                 }}
               >
-                <tab.icon size={16} />
-                {tab.label}
+                Reset
               </button>
+            </div>
+          ) : (
+            <div className="rounded-lg p-4 border" style={{ backgroundColor: 'var(--accent-coral)', borderColor: 'var(--accent-coral)' }}>
+              <div className="flex items-start gap-3">
+                <AlertTriangle size={20} className="flex-shrink-0 mt-0.5" style={{ color: '#fff' }} />
+                <div className="flex-1">
+                  <p className="text-sm font-medium mb-1" style={{ color: '#fff' }}>
+                    Are you sure?
+                  </p>
+                  <p className="text-xs mb-3" style={{ color: 'rgba(255,255,255,0.85)' }}>
+                    This will permanently delete all your reading progress, quiz scores, and exam results. This cannot be undone.
+                  </p>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={handleResetProgress}
+                      className="px-3 py-1.5 rounded-lg text-sm font-medium text-white border border-white/40 transition-opacity duration-200 hover:opacity-80"
+                    >
+                      Yes, Reset Everything
+                    </button>
+                    <button
+                      onClick={() => setShowResetConfirm(false)}
+                      className="px-3 py-1.5 rounded-lg text-sm font-medium transition-opacity duration-200 hover:opacity-80"
+                      style={{ color: '#fff', backgroundColor: 'rgba(255,255,255,0.2)' }}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* Keyboard Shortcuts */}
+      <section className="mb-8">
+        <h2 className="text-lg font-semibold mb-4 flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
+          <Keyboard size={18} style={{ color: 'var(--warning)' }} />
+          Keyboard Shortcuts
+        </h2>
+        <div
+          className="rounded-xl border p-4"
+          style={{ backgroundColor: 'var(--surface-base)', borderColor: 'var(--border-subtle)' }}
+        >
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {[
+              { keys: '⌘ B', desc: 'Toggle sidebar' },
+              { keys: '⌘ K', desc: 'Search' },
+              { keys: '← / →', desc: 'Navigate flashcards' },
+              { keys: 'Space', desc: 'Flip flashcard' },
+              { keys: 'Esc', desc: 'Close modal / search' },
+            ].map((shortcut) => (
+              <div key={shortcut.keys} className="flex items-center justify-between">
+                <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+                  {shortcut.desc}
+                </span>
+                <kbd
+                  className="px-2 py-1 rounded text-xs font-mono"
+                  style={{
+                    backgroundColor: 'var(--surface-elevated)',
+                    border: '1px solid var(--border-subtle)',
+                    color: 'var(--text-primary)',
+                  }}
+                >
+                  {shortcut.keys}
+                </kbd>
+              </div>
             ))}
           </div>
         </div>
+      </section>
 
-        {/* Tab Content */}
-          <div
-            key={activeTab}
-          >
-            {renderTabContent()}
+      {/* Navigation Reference */}
+      <section className="mb-8">
+        <h2 className="text-lg font-semibold mb-4 flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
+          <BookOpen size={18} style={{ color: 'var(--accent-primary)' }} />
+          Navigation
+        </h2>
+        <div
+          className="rounded-xl border p-4"
+          style={{ backgroundColor: 'var(--surface-base)', borderColor: 'var(--border-subtle)' }}
+        >
+          <div className="grid grid-cols-2 gap-3">
+            {[
+              { icon: BookOpen, label: 'Home', path: '/' },
+              { icon: FlaskConical, label: 'Practice Exam', path: '/practice-exam' },
+              { icon: BrainCircuit, label: 'Quick Recall', path: '/quick-recall' },
+              { icon: Layers, label: 'Cheat Sheet', path: '/cheat-sheet' },
+            ].map((item) => {
+              const Icon = item.icon;
+              return (
+                <a
+                  key={item.path}
+                  href={item.path}
+                  className="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm transition-colors duration-150 hover:opacity-80"
+                  style={{
+                    backgroundColor: 'var(--surface-elevated)',
+                    color: 'var(--text-primary)',
+                  }}
+                >
+                  <Icon size={16} style={{ color: 'var(--text-tertiary)' }} />
+                  {item.label}
+                </a>
+              );
+            })}
           </div>
-      </div>
+        </div>
+      </section>
+
+      {/* About */}
+      <section className="mb-8">
+        <h2 className="text-lg font-semibold mb-4 flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
+          <Info size={18} style={{ color: 'var(--text-tertiary)' }} />
+          About
+        </h2>
+        <div
+          className="rounded-xl border p-4"
+          style={{ backgroundColor: 'var(--surface-base)', borderColor: 'var(--border-subtle)' }}
+        >
+          <p className="text-sm mb-2" style={{ color: 'var(--text-secondary)' }}>
+            <strong style={{ color: 'var(--text-primary)' }}>KCSA Exam Prep</strong> — A focused study companion for the Kubernetes and Cloud Native Security Associate certification.
+          </p>
+          <p className="text-sm mb-3" style={{ color: 'var(--text-secondary)' }}>
+            Covers all 6 CNCF KCSA domains with detailed chapters, practice questions, flashcards, and a comprehensive cheat sheet.
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {['React 19', 'TypeScript', 'Tailwind CSS', 'Lucide Icons'].map((tag) => (
+              <span
+                key={tag}
+                className="px-2.5 py-1 rounded-full text-xs font-medium"
+                style={{
+                  backgroundColor: 'var(--surface-elevated)',
+                  color: 'var(--text-tertiary)',
+                }}
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

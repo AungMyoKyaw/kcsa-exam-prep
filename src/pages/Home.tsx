@@ -1,386 +1,528 @@
-import { useRef, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { Link } from 'react-router'
 import {
-  FlaskConical,
-  ClipboardList,
+  Shield,
+  Server,
+  Lock,
+  Globe,
+  Database,
+  FileText,
+  Zap,
   BookOpen,
-  ChevronLeft,
-  ChevronRight,
-  ArrowRight,
-  Clock,
   Target,
+  Clock,
+  Award,
+  ChevronRight,
   Layers,
-  HelpCircle,
+  BrainCircuit,
+  FlaskConical,
+  CheckCircle2,
+  Brain,
 } from 'lucide-react'
-import { domains, examTips } from '@/lib/domainData'
+import { domains } from '@/lib/domainData'
 
-/* ─── Stat Block — static, no animation ─── */
-function StatBlock({
-  icon: Icon,
-  value,
-  label,
-}: {
-  icon: typeof Clock
-  value: string
-  label: string
-}) {
-  return (
-    <div className="flex items-center gap-3 px-5 py-4 rounded-lg" style={{ backgroundColor: 'var(--surface-elevated)' }}>
-      <Icon size={20} style={{ color: 'var(--text-tertiary)' }} />
-      <div>
-        <div className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>{value}</div>
-        <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>{label}</div>
-      </div>
-    </div>
-  )
-}
+const domainMeta = [
+  { id: 1, icon: Shield, color: '#0969da', bg: '#ddf4ff', border: '#54aeff' },
+  { id: 2, icon: Server, color: '#1a7f37', bg: '#dafbe1', border: '#4ac26b' },
+  { id: 3, icon: Lock, color: '#8257e5', bg: '#f0e6ff', border: '#c084fc' },
+  { id: 4, icon: Globe, color: '#9a6700', bg: '#fff8c5', border: '#eac54f' },
+  { id: 5, icon: Database, color: '#cf222e', bg: '#ffebe9', border: '#ff8182' },
+  { id: 6, icon: FileText, color: '#6a737d', bg: '#f0f0f0', border: '#b4bcc3' },
+]
 
-/* ─── Domain Progress Card ─── */
-function DomainProgressCard({ domain }: { domain: (typeof domains)[0] }) {
-  const totalChapters = domain.chapters.length
-  const readCount = [1, 2].includes(domain.id) ? 3 : 0
-  const progressPercent = Math.round((readCount / totalChapters) * 100)
+const studyPath = [
+  {
+    step: 1,
+    domain: 1,
+    title: 'Overview of Cloud Native Security',
+    why: 'Start here — understand the big picture: 4Cs model, defense in depth, and security frameworks.',
+    icon: Shield,
+    color: '#0969da',
+  },
+  {
+    step: 2,
+    domain: 2,
+    title: 'Cluster Component Security',
+    why: 'Learn the Kubernetes architecture: API Server, etcd, Kubelet, Scheduler, and Controller Manager.',
+    icon: Server,
+    color: '#1a7f37',
+  },
+  {
+    step: 3,
+    domain: 3,
+    title: 'Security Fundamentals',
+    why: 'Master the core security primitives: Authentication, Authorization, Network Policies, and Secrets.',
+    icon: Lock,
+    color: '#8257e5',
+  },
+  {
+    step: 4,
+    domain: 5,
+    title: 'Platform Security',
+    why: 'Understand supply chain security: image scanning, admission controllers, and runtime security.',
+    icon: Database,
+    color: '#cf222e',
+  },
+  {
+    step: 5,
+    domain: 4,
+    title: 'Threat Model',
+    why: 'Learn to think like an attacker: STRIDE, vulnerability management, and incident response.',
+    icon: Globe,
+    color: '#9a6700',
+  },
+  {
+    step: 6,
+    domain: 6,
+    title: 'Compliance & Frameworks',
+    why: 'Finish with compliance: CIS Benchmarks, NIST, MITRE ATT&CK, and audit logging.',
+    icon: FileText,
+    color: '#6a737d',
+  },
+]
 
-  return (
-    <Link to={`/domain${domain.id}`} className="block no-underline group">
-      <div
-        className="p-4 rounded-lg h-full transition-colors duration-150 hover:bg-[var(--surface-elevated)]"
-        style={{
-          backgroundColor: 'var(--surface-base)',
-          border: '1px solid var(--border-subtle)',
-        }}
-      >
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-xs font-semibold uppercase tracking-wide" style={{ color: 'var(--text-tertiary)' }}>
-            {domain.number}
-          </span>
-          <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{ backgroundColor: 'var(--surface-elevated)', color: 'var(--text-secondary)' }}>
-            {domain.weight}%
-          </span>
-        </div>
-        <p className="text-sm font-semibold mb-3 truncate" style={{ color: 'var(--text-primary)' }}>
-          {domain.shortName}
-        </p>
-        <div className="w-full h-1.5 rounded-full overflow-hidden mb-2" style={{ backgroundColor: 'var(--border-subtle)' }}>
-          <div
-            className="h-full rounded-full"
-            style={{ width: `${progressPercent}%`, backgroundColor: 'var(--accent-primary)' }}
-          />
-        </div>
-        <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>
-          {readCount === 0 ? 'Not started' : `${readCount}/${totalChapters} chapters`}
-        </span>
-      </div>
-    </Link>
-  )
-}
-
-/* ─── Domain Study Card ─── */
-function DomainStudyCard({ domain }: { domain: (typeof domains)[0] }) {
-  return (
-    <Link to={`/domain${domain.id}`} className="block no-underline group h-full">
-      <div
-        className="p-6 rounded-lg h-full flex flex-col transition-colors duration-150 hover:bg-[var(--surface-elevated)]"
-        style={{
-          backgroundColor: 'var(--surface-base)',
-          border: '1px solid var(--border-subtle)',
-        }}
-      >
-        <div className="flex items-start justify-between mb-3">
-          <span className="text-2xl font-bold" style={{ color: 'var(--text-tertiary)' }}>
-            {domain.id}
-          </span>
-          <span className="text-xs font-semibold px-2 py-1 rounded-full" style={{ backgroundColor: 'var(--surface-elevated)', color: 'var(--text-secondary)' }}>
-            {domain.weight}%
-          </span>
-        </div>
-
-        <h3 className="text-lg font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>
-          {domain.title}
-        </h3>
-
-        <p className="text-base leading-relaxed mb-4 flex-1" style={{ color: 'var(--text-secondary)', lineHeight: 1.7 }}>
-          {domain.description}
-        </p>
-
-        <ul className="space-y-2 mb-4">
-          {domain.topics.map((topic, i) => (
-            <li key={i} className="flex items-start gap-2 text-sm" style={{ color: 'var(--text-secondary)' }}>
-              <span className="mt-1.5 w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: 'var(--accent-primary)' }} />
-              <span>{topic}</span>
-            </li>
-          ))}
-        </ul>
-
-        <div className="flex items-center gap-1 mt-auto pt-3" style={{ borderTop: '1px solid var(--border-subtle)' }}>
-          <span className="text-sm font-medium" style={{ color: 'var(--accent-primary)' }}>
-            Start Reading
-          </span>
-          <ArrowRight size={14} style={{ color: 'var(--accent-primary)' }} />
-        </div>
-      </div>
-    </Link>
-  )
-}
-
-/* ─── Quick Action Card ─── */
-function QuickActionCard({
-  icon: Icon,
-  title,
-  description,
-  to,
-}: {
-  icon: typeof FlaskConical
-  title: string
-  description: string
-  to: string
-}) {
-  return (
-    <Link to={to} className="block no-underline group h-full">
-      <div
-        className="p-6 rounded-lg h-full flex flex-col transition-colors duration-150 hover:bg-[var(--surface-elevated)]"
-        style={{
-          backgroundColor: 'var(--surface-base)',
-          border: '1px solid var(--border-subtle)',
-        }}
-      >
-        <div className="w-10 h-10 rounded-lg flex items-center justify-center mb-4" style={{ backgroundColor: 'var(--surface-elevated)' }}>
-          <Icon size={20} style={{ color: 'var(--accent-primary)' }} />
-        </div>
-        <h3 className="text-lg font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>
-          {title}
-        </h3>
-        <p className="text-base flex-1 mb-3" style={{ color: 'var(--text-secondary)', lineHeight: 1.7 }}>
-          {description}
-        </p>
-        <span className="text-sm font-medium" style={{ color: 'var(--accent-primary)' }}>
-          Open &rarr;
-        </span>
-      </div>
-    </Link>
-  )
-}
-
-/* ─── Recommendation Card ─── */
-function RecommendationCard({
-  priority,
-  text,
-  context,
-}: {
-  priority: 'High' | 'Medium' | 'Low'
-  text: string
-  context: string
-}) {
-  const priorityColors = {
-    High: { bg: 'rgba(207, 34, 46, 0.1)', text: 'var(--danger)' },
-    Medium: { bg: 'rgba(154, 103, 0, 0.1)', text: 'var(--warning)' },
-    Low: { bg: 'rgba(26, 127, 55, 0.1)', text: 'var(--success)' },
-  }
-  const colors = priorityColors[priority]
-
-  return (
-    <div className="flex items-center gap-4 p-4 rounded-lg" style={{ backgroundColor: 'var(--surface-base)', border: '1px solid var(--border-subtle)' }}>
-      <span className="flex-shrink-0 text-xs font-semibold px-2.5 py-1 rounded-full uppercase tracking-wide" style={{ backgroundColor: colors.bg, color: colors.text }}>
-        {priority}
-      </span>
-      <div className="flex-1 min-w-0">
-        <p className="text-base font-medium" style={{ color: 'var(--text-primary)' }}>{text}</p>
-        <p className="text-sm mt-0.5" style={{ color: 'var(--text-secondary)' }}>{context}</p>
-      </div>
-    </div>
-  )
-}
-
-/* ─── Tip Card ─── */
-function TipCard({ tip }: { tip: (typeof examTips)[0] }) {
-  return (
-    <div
-      className="flex-shrink-0 w-[300px] min-h-[160px] p-5 rounded-lg flex flex-col"
-      style={{ backgroundColor: 'var(--surface-base)', border: '1px solid var(--border-subtle)' }}
-    >
-      <span className="self-start text-xs font-semibold px-2 py-1 rounded-full mb-3" style={{ backgroundColor: 'var(--surface-elevated)', color: 'var(--accent-primary)' }}>
-        {tip.category}
-      </span>
-      <p className="text-base font-semibold mb-2 flex-1" style={{ color: 'var(--text-primary)', lineHeight: 1.5 }}>
-        {tip.tip}
-      </p>
-      <p className="text-sm" style={{ color: 'var(--text-secondary)', lineHeight: 1.6 }}>
-        {tip.detail}
-      </p>
-    </div>
-  )
-}
-
-/* ═══════════════════════════════════════════════
-   MAIN HOME PAGE
-   ═══════════════════════════════════════════════ */
 export default function Home() {
-  const tipsScrollRef = useRef<HTMLDivElement>(null)
-  const [canScrollLeft, setCanScrollLeft] = useState(false)
-  const [canScrollRight, setCanScrollRight] = useState(true)
+  const [progress, setProgress] = useState<Record<string, string[]>>({})
+  const [examDate, setExamDate] = useState<string | null>(null)
 
-  const updateScrollState = () => {
-    const el = tipsScrollRef.current
-    if (!el) {return}
-    setCanScrollLeft(el.scrollLeft > 10)
-    setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 10)
-  }
+  useEffect(() => {
+    const saved = localStorage.getItem('kcsa_read_chapters')
+    if (saved) setProgress(JSON.parse(saved))
+    const date = localStorage.getItem('kcsa_exam_date')
+    if (date) setExamDate(date)
+  }, [])
 
-  const scrollTips = (direction: 'left' | 'right') => {
-    const el = tipsScrollRef.current
-    if (!el) {return}
-    el.scrollBy({ left: direction === 'left' ? -300 : 300, behavior: 'smooth' })
-    setTimeout(updateScrollState, 350)
-  }
+  const totalChapters = useMemo(
+    () => domains.reduce((sum, d) => sum + d.chapters.length, 0),
+    []
+  )
+  const completedChapters = useMemo(
+    () =>
+      Object.values(progress).reduce(
+        (sum, chapters) => sum + chapters.length,
+        0
+      ),
+    [progress]
+  )
 
-  const totalChapters = domains.reduce((acc, d) => acc + d.chapters.length, 0)
-  const totalRead = 5
-  const overallPercent = Math.round((totalRead / totalChapters) * 100)
-
-  const recommendations = [
-    {
-      priority: 'High' as const,
-      text: 'Start with Domain 2: Kubernetes Cluster Component Security',
-      context: 'Highest exam weight (22%) — foundational knowledge',
-    },
-    {
-      priority: 'High' as const,
-      text: 'Continue with Domain 3: Security Fundamentals',
-      context: '22% weight — closely related to Domain 2',
-    },
-    {
-      priority: 'Medium' as const,
-      text: 'Complete Domain 1: Overview of Cloud Native Security',
-      context: '14% weight — completes the foundation',
-    },
-  ]
+  const daysUntilExam = useMemo(() => {
+    if (!examDate) return null
+    const diff = new Date(examDate).getTime() - Date.now()
+    return Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)))
+  }, [examDate])
 
   return (
     <div>
-      {/* Hero */}
-      <section className="pt-12 pb-10 text-center">
-        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-6 text-xs font-semibold uppercase tracking-wide" style={{ backgroundColor: 'var(--surface-elevated)', color: 'var(--text-secondary)', border: '1px solid var(--border-subtle)' }}>
-          CNCF / Linux Foundation Certification
-        </div>
-
-        <h1 className="text-4xl md:text-5xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>
-          Kubernetes and Cloud Native Security Associate
+      {/* Hero Header */}
+      <div className="mb-10">
+        <h1
+          className="text-4xl font-bold mb-3"
+          style={{ color: 'var(--text-primary)' }}
+        >
+          KCSA Exam Prep
         </h1>
-        <p className="text-4xl md:text-5xl font-bold mb-10" style={{ color: 'var(--accent-primary)' }}>
-          Exam Preparation
+        <p className="text-lg mb-4" style={{ color: 'var(--text-secondary)' }}>
+          Master Kubernetes and Cloud Native Security. Study the 6 domains, test
+          your knowledge, and pass the KC-SA exam.
         </p>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl mx-auto">
-          <StatBlock icon={Clock} value="90 min" label="Duration" />
-          <StatBlock icon={Target} value="75%" label="Passing Score" />
-          <StatBlock icon={Layers} value="6" label="Domains" />
-          <StatBlock icon={HelpCircle} value="60" label="Questions" />
-        </div>
-      </section>
-
-      {/* Progress */}
-      <section className="py-10">
-        <h2 className="mb-2">Your Progress</h2>
-        <p className="text-lg mb-6" style={{ color: 'var(--text-secondary)' }}>
-          Track your reading across all exam domains
-        </p>
-
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>Overall Completion</span>
-            <span className="text-sm font-semibold" style={{ color: 'var(--accent-primary)' }}>{overallPercent}% Complete</span>
-          </div>
-          <div className="w-full h-2.5 rounded-full overflow-hidden" style={{ backgroundColor: 'var(--border-subtle)' }}>
-            <div className="h-full rounded-full transition-all duration-500" style={{ width: `${overallPercent}%`, backgroundColor: 'var(--accent-primary)' }} />
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-          {domains.map((domain) => (
-            <DomainProgressCard key={domain.id} domain={domain} />
-          ))}
-        </div>
-      </section>
-
-      {/* Study by Domain */}
-      <section className="py-10">
-        <h2 className="mb-2">Study by Domain</h2>
-        <p className="text-lg mb-6" style={{ color: 'var(--text-secondary)' }}>
-          Select a domain to begin studying. Each domain is weighted based on exam coverage.
-        </p>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {domains.map((domain) => (
-            <DomainStudyCard key={domain.id} domain={domain} />
-          ))}
-        </div>
-      </section>
-
-      {/* Recommendations */}
-      <section className="py-10 px-6 rounded-lg mb-8" style={{ backgroundColor: 'var(--surface-elevated)' }}>
-        <h2 className="mb-2">Recommended Next Steps</h2>
-        <p className="text-lg mb-6" style={{ color: 'var(--text-secondary)' }}>
-          Based on your progress and exam domain weightings
-        </p>
-
-        <div className="flex flex-col gap-3">
-          {recommendations.map((rec, index) => (
-            <RecommendationCard key={index} {...rec} />
-          ))}
-        </div>
-      </section>
-
-      {/* Quick Access */}
-      <section className="py-10">
-        <h2 className="mb-2">Quick Access</h2>
-        <p className="text-lg mb-6" style={{ color: 'var(--text-secondary)' }}>
-          Jump to key tools and references
-        </p>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <QuickActionCard icon={FlaskConical} title="Practice Exam" description="60 questions • Timed 90 min • Full exam simulation" to="/practice-exam" />
-          <QuickActionCard icon={ClipboardList} title="Quick Reference" description="Ports, commands, RBAC verbs, PSS matrix — all in one place" to="/cheat-sheet" />
-          <QuickActionCard icon={BookOpen} title="Glossary" description="Searchable definitions of every KCSA term and concept" to="/glossary" />
-        </div>
-      </section>
-
-      {/* Exam Tips */}
-      <section className="py-10 -mx-6 px-6" style={{ backgroundColor: 'var(--surface-elevated)' }}>
-        <h2 className="mb-2">Key Exam Tips</h2>
-        <p className="text-lg mb-6" style={{ color: 'var(--text-secondary)' }}>
-          High-yield facts to memorize before exam day
-        </p>
-
-        <div className="relative">
-          <button
-            onClick={() => scrollTips('left')}
-            disabled={!canScrollLeft}
-            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full flex items-center justify-center disabled:opacity-0"
-            style={{ backgroundColor: 'var(--surface-base)', border: '1px solid var(--border-subtle)', color: 'var(--text-secondary)' }}
-          >
-            <ChevronLeft size={16} />
-          </button>
-          <button
-            onClick={() => scrollTips('right')}
-            disabled={!canScrollRight}
-            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full flex items-center justify-center disabled:opacity-0"
-            style={{ backgroundColor: 'var(--surface-base)', border: '1px solid var(--border-subtle)', color: 'var(--text-secondary)' }}
-          >
-            <ChevronRight size={16} />
-          </button>
-
+        <div className="flex flex-wrap gap-4 mt-6">
           <div
-            ref={tipsScrollRef}
-            className="flex gap-4 overflow-x-auto pb-2"
-            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', paddingLeft: '4px', paddingRight: '4px' }}
-            onScroll={updateScrollState}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium"
+            style={{ backgroundColor: 'var(--surface-elevated)' }}
           >
-            {examTips.map((tip) => (
-              <TipCard key={tip.id} tip={tip} />
-            ))}
+            <BookOpen size={16} style={{ color: 'var(--accent-primary)' }} />
+            <span style={{ color: 'var(--text-secondary)' }}>
+              {totalChapters} Chapters
+            </span>
           </div>
+          <div
+            className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium"
+            style={{ backgroundColor: 'var(--surface-elevated)' }}
+          >
+            <FlaskConical size={16} style={{ color: 'var(--success)' }} />
+            <span style={{ color: 'var(--text-secondary)' }}>
+              105 Questions
+            </span>
+          </div>
+          <div
+            className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium"
+            style={{ backgroundColor: 'var(--surface-elevated)' }}
+          >
+            <Target size={16} style={{ color: 'var(--warning)' }} />
+            <span style={{ color: 'var(--text-secondary)' }}>
+              6 Domains
+            </span>
+          </div>
+          <div
+            className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium"
+            style={{ backgroundColor: 'var(--surface-elevated)' }}
+          >
+            <CheckCircle2
+              size={16}
+              style={{
+                color:
+                  completedChapters > 0 ? 'var(--success)' : 'var(--text-tertiary)',
+              }}
+            />
+            <span style={{ color: 'var(--text-secondary)' }}>
+              {completedChapters}/{totalChapters} Read
+            </span>
+          </div>
+          {daysUntilExam !== null && (
+            <div
+              className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold"
+              style={{
+                backgroundColor:
+                  daysUntilExam <= 7
+                    ? 'var(--accent-coral)'
+                    : 'var(--accent-lavender-soft)',
+                color: daysUntilExam <= 7 ? '#fff' : 'var(--accent-lavender)',
+              }}
+            >
+              <Clock size={16} />
+              {daysUntilExam === 0
+                ? 'Exam is today! 🎯'
+                : `${daysUntilExam} day${daysUntilExam !== 1 ? 's' : ''} until exam`}
+            </div>
+          )}
         </div>
-      </section>
+      </div>
+
+      {/* Quick Action Cards */}
+      <h2
+        className="text-xl font-semibold mb-4 flex items-center gap-2"
+        style={{ color: 'var(--text-primary)' }}
+      >
+        <Zap size={20} style={{ color: 'var(--accent-primary)' }} />
+        Quick Actions
+      </h2>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
+        <Link
+          to="/practice-exam"
+          className="group block p-5 rounded-xl border transition-all duration-200 hover:shadow-md"
+          style={{
+            backgroundColor: 'var(--surface-base)',
+            borderColor: 'var(--border-subtle)',
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.borderColor = 'var(--accent-primary)'
+            e.currentTarget.style.transform = 'translateY(-2px)'
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.borderColor = 'var(--border-subtle)'
+            e.currentTarget.style.transform = 'translateY(0)'
+          }}
+        >
+          <div
+            className="flex items-center justify-between mb-3"
+            style={{ color: 'var(--accent-primary)' }}
+          >
+            <FlaskConical size={28} />
+            <ChevronRight
+              size={18}
+              className="transition-transform duration-200 group-hover:translate-x-1"
+            />
+          </div>
+          <h3
+            className="text-base font-semibold mb-1"
+            style={{ color: 'var(--text-primary)' }}
+          >
+            Practice Exam
+          </h3>
+          <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+            105 questions across all 6 domains with full explanations.
+          </p>
+        </Link>
+
+        <Link
+          to="/quick-recall"
+          className="group block p-5 rounded-xl border transition-all duration-200 hover:shadow-md"
+          style={{
+            backgroundColor: 'var(--surface-base)',
+            borderColor: 'var(--border-subtle)',
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.borderColor = 'var(--accent-lavender)'
+            e.currentTarget.style.transform = 'translateY(-2px)'
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.borderColor = 'var(--border-subtle)'
+            e.currentTarget.style.transform = 'translateY(0)'
+          }}
+        >
+          <div
+            className="flex items-center justify-between mb-3"
+            style={{ color: 'var(--accent-lavender)' }}
+          >
+            <BrainCircuit size={28} />
+            <ChevronRight
+              size={18}
+              className="transition-transform duration-200 group-hover:translate-x-1"
+            />
+          </div>
+          <h3
+            className="text-base font-semibold mb-1"
+            style={{ color: 'var(--text-primary)' }}
+          >
+            Quick Recall
+          </h3>
+          <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+            Flashcards for ports, PSS rules, RBAC verbs, and key facts.
+          </p>
+        </Link>
+
+        <Link
+          to="/cheat-sheet"
+          className="group block p-5 rounded-xl border transition-all duration-200 hover:shadow-md"
+          style={{
+            backgroundColor: 'var(--surface-base)',
+            borderColor: 'var(--border-subtle)',
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.borderColor = 'var(--success)'
+            e.currentTarget.style.transform = 'translateY(-2px)'
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.borderColor = 'var(--border-subtle)'
+            e.currentTarget.style.transform = 'translateY(0)'
+          }}
+        >
+          <div
+            className="flex items-center justify-between mb-3"
+            style={{ color: 'var(--success)' }}
+          >
+            <Layers size={28} />
+            <ChevronRight
+              size={18}
+              className="transition-transform duration-200 group-hover:translate-x-1"
+            />
+          </div>
+          <h3
+            className="text-base font-semibold mb-1"
+            style={{ color: 'var(--text-primary)' }}
+          >
+            Cheat Sheet
+          </h3>
+          <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+            One-page reference for commands, ports, and quick facts.
+          </p>
+        </Link>
+      </div>
+
+      {/* Domain Cards */}
+      <h2
+        className="text-xl font-semibold mb-4 flex items-center gap-2"
+        style={{ color: 'var(--text-primary)' }}
+      >
+        <Layers size={20} style={{ color: 'var(--accent-primary)' }} />
+        Study Domains
+      </h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
+        {domains.map((domain) => {
+          const meta = domainMeta.find((m) => m.id === domain.id)!
+          const Icon = meta.icon
+          const readCount = progress[domain.id]?.length || 0
+          const totalCount = domain.chapters.length
+          const pct = Math.round((readCount / totalCount) * 100)
+          const isDone = pct === 100
+
+          return (
+            <Link
+              key={domain.id}
+              to={`/domain${domain.id}`}
+              className="group block p-5 rounded-xl border transition-all duration-200 hover:shadow-md"
+              style={{
+                backgroundColor: 'var(--surface-base)',
+                borderColor: meta.border,
+                borderLeftWidth: '4px',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-2px)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)'
+              }}
+            >
+              <div className="flex items-start gap-4">
+                <div
+                  className="flex-shrink-0 w-11 h-11 rounded-lg flex items-center justify-center"
+                  style={{ backgroundColor: meta.bg }}
+                >
+                  <Icon size={22} style={{ color: meta.color }} />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between mb-1">
+                    <h3
+                      className="text-base font-semibold"
+                      style={{ color: 'var(--text-primary)' }}
+                    >
+                      Domain {domain.number}: {domain.title}
+                    </h3>
+                    {isDone && (
+                      <CheckCircle2 size={18} style={{ color: 'var(--success)' }} />
+                    )}
+                  </div>
+                  <p
+                    className="text-sm mb-3"
+                    style={{ color: 'var(--text-secondary)' }}
+                  >
+                    {totalCount} chapters · {domain.weight}
+                  </p>
+                  <div className="flex items-center gap-3">
+                    <div
+                      className="flex-1 h-2 rounded-full overflow-hidden"
+                      style={{ backgroundColor: 'var(--surface-elevated)' }}
+                    >
+                      <div
+                        className="h-full rounded-full transition-all duration-200"
+                        style={{
+                          width: `${pct}%`,
+                          backgroundColor: meta.color,
+                        }}
+                      />
+                    </div>
+                    <span
+                      className="text-xs font-medium tabular-nums"
+                      style={{ color: meta.color }}
+                    >
+                      {pct}%
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </Link>
+          )
+        })}
+      </div>
+
+      {/* Study Path */}
+      <h2
+        className="text-xl font-semibold mb-4 flex items-center gap-2"
+        style={{ color: 'var(--text-primary)' }}
+      >
+        <Award size={20} style={{ color: 'var(--warning)' }} />
+        Recommended Study Path
+      </h2>
+      <div
+        className="rounded-xl border p-6 mb-10"
+        style={{
+          backgroundColor: 'var(--surface-base)',
+          borderColor: 'var(--border-subtle)',
+        }}
+      >
+        <p className="text-sm mb-5" style={{ color: 'var(--text-secondary)' }}>
+          Follow this order to build your understanding from the ground up.
+          Each step prepares you for the next.
+        </p>
+        <div className="space-y-0">
+          {studyPath.map((step, i) => {
+            const readCount = progress[step.domain]?.length || 0
+            const totalCount =
+              domains.find((d) => d.id === step.domain)?.chapters.length || 0
+            const isDone = readCount === totalCount && totalCount > 0
+            const isActive = readCount > 0 && !isDone
+
+            return (
+              <Link
+                key={step.step}
+                to={`/domain${step.domain}`}
+                className="flex items-start gap-4 py-4 transition-colors duration-200"
+                style={{
+                  borderBottom:
+                    i < studyPath.length - 1
+                      ? '1px solid var(--border-subtle)'
+                      : 'none',
+                }}
+              >
+                <div
+                  className="flex-shrink-0 w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold mt-0.5"
+                  style={{
+                    backgroundColor: isDone ? step.color : 'var(--surface-elevated)',
+                    color: isDone ? '#fff' : step.color,
+                    border: isDone ? 'none' : `2px solid ${step.color}`,
+                  }}
+                >
+                  {isDone ? <CheckCircle2 size={16} /> : step.step}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-0.5">
+                    <span
+                      className="text-sm font-semibold"
+                      style={{ color: 'var(--text-primary)' }}
+                    >
+                      {step.title}
+                    </span>
+                    {isActive && (
+                      <span
+                        className="text-xs px-2 py-0.5 rounded-full font-medium"
+                        style={{
+                          backgroundColor: step.color + '15',
+                          color: step.color,
+                        }}
+                      >
+                        In Progress
+                      </span>
+                    )}
+                    {isDone && (
+                      <span
+                        className="text-xs px-2 py-0.5 rounded-full font-medium"
+                        style={{
+                          backgroundColor: 'var(--surface-elevated)',
+                          color: 'var(--success)',
+                        }}
+                      >
+                        Completed
+                      </span>
+                    )}
+                  </div>
+                  <p
+                    className="text-xs leading-relaxed"
+                    style={{ color: 'var(--text-secondary)' }}
+                  >
+                    {step.why}
+                  </p>
+                </div>
+                <ChevronRight
+                  size={16}
+                  className="flex-shrink-0 mt-2"
+                  style={{ color: 'var(--text-tertiary)' }}
+                />
+              </Link>
+            )
+          })}
+        </div>
+      </div>
+
+      {/* Quick Motivation */}
+      <div
+        className="rounded-xl p-5 flex items-start gap-3"
+        style={{
+          backgroundColor: 'var(--surface-elevated)',
+          border: '1px solid var(--border-subtle)',
+        }}
+      >
+        <Brain
+          size={20}
+          className="flex-shrink-0 mt-0.5"
+          style={{ color: 'var(--accent-lavender)' }}
+        />
+        <div>
+          <p
+            className="text-sm font-medium mb-1"
+            style={{ color: 'var(--text-primary)' }}
+          >
+            Study Tip
+          </p>
+          <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+            The KCSA exam tests understanding, not memorization. Focus on{' '}
+            <strong>why</strong> security controls exist, not just{' '}
+            <strong>what</strong> they are. Use the Quick Recall flashcards for
+            facts you must memorize (ports, verbs, levels), and read each domain
+            for conceptual depth.
+          </p>
+        </div>
+      </div>
     </div>
   )
 }

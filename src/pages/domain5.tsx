@@ -16,6 +16,7 @@ import {
   Layers,
   GitBranch,
   Fingerprint,
+  Database,
 } from 'lucide-react'
 import CalloutBox from '@/components/CalloutBox'
 import Callout from '@/components/Callout'
@@ -216,12 +217,15 @@ export default function Domain5Page() {
       </nav>
 
       {/* Chapter Header */}
-      <header className="mb-10">
-        <div
-          className="mb-2 text-xs font-semibold uppercase tracking-[0.06em]"
-          style={{ color: 'var(--text-tertiary)' }}
-        >
-          Domain 5
+      <header className="mb-10 p-6 rounded-xl border-l-4" style={{ backgroundColor: 'var(--surface-elevated)', borderLeftColor: '#cf222e' }}>
+        <div className="flex items-center gap-2 mb-2">
+          <Database size={20} style={{ color: '#cf222e' }} />
+          <span className="text-sm font-bold" style={{ color: '#cf222e', fontFamily: 'var(--font-mono)' }}>
+            Domain 5
+          </span>
+          <span className="text-xs px-2 py-0.5 rounded-full font-semibold" style={{ backgroundColor: '#ffebe9', color: '#cf222e' }}>
+            16% exam weight
+          </span>
         </div>
         <h1
           className="text-4xl font-normal mb-4"

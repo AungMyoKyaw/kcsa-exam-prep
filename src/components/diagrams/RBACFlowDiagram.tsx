@@ -5,7 +5,6 @@ interface FlowStepProps {
   sublabel?: string
   color: string
   highlight?: boolean
-  index: number
   children?: ReactNode
 }
 
@@ -32,7 +31,22 @@ function FlowStep({ label, sublabel, color, highlight, children }: FlowStepProps
   )
 }
 
-function Arrow() {
+function Arrow({ direction = 'horizontal' }: { direction?: 'horizontal' | 'vertical' }) {
+  if (direction === 'vertical') {
+    return (
+      <div className="flex items-center justify-center my-2">
+        <svg width="16" height="24" viewBox="0 0 16 24" fill="none" className="flex-shrink-0">
+          <path
+            d="M8 0v20m0 0l-6-6m6 6l6-6"
+            stroke="var(--border-medium)"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      </div>
+    )
+  }
   return (
     <div className="flex items-center mx-1">
       <svg width="32" height="16" viewBox="0 0 32 16" fill="none" className="flex-shrink-0">
@@ -66,18 +80,17 @@ export default function RBACFlowDiagram({ className }: RBACFlowDiagramProps) {
 
   return (
     <div className={`my-8 w-full ${className ?? ''}`}>
-      <div className="flex flex-wrap items-center justify-center gap-y-4">
+      <div className="flex flex-col md:flex-row items-center justify-center gap-y-2">
         {steps.map((step, idx) => (
-          <div key={step.label} className="flex items-center">
+          <div key={step.label} className="flex flex-col md:flex-row items-center">
             <FlowStep
               label={step.label}
               sublabel={step.sublabel}
               color={step.color}
               highlight={step.highlight}
-              index={idx}
             >
               {step.label === 'AuthZ / RBAC' && (
-                <div className="absolute top-full mt-2 left-1/2 -translate-x-1/2 flex flex-col items-center">
+                <div className="mt-2 flex flex-col items-center">
                   <div
                     className="rounded-lg px-3 py-2 text-xs font-medium whitespace-nowrap shadow-sm"
                     style={{
@@ -97,12 +110,17 @@ export default function RBACFlowDiagram({ className }: RBACFlowDiagramProps) {
                 </div>
               )}
             </FlowStep>
-            {idx < steps.length - 1 && <Arrow />}
+            {idx < steps.length - 1 && (
+              <>
+                <div className="hidden md:flex"><Arrow direction="horizontal" /></div>
+                <div className="flex md:hidden"><Arrow direction="vertical" /></div>
+              </>
+            )}
           </div>
         ))}
       </div>
 
-      <div className="mt-12 text-center text-xs" style={{ color: 'var(--text-tertiary)' }}>
+      <div className="mt-6 text-center text-xs" style={{ color: 'var(--text-tertiary)' }}>
         Request authorization flow — AuthZ/RBAC is the most exam-relevant step
       </div>
     </div>

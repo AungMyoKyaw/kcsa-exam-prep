@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router';
-import { ChevronRight, BookOpen } from 'lucide-react';
+import { ChevronRight, Lock } from 'lucide-react';
 import { useProgress } from '@/hooks/useProgress';
 import CodeBlock from '@/components/CodeBlock';
 import Callout from '@/components/Callout';
@@ -231,17 +231,18 @@ export default function Domain3Page() {
 
       {/* Chapter Header */}
       <div
-        className="mb-10"
+        className="mb-10 p-6 rounded-xl border-l-4"
+        style={{
+          backgroundColor: 'var(--surface-elevated)',
+          borderLeftColor: '#8257e5',
+        }}
       >
         <div className="mb-3 flex items-center gap-3 flex-wrap">
-          <span
-            className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full"
-            style={{
-              backgroundColor: 'rgba(242, 196, 77, 0.15)',
-              color: 'var(--accent-amber)',
-            }}
-          >
-            <BookOpen size={12} />
+          <Lock size={20} style={{ color: '#8257e5' }} />
+          <span className="text-sm font-bold" style={{ color: '#8257e5', fontFamily: 'var(--font-mono)' }}>
+            Domain 3
+          </span>
+          <span className="text-xs px-2 py-0.5 rounded-full font-semibold" style={{ backgroundColor: '#f0e6ff', color: '#8257e5' }}>
             22% exam weight
           </span>
           <span className="text-xs" style={{ color: 'var(--text-tertiary)' }}>~70 min read</span>
@@ -289,7 +290,7 @@ export default function Domain3Page() {
 
       {/* ─── Section 3.1: Pod Security Standards ─── */}
       <section id="pss">
-        <SectionHeader number="3.1" title="Pod Security Standards (PSS)" />
+        <SectionHeader number="3.1" title="Pod Security Standards (PSS)" color="#8257e5" />
 
         <p
           className="mb-4 text-base leading-relaxed"
@@ -414,7 +415,7 @@ spec:
 
       {/* ─── Section 3.2: Pod Security Admission ─── */}
       <section id="psa">
-        <SectionHeader number="3.2" title="Pod Security Admission (PSA)" />
+        <SectionHeader number="3.2" title="Pod Security Admission (PSA)" color="#8257e5" />
 
         <p
           className="mb-4 text-base leading-relaxed"
@@ -534,7 +535,7 @@ kubectl label --dry-run=server --overwrite ns --all \\
 
       {/* ─── Section 3.3: Authentication Methods ─── */}
       <section id="authentication">
-        <SectionHeader number="3.3" title="Authentication Methods" />
+        <SectionHeader number="3.3" title="Authentication Methods" color="#8257e5" />
 
         <p
           className="mb-4 text-base leading-relaxed"
@@ -654,7 +655,7 @@ Identity established → Pass to Authorization → RBAC check`}
 
       {/* ─── Section 3.4: Authorization (RBAC) ─── */}
       <section id="authorization">
-        <SectionHeader number="3.4" title="Authorization (RBAC, ABAC, Node, Webhook)" />
+        <SectionHeader number="3.4" title="Authorization (RBAC, ABAC, Node, Webhook)" color="#8257e5" />
 
         <p
           className="mb-4 text-base leading-relaxed"
@@ -819,7 +820,7 @@ kubectl auth can-i create secrets --all-namespaces`}
 
       {/* ─── Section 3.5: Secrets Management ─── */}
       <section id="secrets">
-        <SectionHeader number="3.5" title="Secrets Management" />
+        <SectionHeader number="3.5" title="Secrets Management" color="#8257e5" />
 
         <p
           className="mb-4 text-base leading-relaxed"
@@ -991,7 +992,7 @@ spec:
 
       {/* ─── Section 3.6: Isolation and Segmentation ─── */}
       <section id="isolation">
-        <SectionHeader number="3.6" title="Isolation and Segmentation" />
+        <SectionHeader number="3.6" title="Isolation and Segmentation" color="#8257e5" />
 
         <p
           className="mb-4 text-base leading-relaxed"
@@ -1061,7 +1062,7 @@ spec:
 
       {/* ─── Section 3.7: Audit Logging ─── */}
       <section id="audit">
-        <SectionHeader number="3.7" title="Audit Logging" />
+        <SectionHeader number="3.7" title="Audit Logging" color="#8257e5" />
 
         <p
           className="mb-4 text-base leading-relaxed"
@@ -1141,7 +1142,7 @@ rules:
 
       {/* ─── Section 3.8: Network Policies ─── */}
       <section id="network-policies">
-        <SectionHeader number="3.8" title="Network Policies (Deep Dive)" />
+        <SectionHeader number="3.8" title="Network Policies (Deep Dive)" color="#8257e5" />
 
         <p
           className="mb-4 text-base leading-relaxed"

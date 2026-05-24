@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router';
-import { ChevronRight, BookOpen, ArrowRight } from 'lucide-react';
+import { ChevronRight, ArrowRight, Globe } from 'lucide-react';
 import { useProgress } from '@/hooks/useProgress';
 import CodeBlock from '@/components/CodeBlock';
 import Callout from '@/components/Callout';
@@ -194,17 +194,18 @@ export default function Domain4Page() {
 
       {/* Chapter Header */}
       <div
-        className="mb-10"
+        className="mb-10 p-6 rounded-xl border-l-4"
+        style={{
+          backgroundColor: 'var(--surface-elevated)',
+          borderLeftColor: '#9a6700',
+        }}
       >
         <div className="mb-3 flex items-center gap-3 flex-wrap">
-          <span
-            className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full"
-            style={{
-              backgroundColor: 'rgba(242, 196, 77, 0.15)',
-              color: 'var(--accent-amber)',
-            }}
-          >
-            <BookOpen size={12} />
+          <Globe size={20} style={{ color: '#9a6700' }} />
+          <span className="text-sm font-bold" style={{ color: '#9a6700', fontFamily: 'var(--font-mono)' }}>
+            Domain 4
+          </span>
+          <span className="text-xs px-2 py-0.5 rounded-full font-semibold" style={{ backgroundColor: '#fff8c5', color: '#9a6700' }}>
             16% exam weight
           </span>
           <span className="text-xs" style={{ color: 'var(--text-tertiary)' }}>~55 min read</span>
@@ -249,7 +250,7 @@ export default function Domain4Page() {
 
       {/* ─── Section 4.1: Trust Boundaries and Data Flow ─── */}
       <section id="trust-boundaries">
-        <SectionHeader number="4.1" title="Trust Boundaries and Data Flow" />
+        <SectionHeader number="4.1" title="Trust Boundaries and Data Flow" color="#9a6700" />
 
         <p
           className="mb-4 text-base leading-relaxed"
@@ -355,7 +356,7 @@ export default function Domain4Page() {
 
       {/* ─── Section 4.2: STRIDE Framework ─── */}
       <section id="stride">
-        <SectionHeader number="4.2" title="STRIDE Framework Applied to Kubernetes" />
+        <SectionHeader number="4.2" title="STRIDE Framework Applied to Kubernetes" color="#9a6700" />
 
         <p
           className="mb-4 text-base leading-relaxed"
@@ -392,7 +393,7 @@ export default function Domain4Page() {
 
       {/* ─── Section 4.3: Persistence Mechanisms ─── */}
       <section id="persistence">
-        <SectionHeader number="4.3" title="Persistence Mechanisms" />
+        <SectionHeader number="4.3" title="Persistence Mechanisms" color="#9a6700" />
 
         <p
           className="mb-4 text-base leading-relaxed"
@@ -503,7 +504,7 @@ export default function Domain4Page() {
 
       {/* ─── Section 4.4: Denial of Service ─── */}
       <section id="dos">
-        <SectionHeader number="4.4" title="Denial of Service" />
+        <SectionHeader number="4.4" title="Denial of Service" color="#9a6700" />
 
         <p
           className="mb-4 text-base leading-relaxed"
@@ -629,7 +630,7 @@ spec:
 
       {/* ─── Section 4.5: Container Escape ─── */}
       <section id="container-escape">
-        <SectionHeader number="4.5" title="Malicious Code Execution & Container Escape" />
+        <SectionHeader number="4.5" title="Malicious Code Execution & Container Escape" color="#9a6700" />
 
         <p
           className="mb-4 text-base leading-relaxed"
@@ -720,7 +721,7 @@ spec:
 
       {/* ─── Section 4.6: Lateral Movement ─── */}
       <section id="lateral-movement">
-        <SectionHeader number="4.6" title="Attacker on the Network — Lateral Movement" />
+        <SectionHeader number="4.6" title="Attacker on the Network — Lateral Movement" color="#9a6700" />
 
         <p
           className="mb-4 text-base leading-relaxed"
@@ -812,7 +813,7 @@ spec:
 
       {/* ─── Section 4.7: Privilege Escalation ─── */}
       <section id="privilege-escalation">
-        <SectionHeader number="4.7" title="Privilege Escalation & RBAC Abuse" />
+        <SectionHeader number="4.7" title="Privilege Escalation & RBAC Abuse" color="#9a6700" />
 
         <p
           className="mb-4 text-base leading-relaxed"
@@ -973,7 +974,7 @@ kubectl get rolebindings,clusterrolebindings --all-namespaces \\
 
       {/* ─── Section 4.8: MITRE ATT&CK for Containers ─── */}
       <section id="mitre">
-        <SectionHeader number="4.8" title="MITRE ATT&CK for Containers" />
+        <SectionHeader number="4.8" title="MITRE ATT&CK for Containers" color="#9a6700" />
 
         <p
           className="mb-4 text-base leading-relaxed"

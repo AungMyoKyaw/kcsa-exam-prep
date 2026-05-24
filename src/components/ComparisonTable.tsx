@@ -5,12 +5,34 @@ interface TableColumn {
 }
 
 interface ComparisonTableProps {
-  columns: TableColumn[];
-  rows: Record<string, string>[];
+  columns?: TableColumn[];
+  headers?: string[];
+  rows: Record<string, string>[] | string[][];
   highlightRow?: (row: Record<string, string>) => string | null;
 }
 
-export default function ComparisonTable({ columns, rows, highlightRow }: ComparisonTableProps) {
+function normalizeColumns(columns?: TableColumn[], headers?: string[]): TableColumn[] {
+  if (columns) return columns;
+  if (headers) {
+    return headers.map((h, i) => ({ key: `col${i}`, header: h }));
+  }
+  return [];
+}
+
+function normalizeRow(row: Record<string, string> | string[], columns: TableColumn[]): Record<string, string> {
+  if (Array.isArray(row)) {
+    const obj: Record<string, string> = {};
+    columns.forEach((col, i) => {
+      obj[col.key] = row[i] ?? '';
+    });
+    return obj;
+  }
+  return row;
+}
+
+export default function ComparisonTable({ columns, headers, rows, highlightRow }: ComparisonTableProps) {
+  const cols = normalizeColumns(columns, headers);
+
   const getHighlightColor = (row: Record<string, string>) => {
     if (!highlightRow) {return null;}
     return highlightRow(row);
@@ -27,18 +49,17 @@ export default function ComparisonTable({ columns, rows, highlightRow }: Compari
         <thead>
           <tr
             style={{
-              backgroundColor: 'var(--accent-primary)',
-              opacity: 0.1,
+              backgroundColor: 'var(--surface-elevated)',
             }}
           >
-            {columns.map((col) => (
+            {cols.map((col) => (
               <th
                 key={col.key}
                 className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider"
                 style={{
                   color: 'var(--text-primary)',
                   width: col.width,
-                  borderBottom: '1px solid var(--border-subtle)',
+                  borderBottom: '2px solid var(--border-medium)',
                 }}
               >
                 {col.header}
@@ -47,8 +68,10 @@ export default function ComparisonTable({ columns, rows, highlightRow }: Compari
           </tr>
         </thead>
         <tbody>
-          {rows.map((row, idx) => {
+          {rows.map((rawRow, idx) => {
+            const row = normalizeRow(rawRow, cols);
             const highlightColor = getHighlightColor(row);
+            const isEven = idx % 2 === 1;
             return (
               <tr
                 key={idx}
@@ -57,10 +80,11 @@ export default function ComparisonTable({ columns, rows, highlightRow }: Compari
                     idx < rows.length - 1
                       ? '1px solid var(--border-subtle)'
                       : 'none',
-                  backgroundColor: highlightColor ?? 'transparent',
+                  backgroundColor: highlightColor ?? (isEven ? 'var(--surface-elevated)' : 'transparent'),
+                  transition: 'background-color 150ms ease',
                 }}
               >
-                {columns.map((col, colIdx) => (
+                {cols.map((col, colIdx) => (
                   <td
                     key={col.key}
                     className="px-4 py-3"

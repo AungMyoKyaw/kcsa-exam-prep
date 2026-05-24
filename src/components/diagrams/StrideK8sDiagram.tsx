@@ -127,7 +127,7 @@ export default function StrideK8sDiagram({ className }: StrideK8sDiagramProps) {
                   fontSize="18"
                   fontWeight="700"
                   fill={seg.color}
-                  fontFamily="var(--font-display)"
+                  style={{ fontFamily: 'var(--font-display), system-ui, sans-serif' }}
                 >
                   {seg.letter}
                 </text>
@@ -136,21 +136,21 @@ export default function StrideK8sDiagram({ className }: StrideK8sDiagramProps) {
                   x={midInner.x}
                   y={midInner.y - 3}
                   textAnchor="middle"
-                  fontSize="10"
+                  fontSize="11"
                   fontWeight="600"
                   fill="var(--text-primary)"
-                  fontFamily="var(--font-body)"
+                  style={{ fontFamily: 'var(--font-body), system-ui, sans-serif' }}
                 >
                   {seg.threat}
                 </text>
                 {/* K8s example */}
                 <text
                   x={midInner.x}
-                  y={midInner.y + 10}
+                  y={midInner.y + 11}
                   textAnchor="middle"
-                  fontSize="9"
+                  fontSize="10"
                   fill="var(--text-secondary)"
-                  fontFamily="var(--font-body)"
+                  style={{ fontFamily: 'var(--font-body), system-ui, sans-serif' }}
                 >
                   {seg.k8sExample}
                 </text>
@@ -175,7 +175,7 @@ export default function StrideK8sDiagram({ className }: StrideK8sDiagramProps) {
               fontSize="14"
               fontWeight="700"
               fill="var(--accent-primary)"
-              fontFamily="var(--font-display)"
+              style={{ fontFamily: 'var(--font-display), system-ui, sans-serif' }}
             >
               STRIDE
             </text>
@@ -185,7 +185,7 @@ export default function StrideK8sDiagram({ className }: StrideK8sDiagramProps) {
               textAnchor="middle"
               fontSize="11"
               fill="var(--text-secondary)"
-              fontFamily="var(--font-body)"
+              style={{ fontFamily: 'var(--font-body), system-ui, sans-serif' }}
             >
               → Kubernetes
             </text>

@@ -86,16 +86,10 @@ export default function SupplyChainDiagram({ className }: SupplyChainDiagramProp
 
             {/* Arrow */}
             {idx < arrows.length && (
-              <div
-                className="flex flex-col items-center py-2"
-              >
-                <div className="relative flex items-center gap-2">
+              <div className="flex flex-col items-center py-2 w-full max-w-sm">
+                <div className="flex items-center gap-2">
                   {arrows[idx].attackPoint && (
-                    <div
-                      className="absolute -left-7 top-1/2 -translate-y-1/2 flex items-center justify-center"
-                    >
-                      <AlertTriangle size={14} style={{ color: 'var(--accent-coral)' }} />
-                    </div>
+                    <AlertTriangle size={14} style={{ color: 'var(--accent-coral)', flexShrink: 0 }} />
                   )}
                   <span
                     className="text-xs font-medium px-2 py-0.5 rounded"
@@ -112,9 +106,9 @@ export default function SupplyChainDiagram({ className }: SupplyChainDiagramProp
                     {arrows[idx].control}
                   </span>
                 </div>
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" className="mt-1">
+                <svg width="24" height="28" viewBox="0 0 24 28" fill="none" className="mt-1.5">
                   <path
-                    d="M10 0v16m0 0l-6-6m6 6l6-6"
+                    d="M12 0v24m0 0l-7-7m7 7l7-7"
                     stroke="var(--border-medium)"
                     strokeWidth="1.5"
                     strokeLinecap="round"
