@@ -393,7 +393,7 @@ export default function Home() {
                 e.currentTarget.style.transform = 'translateY(0)'
               }}
             >
-              <div className="flex items-start gap-4">
+              <div className="flex items-center gap-4">
                 <div
                   className="flex-shrink-0 w-11 h-11 rounded-lg flex items-center justify-center"
                   style={{ backgroundColor: meta.bg }}
