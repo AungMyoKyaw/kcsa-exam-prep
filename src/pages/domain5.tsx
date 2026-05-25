@@ -356,7 +356,7 @@ export default function Domain5Page() {
               }}
             >
               <div
-                className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold"
+                className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold mt-0.5"
                 style={{ backgroundColor: `${l.color}20`, color: l.color }}
               >
                 {l.level}
@@ -569,7 +569,7 @@ trivy image --format spdx-json --output sbom.json myregistry.io/app:v1.0.0`}
               className="flex items-start gap-3 px-4 py-3 rounded-xl"
               style={{ backgroundColor: 'var(--surface-base)', border: '1px solid var(--border-subtle)' }}
             >
-              <span className="text-lg flex-shrink-0">{item.icon}</span>
+              <span className="text-lg flex-shrink-0 mt-0.5">{item.icon}</span>
               <div>
                 <span className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>{item.name}:</span>
                 <span className="text-sm ml-1" style={{ color: 'var(--text-secondary)' }}>{item.desc}</span>
@@ -918,7 +918,7 @@ cosign attest --predicate sbom.spdx.json \\
           ].map((m) => (
             <div key={m.mode} className="flex items-start gap-3 text-sm">
               <code
-                className="flex-shrink-0 px-2 py-0.5 rounded text-xs"
+                className="flex-shrink-0 px-2 py-0.5 rounded text-xs mt-0.5"
                 style={{ backgroundColor: 'var(--surface-code)', color: 'var(--accent-primary)' }}
               >
                 {m.mode}
@@ -1038,7 +1038,7 @@ spec:
           ].map((step, i) => (
             <li key={i} className="flex items-start gap-3 text-sm leading-relaxed">
               <span
-                className="flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold"
+                className="flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold mt-0.5"
                 style={{
                   backgroundColor: 'var(--accent-primary)',
                   color: '#fff',

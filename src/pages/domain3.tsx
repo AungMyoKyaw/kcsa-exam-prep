@@ -1209,7 +1209,7 @@ rules:
               key={idx}
               className="flex items-start gap-3"
             >
-              <span className="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold" style={{ backgroundColor: 'rgba(4, 80, 54, 0.1)', color: 'var(--accent-primary)' }}>
+              <span className="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold mt-0.5" style={{ backgroundColor: 'rgba(4, 80, 54, 0.1)', color: 'var(--accent-primary)' }}>
                 {idx + 1}
               </span>
               <p className="text-sm leading-relaxed" style={{ color: 'var(--text-primary)' }}>{rule}</p>

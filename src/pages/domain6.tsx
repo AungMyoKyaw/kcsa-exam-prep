@@ -871,7 +871,7 @@ kube-bench run --json > kube-bench-results.json`}
                   style={{ backgroundColor: 'var(--surface-elevated)' }}
                 >
                   <span
-                    className="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold"
+                    className="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold mt-0.5"
                     style={{ backgroundColor: 'var(--accent-coral)', color: '#fff' }}
                   >
                     {cat.letter}
