@@ -157,7 +157,7 @@ export default function Home() {
           >
             <FlaskConical size={16} style={{ color: 'var(--success)' }} />
             <span style={{ color: 'var(--text-secondary)' }}>
-              105 Questions
+              300 Questions
             </span>
           </div>
           <div
@@ -406,7 +406,7 @@ export default function Home() {
                       className="text-base font-semibold"
                       style={{ color: 'var(--text-primary)' }}
                     >
-                      Domain {domain.number}: {domain.title}
+                      {domain.number}: {domain.title}
                     </h3>
                     {isDone && (
                       <CheckCircle2 size={18} style={{ color: 'var(--success)' }} />
@@ -416,7 +416,7 @@ export default function Home() {
                     className="text-sm mb-3"
                     style={{ color: 'var(--text-secondary)' }}
                   >
-                    {totalCount} chapters · {domain.weight}
+                    {totalCount} chapters · {domain.weight}% exam weight
                   </p>
                   <div className="flex items-center gap-3">
                     <div
