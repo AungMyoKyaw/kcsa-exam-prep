@@ -53,7 +53,13 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
 
   useEffect(() => {
     const saved = localStorage.getItem('kcsa_read_chapters')
-    if (saved) setReadChapters(JSON.parse(saved))
+    if (saved) {
+      try {
+        setReadChapters(JSON.parse(saved))
+      } catch {
+        setReadChapters({})
+      }
+    }
     const date = localStorage.getItem('kcsa_exam_date')
     if (date) setExamDate(date)
 
@@ -208,7 +214,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                   >
                     <Icon size={16} style={{ color: isActive ? color : 'var(--text-tertiary)' }} />
                     <span className="flex-1 text-left truncate">
-                      D{domain.number}: {domain.title}
+                      {domain.number}: {domain.title}
                     </span>
                     {isDone && (
                       <CheckCircle2 size={14} style={{ color: 'var(--success)' }} />

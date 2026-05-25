@@ -96,7 +96,13 @@ export default function Home() {
 
   useEffect(() => {
     const saved = localStorage.getItem('kcsa_read_chapters')
-    if (saved) setProgress(JSON.parse(saved))
+    if (saved) {
+      try {
+        setProgress(JSON.parse(saved))
+      } catch {
+        setProgress({})
+      }
+    }
     const date = localStorage.getItem('kcsa_exam_date')
     if (date) setExamDate(date)
     setLastLocation(getLastLocation())

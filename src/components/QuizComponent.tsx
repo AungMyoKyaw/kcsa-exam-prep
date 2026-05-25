@@ -72,6 +72,7 @@ export default function QuizComponent({ questions, domainId }: QuizComponentProp
 
   const handleSubmit = useCallback(() => {
     if (selectedIndices.length === 0) return;
+    if (submitted) return; // prevent re-submitting and double-counting score
     setSubmitted(true);
     setShowExplanation(true);
     const newAnswered = new Set(answeredQuestions);
@@ -80,7 +81,7 @@ export default function QuizComponent({ questions, domainId }: QuizComponentProp
     if (isCorrect()) {
       setScore((prev) => prev + 1);
     }
-  }, [selectedIndices, currentIndex, answeredQuestions, isCorrect]);
+  }, [selectedIndices, currentIndex, answeredQuestions, isCorrect, submitted]);
 
   const handleNext = useCallback(() => {
     if (currentIndex < questions.length - 1) {
@@ -89,7 +90,9 @@ export default function QuizComponent({ questions, domainId }: QuizComponentProp
       setSubmitted(false);
       setShowExplanation(false);
     } else {
-      const finalScore = score + (isCorrect() ? 1 : 0);
+      // Score already includes the current question if it was submitted in handleSubmit
+      // Don't double-count here
+      const finalScore = score;
       const percentage = Math.round((finalScore / questions.length) * 100);
       setQuizComplete(true);
       // Save score to localStorage

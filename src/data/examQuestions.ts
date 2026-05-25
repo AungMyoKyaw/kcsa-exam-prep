@@ -1085,7 +1085,7 @@ export const examQuestions: ExamQuestion[] = [
     correctAnswer: [0, 1, 2, 3, 4],
     explanation: 'All of these flags improve Kubelet security: --anonymous-auth=false blocks unauthenticated requests, --authorization-mode=Webhook delegates auth to the API Server, --read-only-port=0 disables the insecure read-only endpoint, --authentication-token-webhook=true enables token authentication via webhook, and --protect-kernel-defaults=true prevents the Kubelet from modifying kernel parameters.',
     difficulty: 'Hard',
-    relatedSection: '/domain2/d2-3',
+    relatedSection: '/domain2/d2-c3',
     type: 'multiple',
   },
   {

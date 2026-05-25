@@ -20,7 +20,16 @@ function seededRandom(seed: number) {
 function getDailyQuestionIndex(): number {
   const today = new Date();
   const seed = today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate();
-  return Math.floor(seededRandom(seed) * examQuestions.length);
+  let offset = 0;
+  while (offset < examQuestions.length) {
+    const idx = Math.floor(seededRandom(seed + offset) * examQuestions.length);
+    const q = examQuestions[idx];
+    if (!Array.isArray(q.correctAnswer)) {
+      return idx;
+    }
+    offset++;
+  }
+  return 0; // fallback
 }
 
 export default function DailyChallenge() {

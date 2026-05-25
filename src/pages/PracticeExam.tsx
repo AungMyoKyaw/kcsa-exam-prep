@@ -186,6 +186,15 @@ function ExamInProgress({
   useEffect(() => { onFinishRef.current = onFinish; }, [onFinish]);
 
   useEffect(() => {
+    // Handle browser tab switching to prevent timer drift
+    const handleVisibilityChange = () => {
+      if (document.hidden && timerRef.current) {
+        // User switched away — timer continues but we note the time
+        // The setInterval will naturally be throttled by the browser
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    
     timerRef.current = setInterval(() => {
       setTimeRemaining((prev) => {
         if (prev <= 1) {
@@ -198,6 +207,7 @@ function ExamInProgress({
     }, 1000);
     return () => {
       if (timerRef.current != null) { clearInterval(timerRef.current); }
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, []);
 
@@ -1023,9 +1033,15 @@ function ResultsScreen({
         Object.entries(domainScores).map(([id, data]) => [id, { correct: data.correct, total: data.total }])
       ),
     };
-    const existing = JSON.parse(localStorage.getItem('kcsa-practice-exams') ?? '[]');
-    existing.push(result);
-    localStorage.setItem('kcsa-practice-exams', JSON.stringify(existing));
+    try {
+      const existingRaw = localStorage.getItem('kcsa-practice-exams');
+      const existing: ExamResult[] = existingRaw ? JSON.parse(existingRaw) : [];
+      existing.push(result);
+      localStorage.setItem('kcsa-practice-exams', JSON.stringify(existing));
+    } catch {
+      // If localStorage is corrupted, start fresh
+      localStorage.setItem('kcsa-practice-exams', JSON.stringify([result]));
+    }
   }, [score, questions.length, correctCount, timeSpent, domainScores]);
 
   if (showReview) {

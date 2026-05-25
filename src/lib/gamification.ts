@@ -23,13 +23,12 @@ export function checkAndUpdateStreak(): number {
     return getStudyStreak();
   }
 
-  const last = lastDate ? new Date(lastDate) : null;
-  const hoursSince = last ? (now.getTime() - last.getTime()) / (1000 * 60 * 60) : Infinity;
+  const yesterday = new Date(now);
+  yesterday.setDate(yesterday.getDate() - 1);
+  const yesterdayStr = yesterday.toDateString();
 
   let streak = getStudyStreak();
-  if (hoursSince > 48) {
-    streak = 1;
-  } else if (hoursSince > 12) {
+  if (lastDate === yesterdayStr) {
     streak += 1;
   } else {
     streak = 1;
@@ -131,13 +130,21 @@ export const ALL_BADGES: Badge[] = [
 
 export function getUnlockedBadges(): Badge[] {
   const raw = localStorage.getItem(BADGES_KEY);
-  const ids: string[] = raw ? JSON.parse(raw) : [];
-  return ALL_BADGES.filter((b) => ids.includes(b.id));
+  try {
+    const ids: string[] = raw ? JSON.parse(raw) : [];
+    return ALL_BADGES.filter((b) => ids.includes(b.id));
+  } catch {
+    return [];
+  }
 }
 
 export function getBadgeIds(): string[] {
   const raw = localStorage.getItem(BADGES_KEY);
-  return raw ? JSON.parse(raw) : [];
+  try {
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
 }
 
 export function unlockBadge(id: string): boolean {
@@ -247,7 +254,11 @@ interface QuizStats {
 
 export function getQuizStats(): QuizStats {
   const raw = localStorage.getItem(QUIZ_STATS_KEY);
-  return raw ? JSON.parse(raw) : { totalQuizzes: 0, perfectQuizzes: 0, portQuestionsRight: 0, flashcardsReviewed: 0 };
+  try {
+    return raw ? JSON.parse(raw) : { totalQuizzes: 0, perfectQuizzes: 0, portQuestionsRight: 0, flashcardsReviewed: 0 };
+  } catch {
+    return { totalQuizzes: 0, perfectQuizzes: 0, portQuestionsRight: 0, flashcardsReviewed: 0 };
+  }
 }
 
 export function updateQuizStats(updates: Partial<QuizStats>) {
