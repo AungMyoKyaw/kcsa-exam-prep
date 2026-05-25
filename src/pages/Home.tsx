@@ -401,15 +401,15 @@ export default function Home() {
                   <Icon size={22} style={{ color: meta.color }} />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between mb-1">
+                  <div className="flex items-center gap-2 mb-1">
                     <h3
-                      className="text-base font-semibold"
+                      className="text-base font-semibold truncate flex-1 min-w-0"
                       style={{ color: 'var(--text-primary)' }}
                     >
                       {domain.number}: {domain.title}
                     </h3>
                     {isDone && (
-                      <CheckCircle2 size={18} style={{ color: 'var(--success)' }} />
+                      <CheckCircle2 size={18} className="flex-shrink-0" style={{ color: 'var(--success)' }} />
                     )}
                   </div>
                   <p
@@ -420,7 +420,7 @@ export default function Home() {
                   </p>
                   <div className="flex items-center gap-3">
                     <div
-                      className="flex-1 h-2 rounded-full overflow-hidden"
+                      className="flex-1 h-2 rounded-full overflow-hidden self-center"
                       style={{ backgroundColor: 'var(--surface-elevated)' }}
                     >
                       <div
@@ -431,7 +431,9 @@ export default function Home() {
                         }}
                       />
                     </div>
-                    <CircularProgress percentage={pct} color={meta.color} size={36} strokeWidth={3} />
+                    <div className="flex-shrink-0 self-center">
+                      <CircularProgress percentage={pct} color={meta.color} size={36} strokeWidth={3} />
+                    </div>
                   </div>
                 </div>
               </div>
