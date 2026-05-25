@@ -172,6 +172,7 @@ function ExamInProgress({
   const [submitted, setSubmitted] = useState<boolean[]>(new Array(questions.length).fill(false));
   const [showReview, setShowReview] = useState(false);
   const [showMobileNav, setShowMobileNav] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   // const [hintRevealed, setHintRevealed] = useState(false);
   // const hintTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -306,6 +307,17 @@ function ExamInProgress({
             <Eye size={16} />
             <span className="hidden sm:inline">Review</span>
           </button>
+          {sidebarCollapsed && (
+            <button
+              onClick={() => setSidebarCollapsed(false)}
+              className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm transition-colors duration-200 min-h-[36px]"
+              style={{ color: 'var(--text-secondary)', backgroundColor: 'var(--surface-elevated)' }}
+              title="Show sidebar"
+            >
+              <Grid3X3 size={16} />
+              <span className="hidden sm:inline">Menu</span>
+            </button>
+          )}
           <button
             onClick={() => setShowMobileNav(true)}
             className="lg:hidden flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm transition-colors duration-200 min-h-[36px]"
@@ -588,13 +600,23 @@ function ExamInProgress({
 
         {/* Sidebar Navigation */}
         <div
-          className="hidden lg:block w-[280px] border-l p-4 overflow-y-auto"
+          className={`hidden lg:flex flex-col border-l overflow-y-auto transition-all duration-300 ${sidebarCollapsed ? 'w-0 p-0 opacity-0 overflow-hidden' : 'w-[280px] p-4'}`}
           style={{
             backgroundColor: 'var(--surface-base)',
-            borderColor: 'var(--border-subtle)',
+            borderColor: sidebarCollapsed ? 'transparent' : 'var(--border-subtle)',
             maxHeight: 'calc(100dvh - 112px)',
           }}
         >
+          {/* Collapse Toggle */}
+          <button
+            onClick={() => setSidebarCollapsed(true)}
+            className="self-end mb-2 p-1 rounded-md transition-colors"
+            style={{ color: 'var(--text-tertiary)' }}
+            title="Collapse sidebar"
+          >
+            <X size={16} />
+          </button>
+
           {/* Timer */}
           <div className="mb-4 p-3 rounded-xl" style={{ backgroundColor: 'var(--surface-elevated)' }}>
             <div className="flex items-center justify-between">
