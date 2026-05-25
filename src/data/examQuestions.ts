@@ -998,6 +998,23 @@ export const examQuestions: ExamQuestion[] = [
     difficulty: 'Easy',
     relatedSection: '/domain6/d6-c3',
   },
+  {
+    id: 303,
+    domain: 6,
+    domainName: 'Compliance and Security Frameworks',
+    question: 'As a Kubernetes and Cloud Native Security Associate, a user can set up audit logging in a cluster. What is the risk of logging every event at the full RequestResponse level?',
+    options: [
+      'No risk, as it provides the most comprehensive audit trail',
+      'Increased storage requirements and potential impact on performance',
+      'Improved security and easier incident investigation',
+      'Reduced storage requirements and faster performance',
+    ],
+    correctAnswer: 1,
+    explanation: 'While RequestResponse provides the most detailed audit logs (including request and response bodies), it significantly increases storage consumption and can impact API server performance. A balanced approach is recommended: use Metadata or Request level for most resources, and RequestResponse only for critical resources or specific security-sensitive operations.',
+    difficulty: 'Medium',
+    relatedSection: '/domain6/d6-c1',
+  },
+
   // ===== MULTI-SELECT QUESTIONS (IDs 248-272) =====
   {
     id: 248,
