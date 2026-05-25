@@ -472,7 +472,7 @@ export default function Domain4Page() {
             },
           ]}
           domainId="domain4-trust"
-          onComplete={(score) => console.log('Trust boundaries quiz:', score)}
+          onComplete={() => {}}
         />
       </section>
 
