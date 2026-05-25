@@ -10,6 +10,9 @@ import SectionHeader from '@/components/SectionHeader';
 import ComparisonTable from '@/components/ComparisonTable';
 import StrideDiagram from '@/components/StrideDiagram';
 import StrideK8sDiagram from '@/components/diagrams/StrideK8sDiagram'
+import ELI5 from '@/components/ELI5'
+import MemoryHook from '@/components/MemoryHook'
+import ExamTrap from '@/components/ExamTrap'
 
 const DOMAIN_ID = 'domain4';
 
@@ -20,6 +23,39 @@ const quizQuestions: QuizQuestion[] = [
     options: ['Tampering', 'Spoofing', 'Information Disclosure', 'Elevation of Privilege'],
     correctIndex: 1,
     explanation: 'Spoofing involves impersonating another identity. A stolen ServiceAccount token allows an attacker to impersonate a legitimate pod/service and access the API server with that identity\'s permissions.',
+  },
+  {
+    question: 'Which trust boundary is MOST critical to protect because it stores ALL cluster state including Secrets?',
+    options: [
+      'Pod → Pod',
+      'API Server → Kubelet',
+      'API Server → etcd',
+      'External User → API Server',
+    ],
+    correctIndex: 2,
+    explanation: 'The API Server → etcd boundary is the most critical because etcd stores ALL cluster state, including Secrets (which are only Base64-encoded by default). Compromising etcd means compromising the entire cluster.',
+  },
+  {
+    question: 'In the "Attacker on the Network" scenario, what is the MOST effective first-line defense against MITM attacks between pods?',
+    options: [
+      'Pod Security Standards',
+      'NetworkPolicy with default-deny',
+      'RBAC least privilege',
+      'Audit logging',
+    ],
+    correctIndex: 1,
+    explanation: 'NetworkPolicy with a default-deny posture is the foundational control for network-level attacks. It segments pod-to-pod traffic so a compromised pod cannot freely communicate with other pods. TLS everywhere and service mesh mTLS add defense-in-depth.',
+  },
+  {
+    question: 'If an attacker compromises a worker node, what is the MOST dangerous container configuration they can exploit?',
+    options: [
+      'A container with readOnlyRootFilesystem: true',
+      'A privileged container with hostPID: true',
+      'A container running as non-root',
+      'A container with RuntimeDefault seccomp',
+    ],
+    correctIndex: 1,
+    explanation: 'A privileged container with hostPID: true is the most dangerous configuration. privileged gives root access to all host devices, and hostPID allows seeing all host processes. With nsenter, the attacker can enter all host namespaces and gain full host root access instantly.',
   },
   {
     question: 'Which persistence mechanism uses a hostPath volume to maintain access to the host filesystem?',
@@ -246,6 +282,10 @@ export default function Domain4Page() {
           <strong>Exam Focus: 16% of exam (~13 questions).</strong> STRIDE mapping to Kubernetes
           components, container escape vectors, and privilege escalation paths are high-frequency topics.
         </Callout>
+
+        <p className="text-sm italic my-2" style={{ color: 'var(--text-tertiary)' }}>
+          <strong>💼 Real-World Impact:</strong> Threat modeling with STRIDE finds vulnerabilities BEFORE attackers do. It's like doing a fire drill — you identify exits before the fire starts.
+        </p>
       </div>
 
       {/* ─── Section 4.1: Trust Boundaries and Data Flow ─── */}
@@ -347,16 +387,115 @@ export default function Domain4Page() {
           showLineNumbers={false}
         />
 
+        <MemoryHook title="🧠 Trust Boundaries = The Gatekeeper">
+          <p><strong>API Server = The Gatekeeper.</strong> Everything passes through it.</p>
+          <p className="mt-1 text-xs" style={{ color: 'var(--text-tertiary)' }}>The API Server → etcd boundary is the most critical because etcd stores ALL cluster state, including Secrets. Compromise etcd = compromise the entire cluster.</p>
+        </MemoryHook>
+
         <Callout variant="tip">
           When analyzing security, always trace the data flow. <strong>Every hop is a potential attack
           surface.</strong> The API Server is the most critical trust boundary — if compromised, the
           entire cluster is at risk.
         </Callout>
+
+        <h3
+          className="text-lg font-bold mb-3"
+          style={{ color: 'var(--text-primary)' }}
+        >
+          Data Flow Diagrams for Threat Modeling
+        </h3>
+        <p
+          className="mb-4 text-base leading-relaxed"
+          style={{ color: 'var(--text-primary)', maxWidth: '680px' }}
+        >
+          Threat modeling requires visualizing how data moves across trust boundaries. Here are the three most important data flows to analyze:
+        </p>
+
+        <div className="space-y-3 mb-6">
+          {[
+            {
+              name: 'Control Plane ↔ Worker Node',
+              desc: 'API Server → Kubelet (10250, TLS, Node auth). Kubelet → API Server (client cert). All control decisions flow through this channel. An attacker who intercepts this can execute arbitrary commands on nodes.',
+              critical: true,
+            },
+            {
+              name: 'Pod ↔ Pod',
+              desc: 'By default, ALL pods can communicate freely (flat network). NetworkPolicy is the ONLY control here. If one pod is compromised, the attacker can scan and attack every other pod in the cluster.',
+              critical: true,
+            },
+            {
+              name: 'User → API Server',
+              desc: 'kubectl → API Server (6443, TLS, AuthN, AuthZ). This is the primary entry point. Anonymous auth must be disabled. RBAC must enforce least privilege.',
+              critical: false,
+            },
+          ].map((flow, idx) => (
+            <div
+              key={idx}
+              className="flex items-start gap-3 px-4 py-3 rounded-xl"
+              style={{
+                backgroundColor: flow.critical ? 'rgba(212, 43, 30, 0.04)' : 'var(--surface-base)',
+                border: `1px solid ${flow.critical ? 'rgba(212, 43, 30, 0.15)' : 'var(--border-subtle)'}`,
+              }}
+            >
+              <ArrowRight size={16} className="flex-shrink-0 mt-0.5" style={{ color: flow.critical ? 'var(--accent-coral)' : 'var(--accent-primary)' }} />
+              <div>
+                <h4 className="text-sm font-bold" style={{ color: 'var(--text-primary)' }}>{flow.name}</h4>
+                <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>{flow.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <Quiz
+          questions={[
+            {
+              question: 'Which trust boundary stores ALL cluster state including Secrets, making it the MOST critical to protect?',
+              options: [
+                'Pod → Pod',
+                'API Server → etcd',
+                'Kubelet → Container Runtime',
+                'User → API Server',
+              ],
+              correctIndex: 1,
+              explanation: 'The API Server → etcd boundary is the most critical because etcd stores ALL cluster state. Anyone with direct etcd access can read every Secret (which are only Base64-encoded by default). This is why etcd must be firewalled to API Server nodes only and encryption at rest is mandatory.',
+            },
+            {
+              question: 'In a flat Kubernetes network without NetworkPolicies, what is the default pod-to-pod communication behavior?',
+              options: [
+                'Pods can only communicate within the same namespace',
+                'All pods can communicate freely across namespaces',
+                'Pods require explicit service mesh authorization',
+                'Only pods with matching labels can communicate',
+              ],
+              correctIndex: 1,
+              explanation: 'By default, ALL pods in a Kubernetes cluster can communicate with each other freely across namespaces. This flat network is the #1 enabler of lateral movement. NetworkPolicies must be explicitly configured to segment traffic.',
+            },
+          ]}
+          domainId="domain4-trust"
+          onComplete={(score) => console.log('Trust boundaries quiz:', score)}
+        />
       </section>
 
       {/* ─── Section 4.2: STRIDE Framework ─── */}
       <section id="stride">
         <SectionHeader number="4.2" title="STRIDE Framework Applied to Kubernetes" color="#9a6700" />
+
+      <ELI5 title="🧒 ELI5: STRIDE Threat Modeling">
+          <p className="mb-2">
+            Imagine you're planning security for a <strong>bank</strong>:
+          </p>
+          <ul className="space-y-1 mb-2">
+            <li><strong>Spoofing</strong> = Someone wears a fake security guard uniform to get past the front door. 👮</li>
+            <li><strong>Tampering</strong> = Someone opens the vault and swaps real gold with painted lead. 🔧</li>
+            <li><strong>Repudiation</strong> = Someone erases the security camera footage so there's no proof they were ever there. 📹</li>
+            <li><strong>Information Disclosure</strong> = Someone reads the bank's customer list through a window. 👀</li>
+            <li><strong>Denial of Service</strong> = Someone parks a truck across the bank's entrance so no one can enter. 🚛</li>
+            <li><strong>Elevation of Privilege</strong> = A janitor finds the manager's keys and empties the vault. 🔑</li>
+          </ul>
+          <p>
+            <strong>In other words:</strong> STRIDE is a checklist of 6 ways attackers can hurt you. For each category, ask: "How could an attacker do this to our Kubernetes cluster?"
+          </p>
+        </ELI5>
 
         <p
           className="mb-4 text-base leading-relaxed"
@@ -366,6 +505,11 @@ export default function Domain4Page() {
           a threat category. For the KCSA exam, you must be able to map each STRIDE category to a
           concrete Kubernetes attack and mitigation.
         </p>
+
+        <MemoryHook title="🧠 S.T.R.I.D.E. Mnemonic">
+          <p className="mb-2"><strong>S.T.R.I.D.E. = Spoofing, Tampering, Repudiation, Info Disclosure, Denial of Service, Elevation of Privilege</strong></p>
+          <p className="text-xs" style={{ color: 'var(--text-tertiary)' }}>Exam tip: Know the mapping cold — Spoofing = auth compromise, Tampering = data/code modification, Repudiation = missing audit, Info Disclosure = secret/network leaks, DoS = resource exhaustion, Elevation of Privilege = container escape/RBAC abuse.</p>
+        </MemoryHook>
 
         {/* Interactive STRIDE Diagram */}
         <StrideDiagram onHover={setActiveStride} />
@@ -379,6 +523,19 @@ export default function Domain4Page() {
         </h3>
 
         <ComparisonTable columns={strideColumns} rows={strideRows} />
+
+        <MemoryHook title="🧠 STRIDE vs Attack Trees">
+          <p><strong>STRIDE finds WHAT, attack trees find HOW.</strong></p>
+          <p className="mt-1 text-xs" style={{ color: 'var(--text-tertiary)' }}>STRIDE is a checklist — it tells you which categories of threats to look for. Attack trees trace the actual paths an attacker takes step by step. Use STRIDE to know what to defend against, then use attack trees to understand the paths.</p>
+        </MemoryHook>
+
+        <ExamTrap title="⚠️ Spoofing vs Tampering">
+          <strong>Don't confuse Spoofing vs Tampering — spoofing = fake identity, tampering = changing data.</strong> Spoofing is wearing a fake security guard uniform to get past the door. Tampering is opening the vault and swapping real gold with painted lead. On the exam, stolen SA tokens = Spoofing. Modified ConfigMaps = Tampering.
+        </ExamTrap>
+
+        <ExamTrap title="⚠️ STRIDE is a Checklist, NOT a Risk Scoring System">
+          <strong>STRIDE is a checklist, NOT a risk scoring system.</strong> It categorizes threats but does NOT tell you how dangerous each one is. For risk scoring, use DREAD (Damage, Reproducibility, Exploitability, Affected Users, Discoverability). The exam may ask which framework is used for risk assessment — the answer is DREAD, not STRIDE.
+        </ExamTrap>
 
         <Callout variant="exam">
           Know how to map each STRIDE category: <strong>Spoofing</strong> = auth compromise,{' '}
@@ -650,6 +807,10 @@ spec:
 
         <ComparisonTable columns={escapeVectorsColumns} rows={escapeVectorsRows} />
 
+        <ExamTrap title="⚠️ Privileged + hostPID = Instant Root Escape">
+          <strong>Privileged container + hostPID = instant root escape (most dangerous combo).</strong> A privileged container has root access to all host devices, and hostPID allows it to see all host processes. With <code>nsenter</code>, the attacker can enter all host namespaces and gain full host root access instantly. PSS Restricted blocks both of these vectors entirely.
+        </ExamTrap>
+
         <Callout variant="warning">
           <strong>privileged + hostPID is the MOST dangerous combination</strong> — it effectively
           gives root on the host. With nsenter, the attacker can enter all host namespaces:
@@ -748,13 +909,18 @@ spec:
           Mitigations
         </h3>
 
+        <MemoryHook title="🧠 NetworkPolicy + TLS = Defense in Depth">
+          <p><strong>NetworkPolicy segments who can talk to whom. TLS encrypts what they say.</strong></p>
+          <p className="mt-1 text-xs" style={{ color: 'var(--text-tertiary)' }}>NetworkPolicy alone doesn't encrypt traffic — it only controls pod-to-pod connectivity. Combine with service mesh mTLS or pod-level TLS for true defense in depth. The exam loves testing whether you know NetworkPolicy only controls traffic, not external threats or encryption.</p>
+        </MemoryHook>
+
         <div className="space-y-3 mb-6">
           {[
             {
               name: 'Network Policies (default-deny)',
               desc: 'The most important control. Start with deny-all, then explicitly allow required traffic.',
               critical: true,
-            },
+            },,
             {
               name: 'Namespace isolation',
               desc: 'Segment workloads by team/application with namespace boundaries.',
@@ -785,8 +951,8 @@ spec:
               key={idx}
               className="flex items-start gap-3 px-4 py-3 rounded-xl"
               style={{
-                backgroundColor: mit.critical ? 'rgba(4, 80, 54, 0.04)' : 'var(--surface-base)',
-                border: `1px solid ${mit.critical ? 'var(--accent-primary)' : 'var(--border-subtle)'}`,
+                backgroundColor: mit!.critical ? 'rgba(4, 80, 54, 0.04)' : 'var(--surface-base)',
+                border: `1px solid ${mit!.critical ? 'var(--accent-primary)' : 'var(--border-subtle)'}`,
               }}
             >
               <span
@@ -796,12 +962,16 @@ spec:
                 {idx + 1}
               </span>
               <div>
-                <h4 className="text-sm font-bold" style={{ color: 'var(--text-primary)' }}>{mit.name}</h4>
-                <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>{mit.desc}</p>
+                <h4 className="text-sm font-bold" style={{ color: 'var(--text-primary)' }}>{mit!.name}</h4>
+                <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>{mit!.desc}</p>
               </div>
             </div>
           ))}
         </div>
+
+        <ExamTrap title="⚠️ NetworkPolicy is NOT a Firewall">
+          <strong>NetworkPolicy is NOT a firewall — it only controls pod-to-pod, not external traffic.</strong> It operates at Layer 3/4 (IP/port) within the cluster and has no concept of Layer 7 (HTTP paths), no NAT, no stateful inspection, and no egress filtering to external endpoints by default. For external traffic control, you need cloud security groups, NAT gateways, or service mesh egress gateways.
+        </ExamTrap>
 
         <Callout variant="exam">
           A zero-trust Kubernetes posture starts with <strong>default-deny NetworkPolicies</strong>,

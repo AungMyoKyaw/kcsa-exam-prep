@@ -11,6 +11,8 @@ import {
 } from 'lucide-react';
 import { Link, useLocation } from 'react-router';
 
+import StudyStreak from '@/components/StudyStreak';
+
 interface NavbarProps {
   onMenuClick: () => void;
   sidebarOpen: boolean;
@@ -28,6 +30,7 @@ const routeTitles: Record<string, string> = {
   '/quick-recall': 'Quick Recall',
   '/cheat-sheet': 'Cheat Sheet',
   '/glossary': 'Glossary',
+  '/exam-day': 'Exam Day Cram',
   '/settings': 'Settings',
 };
 
@@ -66,6 +69,7 @@ export default function Navbar({ onMenuClick, sidebarOpen }: NavbarProps) {
       { label: 'Quick Recall', to: '/quick-recall' },
       { label: 'Cheat Sheet', to: '/cheat-sheet' },
       { label: 'Glossary', to: '/glossary' },
+      { label: 'Exam Day Cram', to: '/exam-day' },
       { label: 'Settings', to: '/settings' },
     );
     return results;
@@ -166,6 +170,9 @@ export default function Navbar({ onMenuClick, sidebarOpen }: NavbarProps) {
 
         <span className="hidden sm:inline-block text-xs px-2 py-0.5 rounded-full font-medium" style={{ backgroundColor: 'var(--surface-elevated)', color: 'var(--text-secondary)' }}>
           {pageTitle}
+        </span>
+        <span className="hidden md:inline-block">
+          <StudyStreak />
         </span>
       </div>
 

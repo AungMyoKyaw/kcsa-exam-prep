@@ -6,6 +6,7 @@ import PracticeExam from './pages/PracticeExam'
 import CheatSheet from './pages/CheatSheet'
 import Glossary from './pages/Glossary'
 import QuickRecall from './pages/QuickRecall'
+import ExamDay from './pages/ExamDay'
 import Settings from './pages/Settings'
 
 export default function App() {
@@ -29,6 +30,7 @@ export default function App() {
         <Route path="/cheat-sheet" element={<CheatSheet />} />
         <Route path="/glossary" element={<Glossary />} />
         <Route path="/quick-recall" element={<QuickRecall />} />
+        <Route path="/exam-day" element={<ExamDay />} />
         <Route path="/settings" element={<Settings />} />
       </Routes>
     </Layout>

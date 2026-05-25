@@ -26,6 +26,7 @@ import QuizComponent from '@/components/QuizComponent'
 import type { QuizQuestion } from '@/components/QuizComponent'
 import MemoryHook from '@/components/MemoryHook'
 import SupplyChainDiagram from '@/components/diagrams/SupplyChainDiagram'
+import ELI5 from '@/components/ELI5'
 
 /* ------------------------------------------------------------------ */
 /*  DATA                                                               */
@@ -268,6 +269,26 @@ export default function Domain5Page() {
           (OPA vs Kyverno vs built-in), and PKI/cert-manager concepts are frequently tested. Pay
           special attention to the mutating vs. validating admission controller distinction.
         </CalloutBox>
+
+        <ELI5 title="🧒 ELI5: Supply Chain Security">
+          <p className="mb-2">
+            Imagine you're baking a <strong>birthday cake</strong> for a VIP guest:
+          </p>
+          <ul className="space-y-1 mb-2">
+            <li><strong>Source code</strong> = The recipe. If someone swaps "sugar" for "salt" in the recipe, the cake is ruined before you even start. 📝</li>
+            <li><strong>Build process</strong> = The kitchen. You want a clean kitchen (hardened build) with locked doors so no one can sneak in and add poison. 🏭</li>
+            <li><strong>Artifacts (images)</strong> = The finished cake. You wrap it in tamper-evident packaging (signed image) so the guest knows no one opened it. 📦</li>
+            <li><strong>Registry</strong> = The delivery truck. If the truck is unlocked, anyone can swap your cake with a fake one during transport. 🚚</li>
+            <li><strong>Deployment</strong> = Serving the cake. The waiter should check the seal before serving (admission controller verification). 🍽️</li>
+          </ul>
+          <p>
+            <strong>In other words:</strong> Supply chain security protects every step from recipe to table. A single compromised step poisons the whole chain.
+          </p>
+        </ELI5>
+
+        <p className="text-sm italic my-2" style={{ color: 'var(--text-tertiary)' }}>
+          <strong>💼 Real-World Impact:</strong> The SolarWinds and Codecov breaches happened because attackers compromised the BUILD step — they didn't hack production directly, they poisoned the software at the source.
+        </p>
       </header>
 
       {/* Section 5.1 — Supply Chain Security */}
@@ -307,6 +328,21 @@ export default function Domain5Page() {
           SLSA (Supply-chain Levels for Software Artifacts) is a security framework from the OpenSSF
           designed to prevent tampering and improve integrity across the software supply chain.
         </p>
+
+        <ELI5 title="🧒 ELI5: SLSA Levels">
+          <p className="mb-2">
+            Imagine you're buying a <strong>painting</strong> from an artist:
+          </p>
+          <ul className="space-y-1 mb-2">
+            <li><strong>SLSA Level 1</strong> = The artist says "I painted this." No proof, just their word. 🎨</li>
+            <li><strong>SLSA Level 2</strong> = The artist signs the back of the canvas, and a gallery (hosted build service) verifies they actually did it. ✍️</li>
+            <li><strong>SLSA Level 3</strong> = The artist paints in a sealed, monitored studio with no outside distractions (hermetic build). Security guards watch every brushstroke (hardened build platform). 🏛️</li>
+            <li><strong>SLSA Level 4</strong> = Two independent art experts must review every painting before it's sold (two-person review). Plus, if you follow the exact same steps, you get the exact same painting (reproducible build). 👥</li>
+          </ul>
+          <p>
+            <strong>In other words:</strong> Higher SLSA levels = more trust in where your software came from. Level 1 is "trust me." Level 4 is "prove it with witnesses and reproducible science."
+          </p>
+        </ELI5>
 
         {/* SLSA Levels */}
         <div className="space-y-3 mb-6">
@@ -502,6 +538,21 @@ trivy image --format spdx-json --output sbom.json myregistry.io/app:v1.0.0`}
         >
           Sigstore Ecosystem
         </h3>
+
+        <ELI5 title="🧒 ELI5: Image Signing">
+          <p className="mb-2">
+            Imagine you're buying <strong>medicine</strong> from a pharmacy:
+          </p>
+          <ul className="space-y-1 mb-2">
+            <li><strong>Cosign</strong> = The tamper-evident seal on the medicine bottle. You can check if the seal is intact before taking the medicine. 🔏</li>
+            <li><strong>Rekor</strong> = The pharmacy's public logbook that records: "Dr. Smith signed this batch of medicine on Tuesday at 2 PM." Anyone can check the log. 📜</li>
+            <li><strong>Fulcio</strong> = The medical board that issues temporary licenses. "Dr. Smith is a real doctor — here's a 10-minute certificate proving it." No need to remember Dr. Smith's credentials forever. 🆔</li>
+          </ul>
+          <p>
+            <strong>In other words:</strong> Sigstore replaces the old way of managing long-lived signing keys (like GPG) with identity-based, short-lived certificates. It's like using a one-time code sent to your phone instead of remembering a password.
+          </p>
+        </ELI5>
+
         <p className="text-base leading-relaxed mb-4" style={{ color: 'var(--text-secondary)' }}>
           Sigstore is a Linux Foundation project that provides a full stack for software signing and verification without long-lived keys. It consists of three main components plus a provenance framework:
         </p>

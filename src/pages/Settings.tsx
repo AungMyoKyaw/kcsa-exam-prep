@@ -13,7 +13,10 @@ import {
   Calendar,
   CheckCircle2,
   Info,
+  Target,
 } from 'lucide-react';
+import BeginnerModeToggle from '@/components/BeginnerModeToggle';
+import { resetAllProgress } from '@/lib/gamification';
 
 export default function Settings() {
   const [darkMode, setDarkMode] = useState(() => {
@@ -39,11 +42,11 @@ export default function Settings() {
   }, [darkMode]);
 
   const handleResetProgress = () => {
-    localStorage.removeItem('kcsa_read_chapters');
-    localStorage.removeItem('kcsa_quiz_scores');
-    localStorage.removeItem('kcsa_exam_results');
+    resetAllProgress();
     setShowResetConfirm(false);
     window.dispatchEvent(new StorageEvent('storage', { key: 'kcsa_read_chapters' }));
+    window.dispatchEvent(new StorageEvent('storage', { key: 'kcsa-domain-progress' }));
+    window.location.reload();
   };
 
   const handleSaveExamDate = () => {
@@ -79,7 +82,7 @@ export default function Settings() {
           className="rounded-xl border p-4"
           style={{ backgroundColor: 'var(--surface-base)', borderColor: 'var(--border-subtle)' }}
         >
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
               {darkMode ? (
                 <Moon size={20} style={{ color: 'var(--accent-lavender)' }} />
@@ -109,6 +112,11 @@ export default function Settings() {
                 style={{ transform: darkMode ? 'translateX(26px)' : 'translateX(2px)' }}
               />
             </button>
+          </div>
+
+          {/* Beginner Mode Toggle */}
+          <div style={{ borderTop: '1px solid var(--border-subtle)' }} className="pt-4">
+            <BeginnerModeToggle />
           </div>
         </div>
       </section>
@@ -158,7 +166,7 @@ export default function Settings() {
                 color: daysUntilExam <= 7 ? '#fff' : 'var(--text-primary)',
               }}
             >
-              <Info size={16} />
+              <Target size={16} />
               {daysUntilExam === 0
                 ? 'Your exam is today. Good luck! 🎯'
                 : `${daysUntilExam} day${daysUntilExam !== 1 ? 's' : ''} until your exam.`}
@@ -196,7 +204,7 @@ export default function Settings() {
                     Reset All Progress
                   </p>
                   <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>
-                    Clear all chapter reads, quiz scores, and exam history.
+                    Clear all chapter reads, quiz scores, exam history, XP, streak, and badges.
                   </p>
                 </div>
               </div>
@@ -221,7 +229,7 @@ export default function Settings() {
                     Are you sure?
                   </p>
                   <p className="text-xs mb-3" style={{ color: 'rgba(255,255,255,0.85)' }}>
-                    This will permanently delete all your reading progress, quiz scores, and exam results. This cannot be undone.
+                    This will permanently delete all your reading progress, quiz scores, XP, streak, badges, and exam results. This cannot be undone.
                   </p>
                   <div className="flex gap-2">
                     <button

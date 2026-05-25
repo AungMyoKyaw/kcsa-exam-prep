@@ -10,6 +10,7 @@ import SectionHeader from '@/components/SectionHeader';
 import ComparisonTable from '@/components/ComparisonTable';
 import MemoryHook from '@/components/MemoryHook'
 import ExamTrap from '@/components/ExamTrap'
+import ELI5 from '@/components/ELI5'
 
 const DOMAIN_ID = 'domain3';
 
@@ -291,6 +292,20 @@ export default function Domain3Page() {
       {/* ─── Section 3.1: Pod Security Standards ─── */}
       <section id="pss">
         <SectionHeader number="3.1" title="Pod Security Standards (PSS)" color="#8257e5" />
+
+      <ELI5 title="🧒 ELI5: Pod Security Standards">
+          <p className="mb-2">
+            Imagine <strong>PSS as building safety rules</strong> for a skyscraper:
+          </p>
+          <ul className="space-y-1 mb-2">
+            <li><strong>Privileged</strong> = "Do whatever you want. Bring power tools, explosives, whatever." Only for trusted maintenance crews. 🚧</li>
+            <li><strong>Baseline</strong> = "No dangerous tools in apartments. No drilling through walls. But normal living is fine." 🏠</li>
+            <li><strong>Restricted</strong> = "No dangerous tools AND everyone must wear safety gear. Only approved materials allowed. Windows are shatterproof." This is for nuclear power plant workers. ⚠️</li>
+          </ul>
+          <p>
+            <strong>In other words:</strong> Baseline stops known attacks. Restricted is defense-in-depth. The policies are cumulative — Restricted includes everything Baseline does, plus more.
+          </p>
+        </ELI5>
 
         <p
           className="mb-4 text-base leading-relaxed"
@@ -1141,7 +1156,21 @@ rules:
       </section>
 
       {/* ─── Section 3.8: Network Policies ─── */}
-      <section id="network-policies">
+      <ELI5 title="🧒 ELI5: NetworkPolicy">
+          <p className="mb-2">
+            Imagine an <strong>apartment building</strong>:
+          </p>
+          <ul className="space-y-1 mb-2">
+            <li><strong>Without NetworkPolicy</strong> = All apartment doors are wide open. Anyone can walk into any unit at any time. Your neighbor can stroll into your kitchen and help themselves. 🚪</li>
+            <li><strong>With default-deny NetworkPolicy</strong> = All doors are locked by default. Nobody can enter any unit unless you explicitly give them a key. 🔒</li>
+            <li><strong>With specific allow rules</strong> = You add a doorbell that only lets the pizza delivery person (frontend) into your unit (backend) through the service entrance (port 8080). 🍕</li>
+          </ul>
+          <p>
+            <strong>In other words:</strong> NetworkPolicy is the firewall for your pods. Default = allow ALL. First policy = isolation. Both source egress AND destination ingress must allow the connection.
+          </p>
+        </ELI5>
+
+        <section id="network-policies">
         <SectionHeader number="3.8" title="Network Policies (Deep Dive)" color="#8257e5" />
 
         <p

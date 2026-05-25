@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from 'react'
-import { Link } from 'react-router'
+import { Link, useLocation } from 'react-router'
 import {
   Shield,
   Server,
@@ -18,8 +18,15 @@ import {
   FlaskConical,
   CheckCircle2,
   Brain,
+  RotateCcw,
 } from 'lucide-react'
 import { domains } from '@/lib/domainData'
+import StudyStreak from '@/components/StudyStreak'
+import XPBar from '@/components/XPBar'
+import DailyChallenge from '@/components/DailyChallenge'
+import BadgeDisplay from '@/components/BadgeDisplay'
+import CircularProgress from '@/components/CircularProgress'
+import { checkAndUpdateStreak, getLastLocation, saveLastLocation } from '@/lib/gamification'
 
 const domainMeta = [
   { id: 1, icon: Shield, color: '#0969da', bg: '#ddf4ff', border: '#54aeff' },
@@ -84,13 +91,21 @@ const studyPath = [
 export default function Home() {
   const [progress, setProgress] = useState<Record<string, string[]>>({})
   const [examDate, setExamDate] = useState<string | null>(null)
+  const [lastLocation, setLastLocation] = useState<string | null>(null)
+  const location = useLocation()
 
   useEffect(() => {
     const saved = localStorage.getItem('kcsa_read_chapters')
     if (saved) setProgress(JSON.parse(saved))
     const date = localStorage.getItem('kcsa_exam_date')
     if (date) setExamDate(date)
+    setLastLocation(getLastLocation())
+    checkAndUpdateStreak()
   }, [])
+
+  useEffect(() => {
+    saveLastLocation(location.pathname)
+  }, [location.pathname])
 
   const totalChapters = useMemo(
     () => domains.reduce((sum, d) => sum + d.chapters.length, 0),
@@ -186,7 +201,41 @@ export default function Home() {
                 : `${daysUntilExam} day${daysUntilExam !== 1 ? 's' : ''} until exam`}
             </div>
           )}
+          <StudyStreak />
         </div>
+      </div>
+
+      {/* Gamification Row */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <div className="md:col-span-2">
+          <XPBar />
+        </div>
+        <div>
+          <BadgeDisplay />
+        </div>
+      </div>
+
+      {/* Continue where left off */}
+      {lastLocation && (
+        <div className="mb-8">
+          <Link
+            to={lastLocation}
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 hover:shadow-md"
+            style={{
+              backgroundColor: 'var(--accent-primary)',
+              color: '#fff',
+            }}
+          >
+            <RotateCcw size={16} />
+            Continue where you left off
+            <ChevronRight size={14} />
+          </Link>
+        </div>
+      )}
+
+      {/* Daily Challenge */}
+      <div className="mb-8">
+        <DailyChallenge />
       </div>
 
       {/* Quick Action Cards */}
@@ -382,12 +431,7 @@ export default function Home() {
                         }}
                       />
                     </div>
-                    <span
-                      className="text-xs font-medium tabular-nums"
-                      style={{ color: meta.color }}
-                    >
-                      {pct}%
-                    </span>
+                    <CircularProgress percentage={pct} color={meta.color} size={36} strokeWidth={3} />
                   </div>
                 </div>
               </div>
@@ -438,12 +482,17 @@ export default function Home() {
                 <div
                   className="flex-shrink-0 w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold mt-0.5"
                   style={{
-                    backgroundColor: isDone ? step.color : 'var(--surface-elevated)',
-                    color: isDone ? '#fff' : step.color,
-                    border: isDone ? 'none' : `2px solid ${step.color}`,
+                    backgroundColor: isDone ? step.color : isActive ? step.color : 'var(--surface-elevated)',
+                    color: isDone || isActive ? '#fff' : step.color,
+                    border: isDone || isActive ? 'none' : `2px solid ${step.color}`,
                   }}
                 >
-                  {isDone ? <CheckCircle2 size={16} /> : step.step}
+                  {isDone ? <CheckCircle2 size={16} /> : isActive ? (
+                    <span className="relative flex h-2.5 w-2.5">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style={{ backgroundColor: '#fff' }} />
+                      <span className="relative inline-flex rounded-full h-2.5 w-2.5" style={{ backgroundColor: '#fff' }} />
+                    </span>
+                  ) : step.step}
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-0.5">

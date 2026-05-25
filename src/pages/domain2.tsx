@@ -16,9 +16,9 @@ import {
   Check,
 } from 'lucide-react';
 import CalloutBox from '@/components/CalloutBox';
+import ComparisonTable from '@/components/ComparisonTable'
 import Callout from '@/components/Callout';
 import CodeBlock from '@/components/CodeBlock';
-import ComparisonTable from '@/components/ComparisonTable';
 import QuizComponent from '@/components/QuizComponent';
 import { useProgress } from '@/hooks/useProgress';
 import MemoryHook from '@/components/MemoryHook'
@@ -28,6 +28,8 @@ import AdmissionPipelineDiagram from '@/components/diagrams/AdmissionPipelineDia
 import EncryptionChainDiagram from '@/components/diagrams/EncryptionChainDiagram'
 import TokenLifecycleDiagram from '@/components/diagrams/TokenLifecycleDiagram'
 import PortMemorySystem from '@/components/PortMemorySystem'
+import ExplainLikeImFive from '@/components/ExplainLikeImFive';
+import ELI5 from '@/components/ELI5'
 
 
 /* ────────────────────── Simple Section Wrapper ────────────────────── */
@@ -597,6 +599,54 @@ const domain2Questions = [
     correctIndex: 1,
     explanation: 'Kubernetes Secrets are stored in etcd as Base64-encoded text by default — NOT encrypted. Anyone with direct access to etcd can read all secrets. You MUST explicitly enable encryption at rest via the --encryption-provider-config flag on the API Server.',
   },
+  {
+    id: 15,
+    question: 'What is the FIRST step when restoring etcd from a snapshot in a disaster recovery scenario?',
+    options: [
+      'Run etcdctl snapshot restore immediately',
+      'Stop the API Server to prevent split-brain writes',
+      'Rotate all ServiceAccount tokens',
+      'Backup the current (potentially corrupted) etcd data',
+    ],
+    correctIndex: 1,
+    explanation: 'The FIRST step in any etcd restore is stopping the API Server (move the manifest out of /etc/kubernetes/manifests). This prevents the API Server from writing to etcd while you are reconstructing it. Rotating tokens happens AFTER restore.',
+  },
+  {
+    id: 16,
+    question: 'Which command is used to verify that a restored etcd cluster is healthy?',
+    options: [
+      'etcdctl snapshot status',
+      'etcdctl endpoint health',
+      'kubectl get etcd',
+      'systemctl status etcd',
+    ],
+    correctIndex: 1,
+    explanation: 'etcdctl endpoint health verifies that the etcd endpoint can successfully commit a proposal. snapshot status only reads snapshot file metadata. There is no etcd resource in kubectl.',
+  },
+  {
+    id: 17,
+    question: 'What is the purpose of a bootstrap token in TLS bootstrapping?',
+    options: [
+      'It is a long-lived credential for the kubelet',
+      'It provides temporary authentication for a new node to submit a CSR',
+      'It replaces the need for a Certificate Authority',
+      'It encrypts etcd peer communication',
+    ],
+    correctIndex: 1,
+    explanation: 'A bootstrap token is a short-lived Secret in the kube-system namespace. It provides temporary credentials so a new kubelet can authenticate to the API Server and submit a CertificateSigningRequest (CSR). After the CSR is approved, the kubelet uses its permanent certificate.',
+  },
+  {
+    id: 18,
+    question: 'Which Kubernetes resource does a kubelet create during TLS bootstrapping to request a permanent certificate?',
+    options: [
+      'Certificate',
+      'CertificateSigningRequest',
+      'Secret',
+      'ServiceAccount',
+    ],
+    correctIndex: 1,
+    explanation: 'During TLS bootstrapping, the kubelet generates a private key and creates a CertificateSigningRequest (CSR) resource. An administrator or auto-approver then approves the CSR, and the kubelet downloads the signed certificate from the CSR status.',
+  },
 ];
 
 /* ══════════════════════════ DOMAIN 2 PAGE ══════════════════════════ */
@@ -670,6 +720,22 @@ export default function Domain2Page() {
           each component authenticates and authorizes. Pay special attention to API Server flags,
           etcd encryption, and Kubelet hardening.
         </CalloutBox>
+
+        <ELI5 title="🧒 ELI5: Kubernetes Cluster Architecture">
+          <p className="mb-2">
+            Imagine a <strong>five-star hotel</strong>:
+          </p>
+          <ul className="space-y-1 mb-2">
+            <li><strong>API Server (6443)</strong> = The front desk. Every guest, staff, and delivery person MUST check in here first. Nothing happens without going through the front desk.</li>
+            <li><strong>etcd (2379/2380)</strong> = The hotel's master ledger. Every room booking, key assignment, and staff schedule is recorded here. If someone steals the ledger, they own the hotel.</li>
+            <li><strong>Kubelet (10250)</strong> = The floor manager on each level. They make sure rooms are clean, guests are served, and report back to the front desk.</li>
+            <li><strong>Controller Manager (10257)</strong> = The automated systems that adjust thermostats, turn on lights, and handle routine tasks without human intervention.</li>
+            <li><strong>Scheduler (10259)</strong> = The room assignment system that decides which floor and room each guest gets based on their needs.</li>
+          </ul>
+          <p>
+            <strong>In other words:</strong> The API Server is the gatekeeper. etcd is the memory. Kubelet is the worker. Controller Manager and Scheduler are the brains behind the scenes.
+          </p>
+        </ELI5>
       </div>
 
       {/* ── Sticky Ports Bar ── */}
@@ -716,7 +782,24 @@ export default function Domain2Page() {
           are heavily tested on the exam.
         </CalloutBox>
 
+        <ExamTrap title="⚠️ etcd Access Trap">
+          <strong>The API Server is the ONLY component that talks directly to etcd.</strong> All other components (Kubelet, Controller Manager, Scheduler) must go through the API Server. etcd should be firewalled to only accept connections from API Server nodes. If anything else connects directly to etcd, your cluster is compromised.
+        </ExamTrap>
+
         <PortMemorySystem />
+
+        <MemoryHook title="🧠 Port Number Mnemonics">
+          <p className="mb-2"><strong>Memorize these port patterns:</strong></p>
+          <ul className="space-y-1 text-sm" style={{ color: 'var(--text-secondary)' }}>
+            <li><strong>6443</strong> = "Admin" — kubectl and all admin traffic goes here</li>
+            <li><strong>2379 / 2380</strong> = "etcd twins" — 2379=client, 2380=peer (Raft)</li>
+            <li><strong>10250</strong> = "kubeLET (5=LET)" — Kubelet main API</li>
+            <li><strong>10257</strong> = "Controller (7=control)" — Controller Manager</li>
+            <li><strong>10259</strong> = "Scheduler (9=schedule)" — Scheduler</li>
+            <li><strong>10249</strong> = "Kube-proxy metrics" — less critical</li>
+          </ul>
+          <p className="mt-2 text-xs" style={{ color: 'var(--text-tertiary)' }}>Exam tip: If a question asks which port a component uses, look for these patterns. 6443 and the 102xx ports are the most heavily tested.</p>
+        </MemoryHook>
       </Section>
 
       {/* ══════════ Section 2.1: API Server ══════════ */}
@@ -811,6 +894,21 @@ export default function Domain2Page() {
           Admission Controllers
         </h3>
 
+        <ELI5 title="🧒 ELI5: Admission Controllers">
+          <p className="mb-2">
+            Imagine a <strong>nightclub with a bouncer</strong>:
+          </p>
+          <ul className="space-y-1 mb-2">
+            <li><strong>Authentication (AuthN)</strong> = The bouncer checks your ID. "Are you who you say you are?" ✅</li>
+            <li><strong>Authorization (AuthZ / RBAC)</strong> = The bouncer checks if you're on the guest list. "Can you enter the VIP section?" ✅</li>
+            <li><strong>Mutating Admission</strong> = The coat check that adds a stamp to your hand or gives you a wristband. It <em>modifies</em> your request before you enter. 📝</li>
+            <li><strong>Validating Admission</strong> = The security guard who checks your bag. "No weapons allowed!" If you have something forbidden, you're <em>rejected</em>. ❌</li>
+          </ul>
+          <p>
+            <strong>In other words:</strong> Admission controllers are the final quality and security checks before something gets into the cluster. Mutating ones can <em>fix</em> your request. Validating ones can <em>reject</em> it.
+          </p>
+        </ELI5>
+
         <p className="text-sm leading-relaxed mb-4" style={{ color: 'var(--text-secondary)' }}>
           Admission controllers intercept requests to the API Server after authentication and
           authorization. <strong>Mutating</strong> webhooks run first, then <strong>Validating</strong>{' '}
@@ -818,11 +916,19 @@ export default function Domain2Page() {
           NamespaceLifecycle, LimitRanger, and CertificateSubjectRestriction.
         </p>
 
+        <p className="text-sm italic my-3" style={{ color: 'var(--text-tertiary)' }}>
+          <strong>🎯 Why This Matters:</strong> Admission controllers appear on ~5% of exam questions. The most common trap: mutating runs BEFORE validating.
+        </p>
+
         <CalloutBox variant="exam">
           The API Server is the ONLY component that talks directly to etcd. Every other component
           must go through the API Server. Port <strong>6443</strong>. Anonymous auth must be FALSE
           in production. Always use --authorization-mode=Node,RBAC.
         </CalloutBox>
+
+        <ExamTrap title="⚠️ Anonymous Auth Trap">
+          <strong>Leaving --anonymous-auth=true (default) is dangerous.</strong> The API Server accepts requests from system:anonymous user and system:unauthenticated group. A rogue node or attacker could probe the API Server without any credentials. Always set <code>--anonymous-auth=false</code> in production.
+        </ExamTrap>
 
         <CodeBlock
           language="yaml"
@@ -898,12 +1004,32 @@ rules:
           ))}
         </div>
 
-        <MemoryHook title="AuthN vs AuthZ vs Admission">
-          AuthN knows your NAME. AuthZ knows your ROLE. Admission can CHANGE your request.
+        <MemoryHook title="🧠 AuthN vs AuthZ vs Admission">
+          <p className="mb-2"><strong>AuthN</strong> knows your NAME. <strong>AuthZ</strong> knows your ROLE. <strong>Admission</strong> can CHANGE your request.</p>
+          <p className="text-xs" style={{ color: 'var(--text-tertiary)' }}>Request lifecycle: 1. AuthN (who are you?) → 2. AuthZ/RBAC (what can you do?) → 3. Mutating Admission (modify) → 4. Validating Admission (approve/reject) → 5. Persist to etcd. The most common trap: mutating runs BEFORE validating.</p>
         </MemoryHook>
       </Section>
 
       <RBACFlowDiagram />
+
+      <ELI5 title="🧒 ELI5: RBAC (Role-Based Access Control)">
+        <p className="mb-2">
+          Imagine a <strong>theater</strong>:
+        </p>
+        <ul className="space-y-1 mb-2">
+          <li><strong>Role</strong> = The job description. "Stagehands can move props and adjust lights." 🎭</li>
+          <li><strong>RoleBinding</strong> = The employment contract that gives a specific person that job. "Alice is hired as a stagehand." 📄</li>
+          <li><strong>ClusterRole</strong> = A job that works across ALL theaters in the chain. 🌐</li>
+          <li><strong>verbs</strong> = The specific actions allowed. get, list, watch, create, update, patch, delete, deletecollection, impersonate, bind, escalate. 🎬</li>
+        </ul>
+        <p>
+          <strong>In other words:</strong> RBAC separates WHAT can be done (Role) from WHO can do it (Binding). Never give someone cluster-admin just because it's easier — that's like giving every employee the master key.
+        </p>
+      </ELI5>
+
+      <p className="text-sm italic my-2" style={{ color: 'var(--text-tertiary)' }}>
+        <strong>💼 Real-World Impact:</strong> RBAC misconfigurations are the #1 cause of privilege escalation in Kubernetes. The dangerous verbs — bind, escalate, impersonate — are like giving someone the master key to the theater.
+      </p>
 
       {/* ══════════ Section 2.2: etcd ══════════ */}
       <Section id="d2-etcd">
@@ -956,6 +1082,24 @@ rules:
           Encryption at Rest Providers
         </h3>
 
+        <ELI5 title="🧒 ELI5: Encryption at Rest">
+          <p className="mb-2">
+            Imagine <strong>etcd as the hotel's master safe</strong>:
+          </p>
+          <ul className="space-y-1 mb-2">
+            <li><strong>Without encryption (identity provider)</strong> = All valuables are sitting in the safe in plain sight. Anyone who cracks the safe can read everything instantly. 🚫</li>
+            <li><strong>With basic encryption (aescbc, aesgcm, secretbox)</strong> = Valuables are in envelopes sealed with a hotel key. Better, but if someone steals the hotel key, all envelopes open. 🔑</li>
+            <li><strong>With KMS v2 (recommended)</strong> = Each envelope gets its own unique seal (DEK), and the master key (KEK) is kept in a separate, ultra-secure vault (HSM/cloud KMS). Even if someone steals one envelope seal, they can't open anything else. 🏦</li>
+          </ul>
+          <p>
+            <strong>In other words:</strong> KMS v2 uses <em>envelope encryption</em> — a unique key for every encryption operation, wrapped by a master key stored externally. It's like having a locksmith make a new key for every letter you send.
+          </p>
+        </ELI5>
+
+        <p className="text-sm italic my-2" style={{ color: 'var(--text-tertiary)' }}>
+          <strong>🎯 Why This Matters:</strong> This concept appears on ~8% of exam questions. Know that KMS v2 is recommended and identity means NO encryption.
+        </p>
+
         <p className="text-sm leading-relaxed mb-4" style={{ color: 'var(--text-secondary)' }}>
           The first provider in the list handles encryption; ALL providers are tried for decryption.
           Always put the strongest provider first. <strong>identity: {}</strong> must be LAST (fallback
@@ -963,6 +1107,17 @@ rules:
         </p>
 
         <EncryptionTable />
+
+        <MemoryHook title="🧠 Encryption Provider Order">
+          <p className="mb-2"><strong>The first provider encrypts; ALL providers are tried for decryption.</strong> Always put the strongest provider first. <code>identity: {}</code> must be LAST (fallback for reading unencrypted data only).</p>
+          <ul className="space-y-1 text-sm" style={{ color: 'var(--text-secondary)' }}>
+            <li><strong>kms v2</strong> = Recommended. Envelope encryption with external KEK.</li>
+            <li><strong>aesgcm</strong> = Fast but MUST rotate every 200K writes.</li>
+            <li><strong>secretbox</strong> = Strong (XSalsa20 + Poly1305), not FIPS.</li>
+            <li><strong>aescbc</strong> = Weak — padding oracle attacks. NOT recommended.</li>
+            <li><strong>identity</strong> = NO encryption. Must be last.</li>
+          </ul>
+        </MemoryHook>
 
         <CalloutBox variant="exam">
           etcd ports: <strong>2379</strong> (client) and <strong>2380</strong> (peer). ALWAYS enable
@@ -1003,6 +1158,8 @@ resources:
       </Section>
 
       <EncryptionChainDiagram />
+
+      <ExplainLikeImFive concept="etcd" />
 
       {/* ══════════ Section 2.2b: etcd Backup & Restore Security ══════════ */}
       <Section id="d2-etcd-backup">
@@ -1073,9 +1230,95 @@ mv /tmp/kube-apiserver.yaml /etc/kubernetes/manifests/`}
           Restoring etcd reverts ALL cluster state, not just what you wanted. Plan accordingly.
         </Callout>
 
+        <h3 className="text-lg font-semibold mb-3" style={{ color: 'var(--text-primary)' }}>
+          Disaster Recovery Scenario
+        </h3>
+        <p className="text-sm leading-relaxed mb-4" style={{ color: 'var(--text-secondary)' }}>
+          Imagine a compromised etcd node where an attacker deleted critical ConfigMaps and Service accounts. Your disaster recovery playbook should look like this:
+        </p>
+        <div className="space-y-2 mb-6">
+          {[
+            { step: '1. Isolate', desc: 'Stop the API Server on all control plane nodes to prevent split-brain writes.' },
+            { step: '2. Restore', desc: 'Use etcdctl snapshot restore on a NEW data-dir (never overwrite live data).' },
+            { step: '3. Verify', desc: 'Start a single API Server, verify resources with kubectl get all -A.' },
+            { step: '4. Roll out', desc: 'Bring remaining control plane nodes online one at a time.' },
+            { step: '5. Post-incident', desc: 'Rotate ALL credentials (SA tokens, certs) — backups may contain compromised state.' },
+          ].map((item) => (
+            <div
+              key={item.step}
+              className="flex items-start gap-3 px-4 py-3 rounded-lg"
+              style={{ backgroundColor: 'var(--surface-base)', border: '1px solid var(--border-subtle)' }}
+            >
+              <span className="text-xs font-mono font-bold flex-shrink-0 px-2 py-1 rounded" style={{ backgroundColor: 'var(--surface-code)', color: 'var(--accent-primary)' }}>
+                {item.step}
+              </span>
+              <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+                {item.desc}
+              </span>
+            </div>
+          ))}
+        </div>
+
+        <ExamTrap title="etcd Backup Verification">
+          The exam loves backup verification questions. After restoring, always verify with etcdctl endpoint status and kubectl get nodes. If the API Server reports errors, the restored etcd may be missing the latest raft index.
+        </ExamTrap>
+
+        <h3 className="text-lg font-semibold mb-3" style={{ color: 'var(--text-primary)' }}>
+          Exam-Style: Backup Verification YAML
+        </h3>
+        <p className="text-sm leading-relaxed mb-4" style={{ color: 'var(--text-secondary)' }}>
+          A common exam question asks how to verify etcd health after restore. You must check both etcd member status AND API Server connectivity.
+        </p>
+
+        <CodeBlock
+          language="bash"
+          code={`# Verify etcd cluster health after restore
+etcdctl endpoint health \\
+  --endpoints=https://127.0.0.1:2379 \\
+  --cacert=/etc/kubernetes/pki/etcd/ca.crt \\
+  --cert=/etc/kubernetes/pki/etcd/server.crt \\
+  --key=/etc/kubernetes/pki/etcd/server.key
+
+# Expected output: https://127.0.0.1:2379 is healthy: successfully committed proposal
+
+# Verify API Server can read from restored etcd
+kubectl get nodes
+kubectl get pods -A | head -10`}
+        />
+
         <MemoryHook title="etcd Backup">
           etcd backup = cluster state. Encrypt it like you&apos;d encrypt a database dump.
         </MemoryHook>
+
+        <QuizComponent
+          questions={[
+            {
+              id: 101,
+              question: 'You restored etcd from a snapshot but the API Server fails to start. What is the MOST likely cause?',
+              options: [
+                'The snapshot was encrypted with the wrong KMS key',
+                'The API Server manifest was not moved out before restore',
+                'The restored etcd data-dir has the wrong permissions',
+                'The snapshot was taken while the API Server was running',
+              ],
+              correctIndex: 1,
+              explanation: 'You MUST stop the API Server before restoring etcd (move the manifest out of /etc/kubernetes/manifests). If the API Server is running during restore, it will attempt to write to etcd while etcd is being reconstructed, causing corruption.',
+            },
+            {
+              id: 102,
+              question: 'Which command verifies etcd health after a snapshot restore?',
+              options: [
+                'etcdctl snapshot status',
+                'etcdctl endpoint health',
+                'kubectl get etcd',
+                'systemctl status etcd',
+              ],
+              correctIndex: 1,
+              explanation: 'etcdctl endpoint health is the correct command to verify etcd cluster health after restore. It checks that the endpoint can successfully commit a proposal. snapshot status only inspects the snapshot file metadata, not the running cluster.',
+            },
+          ]}
+          domainId="domain2-backup"
+        />
       </Section>
 
       {/* ══════════ Section 2.3: Kubelet ══════════ */}
@@ -1130,6 +1373,8 @@ mv /tmp/kube-apiserver.yaml /etc/kubernetes/manifests/`}
             </div>
           ))}
         </div>
+
+        <ExplainLikeImFive concept="kubelet" />
 
         <h3 className="text-lg font-semibold mb-3" style={{ color: 'var(--text-primary)' }}>
           Kubelet Security Flags
@@ -1203,8 +1448,8 @@ curl http://localhost:10255/pods
 # Should fail: connection refused`}
         />
 
-        <ExamTrap title="Kubelet Read-Only Port">
-          Anyone on the node network can read pod specs, env vars, and node metrics via port 10255. This is a direct path to secret leakage. Always set --read-only-port=0 in production.
+        <ExamTrap title="⚠️ Kubelet Read-Only Port = Secret Leakage">
+          <strong>Port 10255 provides unauthenticated access to pod specs, env vars, and node metrics.</strong> An attacker on the node network can extract Secrets passed as environment variables. Always set <code>--read-only-port=0</code> in production to disable it completely. This is a CIS Benchmark requirement (CIS 4.2.4).
         </ExamTrap>
 
         <h3 className="text-lg font-semibold mb-3" style={{ color: 'var(--text-primary)' }}>
@@ -1433,6 +1678,32 @@ curl http://localhost:10255/pods
         </MemoryHook>
 
         <h3 className="text-lg font-semibold mb-3" style={{ color: 'var(--text-primary)' }}>
+          Falco vs seccomp vs AppArmor vs SELinux
+        </h3>
+        <p className="text-sm leading-relaxed mb-4" style={{ color: 'var(--text-secondary)' }}>
+          These tools are often confused. Here's the key difference: some <strong>detect</strong>, others <strong>prevent</strong>.
+        </p>
+
+        <ComparisonTable
+          columns={[
+            { key: 'tool', header: 'Tool' },
+            { key: 'mechanism', header: 'Mechanism' },
+            { key: 'action', header: 'Action' },
+            { key: 'examNote', header: 'Exam Note' },
+          ]}
+          rows={[
+            { tool: 'Falco', mechanism: 'eBPF / kernel module', action: 'DETECTS and ALERTS', examNote: 'Detection only — does NOT block' },
+            { tool: 'seccomp', mechanism: 'Syscall filter', action: 'PREVENTS', examNote: 'Blocks forbidden syscalls' },
+            { tool: 'AppArmor', mechanism: 'Path-based MAC', action: 'PREVENTS', examNote: 'Restricts file + capability access' },
+            { tool: 'SELinux', mechanism: 'Label-based MAC', action: 'PREVENTS', examNote: 'Restricts resource access by label' },
+          ]}
+        />
+
+        <p className="text-sm italic my-3" style={{ color: 'var(--text-tertiary)' }}>
+          <strong>🎯 Why This Matters:</strong> Exam questions love testing whether you know that Falco detects but does NOT prevent. seccomp, AppArmor, and SELinux actually block actions.
+        </p>
+
+        <h3 className="text-lg font-semibold mb-3" style={{ color: 'var(--text-primary)' }}>
           AppArmor Profile Loading
         </h3>
         <p className="text-sm leading-relaxed mb-4" style={{ color: 'var(--text-secondary)' }}>
@@ -1623,6 +1894,8 @@ spec:
           pod-to-pod traffic — use Network Policies for isolation.
         </CalloutBox>
 
+        <ExplainLikeImFive concept="cni" />
+
         <h3 className="text-lg font-semibold mb-3 mt-8" style={{ color: 'var(--text-primary)' }}>
           Network Security Best Practices
         </h3>
@@ -1672,55 +1945,38 @@ spec:
           ServiceAccount Token Types (since Kubernetes 1.24)
         </h3>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-          <div
-            className="rounded-lg p-4"
-            style={{
-              backgroundColor: 'rgba(232,122,93,0.06)',
-              border: '1px solid var(--accent-coral)',
-            }}
-          >
-            <div className="flex items-center gap-2 mb-2">
-              <span
-                className="text-xs font-bold px-2 py-0.5 rounded-full"
-                style={{ backgroundColor: 'rgba(232,122,93,0.15)', color: 'var(--accent-coral)' }}
-              >
-                Legacy
-              </span>
-            </div>
-            <h4 className="text-sm font-semibold mb-1" style={{ color: 'var(--text-primary)' }}>
-              Auto-mounted Secret Token
-            </h4>
-            <p className="text-xs leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-              Long-lived token mounted as a Secret. Persists until the Secret is deleted.
-              Not recommended for new deployments.
-            </p>
-          </div>
+        <ELI5 title="🧒 ELI5: ServiceAccount Tokens">
+          <p className="mb-2">
+            Imagine <strong>API tokens as hotel room keys</strong>:
+          </p>
+          <ul className="space-y-1 mb-2">
+            <li><strong>Legacy Token (auto-mounted Secret)</strong> = A permanent metal key that never expires. If someone steals it, they can enter your room forever. You have to physically change the lock to invalidate it. 🗝️</li>
+            <li><strong>Bound Token (TokenRequest API)</strong> = A modern keycard that expires after 1 hour and only works for YOUR room. If stolen, it's useless after a short time. Plus, it's tied to your specific reservation. 💳</li>
+          </ul>
+          <p>
+            <strong>In other words:</strong> Legacy tokens are long-lived and dangerous. Bound tokens are short-lived, audience-scoped, and auto-rotated. Since Kubernetes 1.24, always use bound tokens.
+          </p>
+        </ELI5>
 
-          <div
-            className="rounded-lg p-4"
-            style={{
-              backgroundColor: 'rgba(163,196,168,0.06)',
-              border: '1.5px solid var(--accent-sage)',
-            }}
-          >
-            <div className="flex items-center gap-2 mb-2">
-              <span
-                className="text-xs font-bold px-2 py-0.5 rounded-full"
-                style={{ backgroundColor: 'rgba(163,196,168,0.15)', color: 'var(--accent-sage)' }}
-              >
-                Recommended
-              </span>
-            </div>
-            <h4 className="text-sm font-semibold mb-1" style={{ color: 'var(--text-primary)' }}>
-              TokenRequest API
-            </h4>
-            <p className="text-xs leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-              Short-lived, bound, audience-scoped tokens via serviceAccountToken projected volumes.
-              Automatically rotated. Since Kubernetes 1.24.
-            </p>
-          </div>
-        </div>
+        <ComparisonTable
+          columns={[
+            { key: 'property', header: 'Property' },
+            { key: 'legacy', header: 'Legacy (Secret-based)' },
+            { key: 'bound', header: 'Bound (TokenRequest API)' },
+          ]}
+          rows={[
+            { property: 'Lifespan', legacy: 'Long-lived (until Secret deleted)', bound: 'Short-lived (~1 hour default)' },
+            { property: 'Rotation', legacy: 'Manual', bound: 'Auto-rotated at 80% TTL' },
+            { property: 'Audience', legacy: 'Any (broad)', bound: 'Scoped to specific audience' },
+            { property: 'Bound to', legacy: 'Nothing (portable if stolen)', bound: 'Specific pod/object' },
+            { property: 'Storage', legacy: 'Kubernetes Secret in etcd', bound: 'Projected volume (tmpfs, in-memory)' },
+            { property: 'Recommended', legacy: '❌ No (since 1.24)', bound: '✅ Yes' },
+          ]}
+        />
+
+        <p className="text-sm italic my-3" style={{ color: 'var(--text-tertiary)' }}>
+          <strong>🎯 Why This Matters:</strong> Token type questions appear on ~5% of exam questions. Know that legacy auto-mounted Secret tokens were disabled by default in Kubernetes 1.24.
+        </p>
 
         <h3 className="text-lg font-semibold mb-3" style={{ color: 'var(--text-primary)' }}>
           kubeconfig Structure
@@ -1793,6 +2049,26 @@ current-context: production-admin`}
 
         <p className="text-base leading-relaxed mb-4" style={{ color: 'var(--text-secondary)' }}>
           When a new worker node joins the cluster, it needs a valid client certificate to authenticate to the API Server. Kubernetes provides an automated TLS bootstrapping mechanism so nodes can join securely without manual certificate distribution.
+        </p>
+
+        <ELI5 title="🧒 ELI5: TLS Bootstrapping">
+          <p className="mb-2">
+            Imagine you're starting at a <strong>new company</strong>:
+          </p>
+          <ul className="space-y-1 mb-2">
+            <li><strong>Bootstrap Token</strong> = Your temporary visitor pass. It's short-lived and lets you into the building once. 🎫</li>
+            <li><strong>kubelet presents token</strong> = You show your visitor pass at the front desk. 🪪</li>
+            <li><strong>CSR submitted</strong> = You fill out an application for a permanent employee badge. 📝</li>
+            <li><strong>Approval</strong> = HR reviews your application and approves it. ✅</li>
+            <li><strong>Certificate issued</strong> = You get your permanent employee badge with your photo and access level. 🪪</li>
+          </ul>
+          <p>
+            <strong>In other words:</strong> TLS bootstrapping is like onboarding a new employee. Start with a temp pass, then get a permanent badge after verification. Without this process, you'd have to hand-deliver badges to every new hire — impossible at scale.
+          </p>
+        </ELI5>
+
+        <p className="text-sm italic my-2" style={{ color: 'var(--text-tertiary)' }}>
+          <strong>🎯 Why This Matters:</strong> This appears on ~5% of exam questions. Know the 5-step flow and that the bootstrap token is a Secret in kube-system.
         </p>
 
         <h3 className="text-lg font-semibold mb-3" style={{ color: 'var(--text-primary)' }}>
@@ -1891,6 +2167,36 @@ kubectl certificate deny <csr-name>`}
         <ExamTrap title="Anonymous Auth">
           Why <code>--anonymous-auth=false</code> matters: if left enabled, the API Server accepts anonymous requests. A rogue node or attacker could probe the API Server without credentials. Always disable anonymous authentication in production.
         </ExamTrap>
+
+        <QuizComponent
+          questions={[
+            {
+              id: 103,
+              question: 'During TLS bootstrapping, what is the purpose of the bootstrap token?',
+              options: [
+                'It is a long-lived credential used by the kubelet forever',
+                'It provides temporary authentication so the kubelet can submit a CSR',
+                'It encrypts communication between the kubelet and etcd',
+                'It replaces the kubelet client certificate entirely',
+              ],
+              correctIndex: 1,
+              explanation: 'The bootstrap token is a short-lived Secret in kube-system. It gives a new kubelet temporary credentials to authenticate to the API Server and submit a CertificateSigningRequest. After CSR approval, the kubelet uses its permanent certificate.',
+            },
+            {
+              id: 104,
+              question: 'An administrator sees a pending CSR from an unknown node. What is the SAFEST action?',
+              options: [
+                'Approve it immediately so the node can join',
+                'Investigate the node identity before approving or denying',
+                'Ignore it — pending CSRs expire automatically',
+                'Delete the CSR resource to hide the evidence',
+              ],
+              correctIndex: 1,
+              explanation: 'CSRs from unknown nodes should be investigated before approval. Approving blindly could let a rogue node join the cluster. Manual approval is the safest approach in regulated environments.',
+            },
+          ]}
+          domainId="domain2-bootstrap"
+        />
       </Section>
 
       <TokenLifecycleDiagram />

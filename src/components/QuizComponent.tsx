@@ -1,12 +1,22 @@
 import { useState, useCallback } from 'react';
-import { ChevronLeft, ChevronRight, Check, X, RotateCcw, ChevronDown } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Check, X, RotateCcw, ChevronDown, Square, CheckSquare } from 'lucide-react';
+import {
+  addXP,
+  XP_VALUES,
+  updateQuizStats,
+  checkBadges,
+  getQuizStats,
+  getStudyStreak,
+} from '@/lib/gamification';
+import ConfettiOverlay, { useConfetti } from '@/components/Confetti';
 
 export interface QuizQuestion {
   id: number;
   question: string;
   options: string[];
-  correctIndex: number;
+  correctIndex: number | number[];
   explanation: string;
+  type?: 'single' | 'multiple';
 }
 
 interface QuizComponentProps {
@@ -14,56 +24,106 @@ interface QuizComponentProps {
   domainId: string;
 }
 
+function arraysEqual(a: number[], b: number[]): boolean {
+  if (a.length !== b.length) return false;
+  const sortedA = [...a].sort((x, y) => x - y);
+  const sortedB = [...b].sort((x, y) => x - y);
+  return sortedA.every((val, i) => val === sortedB[i]);
+}
+
 export default function QuizComponent({ questions, domainId }: QuizComponentProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const [selectedIndices, setSelectedIndices] = useState<number[]>([]);
   const [submitted, setSubmitted] = useState(false);
   const [score, setScore] = useState(0);
   const [answeredQuestions, setAnsweredQuestions] = useState<Set<number>>(new Set());
   const [showExplanation, setShowExplanation] = useState(false);
   const [quizComplete, setQuizComplete] = useState(false);
+  const [xpAwarded, setXpAwarded] = useState(false);
+  const { pieces, trigger } = useConfetti();
 
   const currentQuestion = questions[currentIndex];
+  const isMulti = currentQuestion.type === 'multiple';
+  const correctAnswers = Array.isArray(currentQuestion.correctIndex)
+    ? currentQuestion.correctIndex
+    : [currentQuestion.correctIndex];
 
   const handleSelect = useCallback((index: number) => {
-    if (submitted) {return;}
-    setSelectedIndex(index);
-  }, [submitted]);
+    if (submitted) return;
+    if (isMulti) {
+      setSelectedIndices((prev) => {
+        if (prev.includes(index)) {
+          return prev.filter((i) => i !== index);
+        }
+        return [...prev, index];
+      });
+    } else {
+      setSelectedIndices([index]);
+    }
+  }, [submitted, isMulti]);
+
+  const isCorrect = useCallback(() => {
+    if (selectedIndices.length === 0) return false;
+    return arraysEqual(selectedIndices, correctAnswers);
+  }, [selectedIndices, correctAnswers]);
 
   const handleSubmit = useCallback(() => {
-    if (selectedIndex === null) {return;}
+    if (selectedIndices.length === 0) return;
     setSubmitted(true);
     setShowExplanation(true);
     const newAnswered = new Set(answeredQuestions);
     newAnswered.add(currentIndex);
     setAnsweredQuestions(newAnswered);
-    if (selectedIndex === currentQuestion.correctIndex) {
+    if (isCorrect()) {
       setScore((prev) => prev + 1);
     }
-  }, [selectedIndex, currentIndex, currentQuestion.correctIndex, answeredQuestions]);
+  }, [selectedIndices, currentIndex, answeredQuestions, isCorrect]);
 
   const handleNext = useCallback(() => {
     if (currentIndex < questions.length - 1) {
       setCurrentIndex((prev) => prev + 1);
-      setSelectedIndex(null);
+      setSelectedIndices([]);
       setSubmitted(false);
       setShowExplanation(false);
     } else {
+      const finalScore = score + (isCorrect() ? 1 : 0);
+      const percentage = Math.round((finalScore / questions.length) * 100);
       setQuizComplete(true);
       // Save score to localStorage
       const key = `quiz-score-${domainId}`;
       localStorage.setItem(key, JSON.stringify({
-        score: score + (selectedIndex === currentQuestion.correctIndex ? 1 : 0),
+        score: finalScore,
         total: questions.length,
         completedAt: new Date().toISOString(),
       }));
+
+      // Award XP and check badges
+      if (!xpAwarded) {
+        const xp = percentage === 100 ? XP_VALUES.perfectQuiz : XP_VALUES.completeQuiz;
+        addXP(xp);
+        const stats = getQuizStats();
+        const newStats = updateQuizStats({
+          totalQuizzes: stats.totalQuizzes + 1,
+          perfectQuizzes: stats.perfectQuizzes + (percentage === 100 ? 1 : 0),
+        });
+        checkBadges({
+          totalQuizzes: newStats.totalQuizzes,
+          perfectQuizzes: newStats.perfectQuizzes,
+          streak: getStudyStreak(),
+        });
+        setXpAwarded(true);
+
+        if (percentage >= 80) {
+          trigger();
+        }
+      }
     }
-  }, [currentIndex, questions.length, domainId, score, selectedIndex, currentQuestion.correctIndex]);
+  }, [currentIndex, questions.length, domainId, score, selectedIndices, correctAnswers, xpAwarded, trigger]);
 
   const handlePrev = useCallback(() => {
     if (currentIndex > 0) {
       setCurrentIndex((prev) => prev - 1);
-      setSelectedIndex(null);
+      setSelectedIndices([]);
       setSubmitted(false);
       setShowExplanation(false);
     }
@@ -71,106 +131,125 @@ export default function QuizComponent({ questions, domainId }: QuizComponentProp
 
   const handleRetake = useCallback(() => {
     setCurrentIndex(0);
-    setSelectedIndex(null);
+    setSelectedIndices([]);
     setSubmitted(false);
     setScore(0);
     setAnsweredQuestions(new Set());
     setShowExplanation(false);
     setQuizComplete(false);
+    setXpAwarded(false);
   }, []);
 
   if (quizComplete) {
     const finalScore = score;
     const percentage = Math.round((finalScore / questions.length) * 100);
     const isPassing = percentage >= 75;
+    const isPerfect = percentage === 100;
 
     return (
-      <div
-        className="rounded-xl p-8 max-w-[720px] mx-auto"
-        style={{
-          backgroundColor: 'var(--surface-base)',
-          border: '1px solid var(--border-subtle)',
-          borderTop: `3px solid var(--accent-primary)`,
-        }}
-      >
-        <div className="text-center">
-          <div
-            className="inline-flex items-center justify-center w-16 h-16 rounded-full mb-4"
-            style={{
-              backgroundColor: isPassing
-                ? 'rgba(163,196,168,0.15)'
-                : 'rgba(232,122,93,0.15)',
-            }}
-          >
-            {isPassing ? (
-              <Check size={32} style={{ color: 'var(--accent-sage)' }} />
-            ) : (
-              <RotateCcw size={32} style={{ color: 'var(--accent-coral)' }} />
+      <>
+        <ConfettiOverlay pieces={pieces} />
+        <div
+          className="rounded-xl p-8 max-w-[720px] mx-auto"
+          style={{
+            backgroundColor: 'var(--surface-base)',
+            border: '1px solid var(--border-subtle)',
+            borderTop: `3px solid ${isPerfect ? 'var(--warning)' : 'var(--accent-primary)'}`,
+          }}
+        >
+          <div className="text-center">
+            <div
+              className="inline-flex items-center justify-center w-16 h-16 rounded-full mb-4"
+              style={{
+                backgroundColor: isPassing
+                  ? 'rgba(163,196,168,0.15)'
+                  : 'rgba(232,122,93,0.15)',
+              }}
+            >
+              {isPassing ? (
+                <Check size={32} style={{ color: 'var(--accent-sage)' }} />
+              ) : (
+                <RotateCcw size={32} style={{ color: 'var(--accent-coral)' }} />
+              )}
+            </div>
+
+            <h3
+              className="text-xl font-semibold mb-2"
+              style={{
+                color: 'var(--text-primary)',
+                fontFamily: 'var(--font-display)',
+              }}
+            >
+              {isPerfect ? '🎉 Perfect Score!' : 'Quiz Complete!'}
+            </h3>
+
+            <div className="flex items-center justify-center gap-3 mb-4">
+              <span
+                className="text-4xl font-bold"
+                style={{ color: 'var(--accent-primary)' }}
+              >
+                {finalScore}/{questions.length}
+              </span>
+              <span
+                className="text-lg"
+                style={{ color: 'var(--text-secondary)' }}
+              >
+                ({percentage}%)
+              </span>
+            </div>
+
+            <div
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-2"
+              style={{
+                backgroundColor: isPassing
+                  ? 'rgba(163,196,168,0.15)'
+                  : 'rgba(232,122,93,0.15)',
+              }}
+            >
+              <span
+                className="text-sm font-medium"
+                style={{
+                  color: isPassing ? 'var(--accent-sage)' : 'var(--accent-coral)',
+                }}
+              >
+                {isPerfect
+                  ? 'Incredible! You nailed every question!'
+                  : isPassing
+                  ? 'Passing score! Great job!'
+                  : "Keep studying - you'll get there!"}
+              </span>
+            </div>
+
+            {!xpAwarded && (
+              <p className="text-xs mb-4" style={{ color: 'var(--text-tertiary)' }}>
+                +{isPerfect ? XP_VALUES.perfectQuiz : XP_VALUES.completeQuiz} XP earned
+              </p>
             )}
-          </div>
 
-          <h3
-            className="text-xl font-semibold mb-2"
-            style={{
-              color: 'var(--text-primary)',
-              fontFamily: 'var(--font-display)',
-            }}
-          >
-            Quiz Complete!
-          </h3>
-
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <span
-              className="text-4xl font-bold"
-              style={{ color: 'var(--accent-primary)' }}
-            >
-              {finalScore}/{questions.length}
-            </span>
-            <span
-              className="text-lg"
-              style={{ color: 'var(--text-secondary)' }}
-            >
-              ({percentage}%)
-            </span>
-          </div>
-
-          <div
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6"
-            style={{
-              backgroundColor: isPassing
-                ? 'rgba(163,196,168,0.15)'
-                : 'rgba(232,122,93,0.15)',
-            }}
-          >
-            <span
-              className="text-sm font-medium"
-              style={{
-                color: isPassing ? 'var(--accent-sage)' : 'var(--accent-coral)',
-              }}
-            >
-              {isPassing
-                ? 'Passing score! Great job!'
-                : "Keep studying - you'll get there!"}
-            </span>
-          </div>
-
-          <div className="flex items-center justify-center gap-3">
-            <button
-              onClick={handleRetake}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 hover:opacity-90"
-              style={{
-                backgroundColor: 'var(--accent-primary)',
-                color: 'var(--surface-base)',
-              }}
-            >
-              <RotateCcw size={16} />
-              Retake Quiz
-            </button>
+            <div className="flex items-center justify-center gap-3">
+              <button
+                onClick={handleRetake}
+                className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 hover:opacity-90"
+                style={{
+                  backgroundColor: 'var(--accent-primary)',
+                  color: 'var(--surface-base)',
+                }}
+              >
+                <RotateCcw size={16} />
+                Retake Quiz
+              </button>
+            </div>
           </div>
         </div>
-      </div>
+      </>
     );
   }
+
+  // Partial feedback calculation
+  const correctSelected = selectedIndices.filter((s) => correctAnswers.includes(s)).length;
+  const incorrectSelected = selectedIndices.filter((s) => !correctAnswers.includes(s)).length;
+  const totalCorrect = correctAnswers.length;
+  const isPartial = submitted && correctSelected > 0 && !isCorrect();
 
   return (
     <div
@@ -212,6 +291,11 @@ export default function QuizComponent({ questions, domainId }: QuizComponentProp
         >
           {currentQuestion.question}
         </h3>
+        {isMulti && (
+          <p className="text-sm mt-1 font-medium" style={{ color: 'var(--accent-coral)' }}>
+            Select ALL that apply
+          </p>
+        )}
       </div>
 
       {/* Options */}
@@ -221,10 +305,11 @@ export default function QuizComponent({ questions, domainId }: QuizComponentProp
           className="space-y-2.5"
         >
           {currentQuestion.options.map((option, index) => {
-            const isSelected = selectedIndex === index;
-            const isCorrect = index === currentQuestion.correctIndex;
-            const showCorrect = submitted && isCorrect;
-            const showIncorrect = submitted && isSelected && !isCorrect;
+            const isSelected = selectedIndices.includes(index);
+            const isCorrectOption = correctAnswers.includes(index);
+            const showCorrect = submitted && isCorrectOption;
+            const showIncorrect = submitted && isSelected && !isCorrectOption;
+            const showMissed = submitted && isCorrectOption && !isSelected;
 
             let borderColor = 'var(--border-medium)';
             let bgColor = 'var(--surface-base)';
@@ -235,6 +320,9 @@ export default function QuizComponent({ questions, domainId }: QuizComponentProp
             } else if (showIncorrect) {
               borderColor = 'var(--accent-coral)';
               bgColor = 'rgba(232,122,93,0.1)';
+            } else if (showMissed) {
+              borderColor = 'var(--accent-sage)';
+              bgColor = 'rgba(163,196,168,0.05)';
             } else if (isSelected && !submitted) {
               borderColor = 'var(--accent-primary)';
               bgColor = 'rgba(4,80,54,0.08)';
@@ -250,24 +338,28 @@ export default function QuizComponent({ questions, domainId }: QuizComponentProp
                   border: `1.5px solid ${borderColor}`,
                   backgroundColor: bgColor,
                   cursor: submitted ? 'default' : 'pointer',
-                  opacity: submitted && !isSelected && !isCorrect ? 0.6 : 1,
+                  opacity: submitted && !isSelected && !isCorrectOption ? 0.6 : 1,
                 }}
               >
                 <div
-                  className="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center mt-0.5 text-xs font-semibold"
+                  className="flex-shrink-0 w-6 h-6 rounded flex items-center justify-center mt-0.5 text-xs font-semibold"
                   style={{
                     backgroundColor: (() => {
                       if (showCorrect) { return 'var(--accent-sage)' }
                       if (showIncorrect) { return 'var(--accent-coral)' }
+                      if (showMissed) { return 'rgba(163,196,168,0.3)' }
                       if (isSelected) { return 'var(--accent-primary)' }
                       return 'var(--surface-elevated)'
                     })(),
                     color: isSelected || showCorrect || showIncorrect
                       ? '#fff'
+                      : showMissed
+                      ? 'var(--accent-sage)'
                       : 'var(--text-secondary)',
                     border: `1px solid ${(() => {
                       if (showCorrect) { return 'var(--accent-sage)' }
                       if (showIncorrect) { return 'var(--accent-coral)' }
+                      if (showMissed) { return 'var(--accent-sage)' }
                       if (isSelected) { return 'var(--accent-primary)' }
                       return 'var(--border-medium)'
                     })()}`,
@@ -276,7 +368,11 @@ export default function QuizComponent({ questions, domainId }: QuizComponentProp
                   {(() => {
                     if (showCorrect) { return <Check size={14} /> }
                     if (showIncorrect) { return <X size={14} /> }
-                    return String.fromCharCode(65 + index)
+                    if (showMissed) { return <Check size={14} /> }
+                    if (isSelected) {
+                      return isMulti ? <CheckSquare size={14} /> : <Check size={14} />;
+                    }
+                    return isMulti ? <Square size={14} /> : String.fromCharCode(65 + index);
                   })()}
                 </div>
                 <span
@@ -290,6 +386,23 @@ export default function QuizComponent({ questions, domainId }: QuizComponentProp
           })}
         </div>
       </div>
+
+      {/* Partial feedback */}
+      {isPartial && (
+        <div className="px-6 pb-2">
+          <div
+            className="rounded-lg px-4 py-2 text-sm font-medium"
+            style={{
+              backgroundColor: 'rgba(232,122,93,0.1)',
+              color: 'var(--accent-coral)',
+              border: '1px solid rgba(232,122,93,0.2)',
+            }}
+          >
+            You got {correctSelected}/{totalCorrect} correct
+            {incorrectSelected > 0 && ` (${incorrectSelected} wrong answer${incorrectSelected > 1 ? 's' : ''} selected)`}
+          </div>
+        </div>
+      )}
 
       {/* Explanation */}
       {submitted && (
@@ -350,7 +463,7 @@ export default function QuizComponent({ questions, domainId }: QuizComponentProp
         {!submitted ? (
           <button
             onClick={handleSubmit}
-            disabled={selectedIndex === null}
+            disabled={selectedIndices.length === 0}
             className="flex items-center gap-1.5 px-5 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
             style={{
               backgroundColor: 'var(--accent-primary)',

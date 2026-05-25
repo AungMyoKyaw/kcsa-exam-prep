@@ -23,6 +23,9 @@ import CalloutBox from '@/components/CalloutBox'
 import CodeBlock from '@/components/CodeBlock'
 import QuizComponent from '@/components/QuizComponent'
 import type { QuizQuestion } from '@/components/QuizComponent'
+import ELI5 from '@/components/ELI5'
+import MemoryHook from '@/components/MemoryHook'
+import ExamTrap from '@/components/ExamTrap'
 
 /* ------------------------------------------------------------------ */
 /*  DATA                                                               */
@@ -359,6 +362,26 @@ export default function Domain6Page() {
           MITRE ATT&CK for containers are the most frequently tested topics in this domain. Know the
           NIST CSF 2.0 six functions cold — especially the new <strong>GOVERN</strong> function.
         </CalloutBox>
+
+        <ELI5 title="🧒 ELI5: Compliance Frameworks">
+          <p className="mb-2">
+            Imagine you run a <strong>restaurant</strong>. Different inspectors check different things:
+          </p>
+          <ul className="space-y-1 mb-2">
+            <li><strong>CIS Benchmark</strong> = The health inspector with a clipboard. "Is the fridge at the right temperature? Are employees washing hands?" Specific, checkable rules. ✅</li>
+            <li><strong>NIST CSF</strong> = The emergency preparedness plan. "What do we do if there's a fire? Who calls 911? Where's the first aid kit?" Process-focused. 🚒</li>
+            <li><strong>ISO 27001 / SOC 2</strong> = The insurance auditor. "Show me proof you have working smoke detectors and trained staff." Evidence-based. 📋</li>
+            <li><strong>PCI DSS</strong> = The credit card company's requirements. "If you store card numbers, they MUST be encrypted." Industry-specific. 💳</li>
+            <li><strong>MITRE ATT&CK</strong> = The police database of burglary techniques. "Burglars often enter through back doors at 3 AM." Threat intelligence. 🕵️</li>
+          </ul>
+          <p>
+            <strong>In other words:</strong> Compliance frameworks are different rulebooks for different audiences. CIS tells you <em>what</em> to fix. NIST tells you <em>how to prepare</em>. ISO/SOC 2 makes you <em>prove</em> it. PCI DSS is <em>payment-specific</em>. MITRE tells you <em>what attackers do</em>.
+          </p>
+        </ELI5>
+
+        <p className="text-sm italic my-2" style={{ color: 'var(--text-tertiary)' }}>
+          <strong>🎯 Why This Matters:</strong> The exam tests whether you can match a framework to its purpose. "Which framework requires two-person review?" = SLSA Level 4. "Which framework maps adversary tactics?" = MITRE ATT&CK.
+        </p>
       </header>
 
       {/* Section 6.1 — Compliance Frameworks */}
@@ -560,6 +583,17 @@ export default function Domain6Page() {
             </div>
           ))}
         </div>
+
+        <MemoryHook title="Compliance Frameworks Mnemonic">
+          <p className="mb-2"><strong>SOC2 = Security</strong> (Trust Services), <strong>ISO = International</strong> (27001), <strong>HIPAA = Health</strong> (PHI), <strong>PCI = Payment</strong> (cards).</p>
+          <p className="text-xs" style={{ color: 'var(--text-tertiary)' }}>Exam tip: Match framework to industry. Healthcare → HIPAA. Payment → PCI DSS. Cloud providers → SOC 2.</p>
+        </MemoryHook>
+
+        <ExamTrap title="Pod Security Standards vs Pod Security Admission">
+          <p><strong>Pod Security Standards (PSS)</strong> = The <em>rules</em> — what is allowed (Privileged, Baseline, Restricted).</p>
+          <p className="mt-1"><strong>Pod Security Admission (PSA)</strong> = The <em>enforcer</em> — the built-in admission controller that applies PSS rules via namespace labels.</p>
+          <p className="mt-1 text-xs" style={{ color: 'var(--text-tertiary)' }}>Trap: PSS = policy. PSA = controller. The exam tests this distinction.</p>
+        </ExamTrap>
       </section>
 
       {/* Section 6.2 — CIS Kubernetes Benchmarks */}
@@ -772,6 +806,16 @@ kube-bench run --json > kube-bench-results.json`}
             </div>
           ))}
         </div>
+
+        <MemoryHook title="kube-bench vs Compliance Frameworks">
+          <p className="mb-2"><strong>kube-bench</strong> checks against <strong>CIS Kubernetes Benchmark</strong> — a specific, technical checklist. It does NOT check SOC 2, HIPAA, or PCI DSS compliance directly.</p>
+          <p className="text-xs" style={{ color: 'var(--text-tertiary)' }}>Exam tip: "Which tool checks CIS Benchmark?" = kube-bench. "Which framework requires evidence of controls?" = SOC 2 / ISO 27001.</p>
+        </MemoryHook>
+
+        <ExamTrap title="Audit Logs Default Location">
+          <p>Kubernetes audit logs go to <code>/var/log/audit.log</code> by default (when configured with <code>--audit-log-path</code>). They do NOT go to stdout or container logs automatically.</p>
+          <p className="mt-1 text-xs" style={{ color: 'var(--text-tertiary)' }}>Trap: The exam asks where audit logs are stored. The answer is a file path, not "etcd" or "container stdout".</p>
+        </ExamTrap>
       </section>
 
       {/* Section 6.3 — Threat Modeling */}
@@ -1175,6 +1219,16 @@ jobs:
           exit 1
         fi`}
         />
+
+        <MemoryHook title="Encryption at Rest is NOT Automatic">
+          <p className="mb-2">Secrets in <strong>etcd are stored plaintext</strong> unless you configure <code>EncryptionConfiguration</code> with an encryption provider (aescbc, aesgcm, or kms v2).</p>
+          <p className="text-xs" style={{ color: 'var(--text-tertiary)' }}>Exam trap: "Are Secrets encrypted by default?" → NO. You must enable encryption at rest explicitly.</p>
+        </MemoryHook>
+
+        <ExamTrap title="Secret Encryption Requires EncryptionConfiguration">
+          <p>Many assume Secrets are safe because Kubernetes is "secure by default." <strong>They are not.</strong> Anyone with etcd access can read all Secrets in plaintext without encryption at rest.</p>
+          <p className="mt-1 text-xs" style={{ color: 'var(--text-tertiary)' }}>Correct answer: Enable <code>--encryption-provider-config</code> on the API server. Rotate DEKs regularly. Backup etcd with encryption.</p>
+        </ExamTrap>
       </section>
 
       {/* Section 6.6 — Exam Preparation Strategy */}

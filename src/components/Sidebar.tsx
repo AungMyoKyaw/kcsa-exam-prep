@@ -18,6 +18,7 @@ import {
   BrainCircuit,
   ChevronDown,
   ChevronRight,
+  Eye,
 } from 'lucide-react'
 import { domains } from '@/lib/domainData'
 
@@ -334,6 +335,19 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
             >
               <BookOpen size={16} />
               Glossary
+            </Link>
+            <Link
+              to="/exam-day"
+              onClick={onClose}
+              className="flex items-center gap-2.5 px-2.5 py-2 rounded-md text-sm transition-colors duration-150"
+              style={{
+                backgroundColor: location.pathname === '/exam-day' ? 'var(--surface-elevated)' : 'transparent',
+                color: location.pathname === '/exam-day' ? 'var(--text-primary)' : 'var(--text-secondary)',
+                fontWeight: location.pathname === '/exam-day' ? 600 : 400,
+              }}
+            >
+              <Eye size={16} />
+              Exam Day
             </Link>
 
             <div className="pt-3 pb-1">

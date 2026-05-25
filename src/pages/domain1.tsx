@@ -12,6 +12,8 @@ import {
   Flame,
   Shield,
 } from 'lucide-react';
+import ELI5 from '@/components/ELI5';
+import ExplainLikeImFive from '@/components/ExplainLikeImFive';
 import Callout from '@/components/Callout';
 import CalloutBox from '@/components/CalloutBox';
 import CodeBlock from '@/components/CodeBlock';
@@ -24,10 +26,13 @@ import SectionComplete from '@/components/SectionComplete';
 import { useProgress } from '@/hooks/useProgress';
 import type { QuizQuestion } from '@/components/QuizComponent';
 
+import MemoryHook from '@/components/MemoryHook';
+import ExamTrap from '@/components/ExamTrap';
+
 /* ── Simple Section Wrapper ── */
 function Section({ children, id, className = '', color = 'var(--accent-primary)' }: { children: React.ReactNode; id?: string; className?: string; color?: string }) {
   return (
-    <section id={id} className={`mb-16 pl-4 ${className}`} style={{ borderLeft: `3px solid ${color}20` }}>
+    <section id={id} className={`mb-16 pl-4 ${className}`} style={{ borderLeft: `3px solid ${color}20`, paddingBottom: '1rem', backgroundColor: 'rgba(255,255,255,0.4)', borderRadius: '0 12px 12px 0' }}>
       {children}
     </section>
   );
@@ -521,11 +526,37 @@ export default function Domain1Page() {
           The 4Cs model is the foundational mental model for the entire KCSA exam. Nearly every question can be mapped back to which layer a control belongs in. If you understand the 4Cs, you understand 30% of what the exam tests.
         </Callout>
 
+        <ELI5 title="🧒 ELI5: The 4Cs of Cloud Native Security">
+          <p className="mb-2">
+            Imagine you're building a sandcastle on a beach. The <strong>Cloud</strong> is the beach itself — if the tide comes in and washes away the beach, your castle is gone no matter how well you built it. The <strong>Cluster</strong> is the moat and walls around your castle — they protect the overall structure. The <strong>Container</strong> is each individual tower — some are strong, some are weak. The <strong>Code</strong> is the sand recipe you use — even with perfect walls, if your sand is bad, the castle collapses.
+          </p>
+          <p>
+            <strong>In other words:</strong> You can't secure the inside if the outside is broken. Security flows inward from the foundation (Cloud) to the application (Code).
+          </p>
+        </ELI5>
+
         <p style={{ color: 'var(--text-secondary)' }}>
           Cloud native security is built in layers, often referred to as the <strong>4Cs</strong>: Cloud, Cluster, Container, and Code. Each layer builds on the security of the previous one. You cannot secure containers properly if the cluster is compromised, and you cannot secure the cluster if the cloud infrastructure is insecure.
         </p>
 
+        <p className="text-sm italic my-2" style={{ color: 'var(--text-tertiary)' }}>
+          <strong>💼 Real-World Impact:</strong> Misconfiguration at the Cloud layer (like an open S3 bucket) has caused more data breaches than any advanced hacking technique. Fix the foundation first.
+        </p>
+
         <FourCsDiagram />
+
+        <MemoryHook title="🧠 The 4Cs — Memorize the Order">
+          <p className="mb-2"><strong>Think of it like peeling an onion from the outside in:</strong></p>
+          <ol className="space-y-1 text-sm" style={{ color: 'var(--text-secondary)' }}>
+            <li><strong>1. Cloud</strong> — The infrastructure ground floor</li>
+            <li><strong>2. Cluster</strong> — The Kubernetes building</li>
+            <li><strong>3. Container</strong> — The individual offices</li>
+            <li><strong>4. Code</strong> — What happens inside each office</li>
+          </ol>
+          <p className="mt-2 text-xs" style={{ color: 'var(--text-tertiary)' }}>Exam tip: Questions often ask which layer a control belongs to. IAM or NSG = Cloud. API server or etcd = Cluster. Image scanning = Container.</p>
+        </MemoryHook>
+
+        <ExplainLikeImFive concept="namespaces" />
 
         <MnemonicStory title="The Office Building Memory Palace" pattern="Cloud = Ground floor (foundation) → Cluster = Building management → Container = Individual offices → Code = What happens inside each office">
           Imagine a corporate office building. <strong>Cloud</strong> is the ground, the foundation, the power grid, the security guards at the gate — if the ground is shaky, the whole building falls. <strong>Cluster</strong> is the building management system — elevators, HVAC, keycard access to floors. <strong>Container</strong> is each individual office — some have glass walls, some are locked vaults. <strong>Code</strong> is what the employees actually do inside — no matter how secure the building, if an employee opens every door and invites thieves in, you are compromised.
@@ -605,9 +636,28 @@ export default function Domain1Page() {
           Expect 2-3 questions that ask you to match a framework to its purpose. The exam loves testing whether you know the difference between technical standards (CIS), compliance frameworks (ISO/SOC 2), and threat models (MITRE).
         </Callout>
 
+        <ELI5 title="🧒 ELI5: Security Frameworks">
+          <p className="mb-2">
+            Imagine you want to build a house. Different frameworks are like different guides:
+          </p>
+          <ul className="space-y-1 mb-2">
+            <li><strong>CIS Benchmark</strong> = The building code inspector who gives you a checklist: "Did you use fire-resistant materials? Are the locks on the doors?" (specific, testable)</li>
+            <li><strong>NIST CSF</strong> = The emergency plan: "What do we do before, during, and after a fire?" (process-oriented)</li>
+            <li><strong>ISO 27001 / SOC 2</strong> = The home insurance company that says "Prove you have smoke detectors and we'll cover you." (audit/compliance)</li>
+            <li><strong>MITRE ATT&CK</strong> = The neighborhood watch that documents how burglars actually break in, so you know what to defend against. (threat intelligence)</li>
+          </ul>
+          <p>
+            <strong>In other words:</strong> CIS tells you <em>what</em> to do. NIST tells you <em>when</em> to do it. ISO/SOC 2 makes you <em>prove</em> you did it. MITRE tells you <em>what the bad guys do</em>.
+          </p>
+        </ELI5>
+
         <h3>NIST Cybersecurity Framework</h3>
         <p style={{ color: 'var(--text-secondary)' }}>
           The NIST CSF provides five core functions: Identify, Protect, Detect, Respond, and Recover. For Kubernetes, this translates to asset inventory, hardening configurations, audit logging, incident response playbooks, and backup/restore procedures.
+        </p>
+
+        <p className="text-sm italic my-2" style={{ color: 'var(--text-tertiary)' }}>
+          <strong>🎯 Why This Matters:</strong> This appears on ~10% of exam questions. Know the 5 functions in order.
         </p>
 
         <MnemonicStory title="The Firefighter Story" pattern="Identify → Protect → Detect → Respond → Recover">
@@ -617,6 +667,10 @@ export default function Domain1Page() {
         <h3>CIS Kubernetes Benchmark</h3>
         <p style={{ color: 'var(--text-secondary)' }}>
           The Center for Internet Security (CIS) publishes the definitive Kubernetes hardening guide. It contains specific, testable recommendations for every component. Tools like <strong>kube-bench</strong> automatically assess your cluster against the benchmark.
+        </p>
+
+        <p className="text-sm italic my-2" style={{ color: 'var(--text-tertiary)' }}>
+          <strong>💼 Real-World Impact:</strong> Failing CIS checks is like leaving your house with unlocked doors — easy to fix, but devastating if ignored.
         </p>
 
         <CodeBlock
@@ -653,6 +707,13 @@ kubectl logs job/kube-bench`}
           ]}
           tip="Exam trap: CIS is prescriptive (do this). ISO/SOC 2 are audit frameworks (prove you did it). MITRE is a threat model (know what enemies do)."
         />
+
+        <ExplainLikeImFive concept="cis" />
+
+        <MemoryHook title="🧠 Framework Distinction Mnemonic">
+          <p className="mb-2"><strong>CIS</strong> tells you <em>what</em> to do. <strong>NIST</strong> tells you <em>when</em> to do it. <strong>ISO/SOC 2</strong> makes you <em>prove</em> you did it. <strong>MITRE</strong> tells you <em>what the bad guys do</em>.</p>
+          <p className="text-xs" style={{ color: 'var(--text-tertiary)' }}>Exam trap: CIS is prescriptive (do this). ISO/SOC 2 are audit frameworks (prove you did it). MITRE is a threat model (know what enemies do).</p>
+        </MemoryHook>
 
         <h3>MITRE ATT&CK for Containers</h3>
         <p style={{ color: 'var(--text-secondary)' }}>
@@ -705,6 +766,8 @@ metadata:
     pod-security.kubernetes.io/enforce: restricted`}
         />
 
+        <ExplainLikeImFive concept="namespaces" />
+
         <h3>Network Policies</h3>
         <p style={{ color: 'var(--text-secondary)' }}>
           NetworkPolicies are the Kubernetes-native firewall. By default, all pods can talk to all other pods. Apply a default-deny policy, then explicitly allow required traffic.
@@ -727,6 +790,10 @@ spec:
         <Callout variant="warning" title="⚠️ Common Mistake">
           A common trap: applying a ResourceQuota without a LimitRange. The ResourceQuota will reject any pod that does not specify explicit resource requests because there is no default value to fall back to.
         </Callout>
+
+        <ExamTrap title="⚠️ Namespace Isolation Trap">
+          <strong>Namespaces are NOT a security boundary by default.</strong> Pods in different namespaces can still communicate freely and access each other&apos;s resources unless you add NetworkPolicies and RBAC. Think of namespaces as labeled folders — they organize files but don&apos;t lock the drawers.
+        </ExamTrap>
 
         <h3>Resource Quotas & Limits</h3>
         <p style={{ color: 'var(--text-secondary)' }}>
@@ -753,6 +820,12 @@ spec:
           'gVisor/Kata provide VM-level isolation for high-risk workloads.',
         ]} />
 
+        <MemoryHook title="🧠 ResourceQuota + LimitRange">
+          <p><strong>ResourceQuota</strong> = caps total resources in a namespace.</p>
+          <p><strong>LimitRange</strong> = sets defaults and max per pod.</p>
+          <p className="mt-1 text-xs" style={{ color: 'var(--text-tertiary)' }}>Without a LimitRange, the ResourceQuota has no default to assign, so it rejects pods missing explicit requests. They work as a pair — like a budget (quota) and a spending limit per person (limit range).</p>
+        </MemoryHook>
+
         <div className="mt-8">
           <QuizComponent questions={d1c3Questions} domainId="d1-c3" />
         </div>
@@ -775,6 +848,8 @@ spec:
         <Callout variant="exam" title="Why This Matters for the Exam">
           Image security is a recurring topic across multiple domains. Questions may ask about scanning tools, signing methods, or base image choices. Know the difference between Trivy (scanning), cosign (signing), and distroless (minimal base images).
         </Callout>
+
+        <ExplainLikeImFive concept="image" />
 
         <h3>Image Scanning</h3>
         <p style={{ color: 'var(--text-secondary)' }}>
@@ -825,6 +900,10 @@ cosign verify --key cosign.pub myregistry/app:v1.2.3`}
         <Callout variant="warning" title="⚠️ Common Mistake">
           Using :latest tag in production. It is non-deterministic — you never know exactly what code is running. Always use immutable tags or digests.
         </Callout>
+
+        <ExamTrap title="⚠️ :latest + IfNotPresent = Silent Stale Image">
+          <strong>IfNotPresent with :latest is a dangerous combination.</strong> If the image is cached locally, Kubernetes will NOT pull a newer version. You get a silent stale image that may contain known vulnerabilities. Always use immutable tags or digests with <code>Always</code> or <code>IfNotPresent</code>.
+        </ExamTrap>
 
         <KeyTakeaway items={[
           'Scan images with Trivy/Snyk/Clair before deployment.',
@@ -979,6 +1058,10 @@ cosign verify --key cosign.pub myregistry/app:v1.2.3`}
         <Callout variant="warning">
           IfNotPresent with :latest tag = silent stale image. Always use digests in production.
         </Callout>
+
+        <ExamTrap title="⚠️ imagePullSecrets Placement Trap">
+          <strong>Putting imagePullSecrets on every individual pod is tedious and error-prone.</strong> The exam expects you to know that attaching them to the <code>ServiceAccount</code> is the scalable, recommended approach — all pods using that SA automatically inherit the credentials.
+        </ExamTrap>
 
         <MemorizeThis
           selfTest={{ question: 'Which pull policy silently uses a stale image with :latest?', answer: 'IfNotPresent' }}
