@@ -54,7 +54,7 @@ export default function Layout({ children }: LayoutProps) {
       <Sidebar isOpen={sidebarOpen} onClose={closeSidebar} />
 
       <main
-        className="transition-all duration-200 lg:pl-[280px]"
+        className={`transition-all duration-200 ${sidebarOpen ? 'lg:pl-[280px]' : ''}`}
         style={{
           paddingTop: '56px',
           minHeight: '100dvh',
