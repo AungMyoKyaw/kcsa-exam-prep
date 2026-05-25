@@ -35,7 +35,7 @@ import ELI5 from '@/components/ELI5'
 /* ────────────────────── Simple Section Wrapper ────────────────────── */
 function Section({ children, id, className = '', color = 'var(--accent-sage)' }: { children: React.ReactNode; id?: string; className?: string; color?: string }) {
   return (
-    <section id={id} className={`mb-16 pl-4 ${className}`} style={{ borderLeft: `3px solid ${color}20` }}>
+    <section id={id} className={`mb-16 pl-2 md:pl-4 ${className}`} style={{ borderLeft: `3px solid ${color}20` }}>
       {children}
     </section>
   );

@@ -32,7 +32,7 @@ import ExamTrap from '@/components/ExamTrap';
 /* ── Simple Section Wrapper ── */
 function Section({ children, id, className = '', color = 'var(--accent-primary)' }: { children: React.ReactNode; id?: string; className?: string; color?: string }) {
   return (
-    <section id={id} className={`mb-16 pl-4 ${className}`} style={{ borderLeft: `3px solid ${color}20`, paddingBottom: '1rem', backgroundColor: 'rgba(255,255,255,0.4)', borderRadius: '0 12px 12px 0' }}>
+    <section id={id} className={`mb-16 pl-2 md:pl-4 ${className}`} style={{ borderLeft: `3px solid ${color}20`, paddingBottom: '1rem', backgroundColor: 'rgba(255,255,255,0.4)', borderRadius: '0 12px 12px 0' }}>
       {children}
     </section>
   );
@@ -61,7 +61,7 @@ function KeyTakeaway({ items }: { items: string[] }) {
       <div className="px-5 py-3" style={{ backgroundColor: 'rgba(4,80,54,0.06)', borderBottom: '1px solid rgba(4,80,54,0.1)' }}>
         <span className="text-sm font-bold" style={{ color: 'var(--accent-primary)' }}>📌 Key Takeaways</span>
       </div>
-      <div className="px-5 py-4">
+      <div className="px-4 md:px-5 py-4">
         <ul className="space-y-2">
           {items.map((item, i) => (
             <li key={i} className="flex items-start gap-2 text-sm" style={{ color: 'var(--text-secondary)' }}>

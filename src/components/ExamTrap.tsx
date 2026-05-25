@@ -14,7 +14,7 @@ export default function ExamTrap({ title, children }: ExamTrapProps) {
         backgroundColor: 'rgba(207, 34, 46, 0.06)',
       }}
     >
-      <div className="px-5 py-4">
+      <div className="px-4 md:px-5 py-4">
         <div className="flex items-center gap-2 mb-2">
           <XOctagon size={16} style={{ color: 'var(--accent-coral)' }} />
           <span className="text-sm font-semibold" style={{ color: 'var(--accent-coral)' }}>

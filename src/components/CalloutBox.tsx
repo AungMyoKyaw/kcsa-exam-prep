@@ -52,7 +52,7 @@ export default function CalloutBox({ variant, title, children }: CalloutBoxProps
         backgroundColor: config.bgTint,
       }}
     >
-      <div className="px-5 py-4">
+      <div className="px-4 md:px-5 py-4">
         <div className="flex items-center gap-2 mb-2">
           <Icon size={18} style={{ color: config.textColor }} />
           <span

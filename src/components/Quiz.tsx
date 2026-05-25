@@ -178,7 +178,7 @@ export default function Quiz({ questions, domainId: _domainId, onComplete }: Qui
                   key={idx}
                   onClick={() => !submitted && setSelectedIndex(idx)}
                   disabled={submitted}
-                  className="flex items-center gap-3 text-left px-4 py-3.5 rounded-xl border transition-all duration-200"
+                  className="flex items-center gap-3 text-left px-4 py-4 rounded-xl border transition-all duration-200 min-h-[56px]"
                   style={{
                     borderColor,
                     backgroundColor: bgColor,
@@ -188,7 +188,7 @@ export default function Quiz({ questions, domainId: _domainId, onComplete }: Qui
                   }}
                 >
                   <span
-                    className="flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold"
+                    className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold"
                     style={{
                       backgroundColor: (() => {
                         if (submitted && idx === question.correctIndex) { return 'rgba(163, 196, 168, 0.2)' }
@@ -206,7 +206,7 @@ export default function Quiz({ questions, domainId: _domainId, onComplete }: Qui
                       return String.fromCharCode(65 + idx)
                     })()}
                   </span>
-                  <span className="text-sm leading-relaxed">{option}</span>
+                  <span className="text-sm md:text-base leading-relaxed">{option}</span>
                 </button>
               );
             })}

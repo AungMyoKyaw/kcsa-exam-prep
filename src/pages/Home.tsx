@@ -497,7 +497,7 @@ export default function Home() {
                   ) : step.step}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-0.5">
+                  <div className="flex items-center gap-2 mb-0.5 flex-wrap">
                     <span
                       className="text-sm font-semibold"
                       style={{ color: 'var(--text-primary)' }}

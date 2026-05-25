@@ -52,7 +52,7 @@ export default function Callout({ variant, title, children }: CalloutProps) {
         backgroundColor: c.bgTint,
       }}
     >
-      <div className="px-5 py-4">
+      <div className="px-4 md:px-5 py-4">
         <div className="flex items-center gap-2 mb-2">
           <Icon size={16} style={{ color: c.borderColor }} />
           <span className="text-sm font-semibold" style={{ color: c.borderColor }}>

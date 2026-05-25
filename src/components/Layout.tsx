@@ -8,7 +8,12 @@ interface LayoutProps {
 }
 
 export default function Layout({ children }: LayoutProps) {
-  const [sidebarOpen, setSidebarOpen] = useState(true)
+  const [sidebarOpen, setSidebarOpen] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return window.innerWidth >= 1024
+    }
+    return true
+  })
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -19,6 +24,16 @@ export default function Layout({ children }: LayoutProps) {
     }
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [])
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 1024) {
+        setSidebarOpen(false)
+      }
+    }
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
   }, [])
 
   const toggleSidebar = useCallback(() => {
@@ -39,15 +54,14 @@ export default function Layout({ children }: LayoutProps) {
       <Sidebar isOpen={sidebarOpen} onClose={closeSidebar} />
 
       <main
-        className="transition-all duration-200"
+        className="transition-all duration-200 lg:pl-[280px]"
         style={{
           paddingTop: '56px',
-          paddingLeft: sidebarOpen ? '280px' : '0px',
           minHeight: '100dvh',
         }}
       >
         <div className="min-h-[calc(100dvh-56px)] flex flex-col">
-          <div className="flex-1 max-w-[900px] mx-auto w-full px-6 py-8">
+          <div className="flex-1 max-w-[900px] mx-auto w-full px-4 sm:px-6 py-6 md:py-8">
             {children}
           </div>
           <Footer />

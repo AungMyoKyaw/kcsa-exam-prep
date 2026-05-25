@@ -14,6 +14,8 @@ import {
   AlertTriangle,
   Timer,
   Eye,
+  Grid3X3,
+  X,
 } from 'lucide-react';
 import { getShuffledQuestions } from '@/data/examQuestions';
 import type { ExamQuestion } from '@/data/examQuestions';
@@ -169,6 +171,9 @@ function ExamInProgress({
   const [timeRemaining, setTimeRemaining] = useState(TOTAL_TIME);
   const [submitted, setSubmitted] = useState<boolean[]>(new Array(questions.length).fill(false));
   const [showReview, setShowReview] = useState(false);
+  const [showMobileNav, setShowMobileNav] = useState(false);
+  // const [hintRevealed, setHintRevealed] = useState(false);
+  // const hintTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // Timer
@@ -284,22 +289,29 @@ function ExamInProgress({
         <div className="flex items-center gap-2">
           <button
             onClick={() => toggleFlag(currentIndex)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm transition-colors duration-200"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm transition-colors duration-200 min-h-[36px]"
             style={{
               color: flagged[currentIndex] ? 'var(--accent-coral)' : 'var(--text-secondary)',
               backgroundColor: flagged[currentIndex] ? 'rgba(232,122,93,0.1)' : 'transparent',
             }}
           >
-            {flagged[currentIndex] ? <BookmarkCheck size={14} /> : <Bookmark size={14} />}
+            {flagged[currentIndex] ? <BookmarkCheck size={16} /> : <Bookmark size={16} />}
             <span className="hidden sm:inline">Flag</span>
           </button>
           <button
             onClick={() => setShowReview(true)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm transition-colors duration-200"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm transition-colors duration-200 min-h-[36px]"
             style={{ color: 'var(--text-secondary)' }}
           >
-            <Eye size={14} />
+            <Eye size={16} />
             <span className="hidden sm:inline">Review</span>
+          </button>
+          <button
+            onClick={() => setShowMobileNav(true)}
+            className="lg:hidden flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm transition-colors duration-200 min-h-[36px]"
+            style={{ color: 'var(--text-secondary)', backgroundColor: 'var(--surface-elevated)' }}
+          >
+            <Grid3X3 size={16} />
           </button>
         </div>
       </div>
@@ -677,6 +689,125 @@ function ExamInProgress({
             Submit Exam
           </button>
         </div>
+
+        {/* Mobile Navigation Drawer */}
+        {showMobileNav && (
+          <div className="lg:hidden fixed inset-0 z-50 flex flex-col justify-end">
+            <div className="absolute inset-0 bg-black/40" onClick={() => setShowMobileNav(false)} />
+            <div
+              className="relative w-full max-h-[80vh] overflow-y-auto rounded-t-2xl p-4"
+              style={{
+                backgroundColor: 'var(--surface-base)',
+                borderTop: '1px solid var(--border-subtle)',
+              }}
+            >
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>
+                  Question Navigator
+                </h3>
+                <button
+                  onClick={() => setShowMobileNav(false)}
+                  className="p-1.5 rounded-md"
+                  style={{ color: 'var(--text-secondary)' }}
+                >
+                  <X size={18} />
+                </button>
+              </div>
+
+              {/* Timer */}
+              <div className="mb-3 p-3 rounded-xl" style={{ backgroundColor: 'var(--surface-elevated)' }}>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-medium" style={{ color: 'var(--text-secondary)' }}>
+                    Time Remaining
+                  </span>
+                  <span
+                    className="font-mono text-lg font-medium"
+                    style={{ color: isWarning ? 'var(--accent-coral)' : 'var(--accent-primary)' }}
+                  >
+                    {formatTime(timeRemaining)}
+                  </span>
+                </div>
+              </div>
+
+              {/* Progress */}
+              <div className="mb-3">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-medium" style={{ color: 'var(--text-secondary)' }}>
+                    Progress
+                  </span>
+                  <span className="text-xs font-medium" style={{ color: 'var(--accent-primary)' }}>
+                    {answeredCount}/{questions.length}
+                  </span>
+                </div>
+                <div className="h-2 rounded-full overflow-hidden" style={{ backgroundColor: 'var(--border-subtle)' }}>
+                  <div
+                    className="h-full rounded-full transition-all duration-300"
+                    style={{ width: `${(answeredCount / questions.length) * 100}%`, background: 'var(--accent-gradient)' }}
+                  />
+                </div>
+              </div>
+
+              {/* Question Grid */}
+              <div className="mb-3">
+                <span className="text-xs font-medium mb-2 block" style={{ color: 'var(--text-secondary)' }}>
+                  Question Grid
+                </span>
+                <div className="grid grid-cols-10 gap-1">
+                  {questions.map((_, i) => (
+                    <button
+                      key={i}
+                      onClick={() => { goToQuestion(i); setShowMobileNav(false); }}
+                      className="w-full aspect-square rounded-md text-xs font-medium transition-all duration-150 relative"
+                      style={{
+                        backgroundColor: answers[i] !== null ? 'var(--accent-primary)' : 'var(--surface-elevated)',
+                        color: answers[i] !== null ? '#fff' : 'var(--text-secondary)',
+                        border:
+                          i === currentIndex
+                            ? '2px solid var(--accent-primary)'
+                            : '1px solid var(--border-subtle)',
+                      }}
+                    >
+                      {i + 1}
+                      {flagged[i] && (
+                        <div
+                          className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full"
+                          style={{ backgroundColor: 'var(--accent-coral)' }}
+                        />
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Legend */}
+              <div className="flex flex-wrap gap-3 text-xs mb-4" style={{ color: 'var(--text-secondary)' }}>
+                <div className="flex items-center gap-1.5">
+                  <div className="w-3 h-3 rounded" style={{ backgroundColor: 'var(--accent-primary)' }} />
+                  <span>Answered</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <div className="w-3 h-3 rounded" style={{ backgroundColor: 'var(--surface-elevated)', border: '1px solid var(--border-medium)' }} />
+                  <span>Unanswered</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <div className="w-3 h-3 rounded" style={{ backgroundColor: 'var(--accent-coral)' }} />
+                  <span>Flagged</span>
+                </div>
+              </div>
+
+              <button
+                onClick={() => { setShowMobileNav(false); handleFinish(); }}
+                className="w-full py-3 rounded-xl text-sm font-medium transition-all duration-200 hover:scale-[1.02]"
+                style={{
+                  backgroundColor: 'var(--accent-coral)',
+                  color: '#fff',
+                }}
+              >
+                Submit Exam
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -712,7 +843,7 @@ function ReviewPanel({
           borderColor: 'var(--border-subtle)',
         }}
       >
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between mb-6 flex-wrap gap-2">
           <h2
             className="text-2xl font-normal"
             style={{ fontFamily: 'var(--font-display)', color: 'var(--text-primary)' }}
@@ -728,7 +859,7 @@ function ReviewPanel({
           </button>
         </div>
 
-        <div className="flex gap-4 mb-6">
+        <div className="flex flex-col sm:flex-row gap-4 mb-6">
           <div
             className="px-4 py-3 rounded-xl flex-1"
             style={{ backgroundColor: 'rgba(242,196,77,0.1)' }}
@@ -903,7 +1034,7 @@ function ResultsScreen({
           </div>
 
           {/* Filter Tabs */}
-          <div className="flex gap-2 mb-6">
+          <div className="flex flex-wrap gap-2 mb-6">
             {(['all', 'correct', 'incorrect', 'flagged'] as const).map((f) => (
               <button
                 key={f}

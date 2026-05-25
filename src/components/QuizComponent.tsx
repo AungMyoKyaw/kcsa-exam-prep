@@ -1,5 +1,5 @@
-import { useState, useCallback } from 'react';
-import { ChevronLeft, ChevronRight, Check, X, RotateCcw, ChevronDown, Square, CheckSquare } from 'lucide-react';
+import { useState, useCallback, useEffect, useRef } from 'react';
+import { ChevronLeft, ChevronRight, Check, X, RotateCcw, ChevronDown, Square, CheckSquare, Eye } from 'lucide-react';
 import {
   addXP,
   XP_VALUES,
@@ -9,6 +9,7 @@ import {
   getStudyStreak,
 } from '@/lib/gamification';
 import ConfettiOverlay, { useConfetti } from '@/components/Confetti';
+import { useKeyboardShortcuts, KeyBadge } from '@/hooks/useKeyboardShortcuts';
 
 export interface QuizQuestion {
   id: number;
@@ -40,6 +41,8 @@ export default function QuizComponent({ questions, domainId }: QuizComponentProp
   const [showExplanation, setShowExplanation] = useState(false);
   const [quizComplete, setQuizComplete] = useState(false);
   const [xpAwarded, setXpAwarded] = useState(false);
+  const [hintRevealed, setHintRevealed] = useState(false);
+  const hintTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const { pieces, trigger } = useConfetti();
 
   const currentQuestion = questions[currentIndex];
@@ -138,6 +141,54 @@ export default function QuizComponent({ questions, domainId }: QuizComponentProp
     setShowExplanation(false);
     setQuizComplete(false);
     setXpAwarded(false);
+    setHintRevealed(false);
+    if (hintTimeoutRef.current) {
+      clearTimeout(hintTimeoutRef.current);
+      hintTimeoutRef.current = null;
+    }
+  }, []);
+
+  // Keyboard shortcuts
+  useKeyboardShortcuts({
+    '1': () => { if (!submitted && currentQuestion.options.length > 0) handleSelect(0); },
+    '2': () => { if (!submitted && currentQuestion.options.length > 1) handleSelect(1); },
+    '3': () => { if (!submitted && currentQuestion.options.length > 2) handleSelect(2); },
+    '4': () => { if (!submitted && currentQuestion.options.length > 3) handleSelect(3); },
+    'enter': () => {
+      if (!submitted && selectedIndices.length > 0) {
+        handleSubmit();
+      } else if (submitted) {
+        handleNext();
+      }
+    },
+    'space': () => {
+      if (!submitted && selectedIndices.length > 0) {
+        handleSubmit();
+      } else if (submitted) {
+        handleNext();
+      }
+    },
+    '?': () => {
+      if (submitted) return;
+      setHintRevealed(true);
+      if (hintTimeoutRef.current) clearTimeout(hintTimeoutRef.current);
+      hintTimeoutRef.current = setTimeout(() => setHintRevealed(false), 2000);
+    },
+    'escape': () => {
+      setShowExplanation(false);
+      setHintRevealed(false);
+      if (hintTimeoutRef.current) {
+        clearTimeout(hintTimeoutRef.current);
+        hintTimeoutRef.current = null;
+      }
+    },
+  });
+
+  // Cleanup hint timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (hintTimeoutRef.current) clearTimeout(hintTimeoutRef.current);
+    };
   }, []);
 
   if (quizComplete) {
@@ -310,6 +361,7 @@ export default function QuizComponent({ questions, domainId }: QuizComponentProp
             const showCorrect = submitted && isCorrectOption;
             const showIncorrect = submitted && isSelected && !isCorrectOption;
             const showMissed = submitted && isCorrectOption && !isSelected;
+            const showHint = hintRevealed && isCorrectOption;
 
             let borderColor = 'var(--border-medium)';
             let bgColor = 'var(--surface-base)';
@@ -323,6 +375,9 @@ export default function QuizComponent({ questions, domainId }: QuizComponentProp
             } else if (showMissed) {
               borderColor = 'var(--accent-sage)';
               bgColor = 'rgba(163,196,168,0.05)';
+            } else if (showHint) {
+              borderColor = 'var(--warning)';
+              bgColor = 'rgba(242,196,77,0.1)';
             } else if (isSelected && !submitted) {
               borderColor = 'var(--accent-primary)';
               bgColor = 'rgba(4,80,54,0.08)';
@@ -338,7 +393,7 @@ export default function QuizComponent({ questions, domainId }: QuizComponentProp
                   border: `1.5px solid ${borderColor}`,
                   backgroundColor: bgColor,
                   cursor: submitted ? 'default' : 'pointer',
-                  opacity: submitted && !isSelected && !isCorrectOption ? 0.6 : 1,
+                  opacity: (submitted && !isSelected && !isCorrectOption) || (hintRevealed && !isCorrectOption) ? 0.6 : 1,
                 }}
               >
                 <div
@@ -348,10 +403,11 @@ export default function QuizComponent({ questions, domainId }: QuizComponentProp
                       if (showCorrect) { return 'var(--accent-sage)' }
                       if (showIncorrect) { return 'var(--accent-coral)' }
                       if (showMissed) { return 'rgba(163,196,168,0.3)' }
+                      if (showHint) { return 'var(--warning)' }
                       if (isSelected) { return 'var(--accent-primary)' }
                       return 'var(--surface-elevated)'
                     })(),
-                    color: isSelected || showCorrect || showIncorrect
+                    color: isSelected || showCorrect || showIncorrect || showHint
                       ? '#fff'
                       : showMissed
                       ? 'var(--accent-sage)'
@@ -360,6 +416,7 @@ export default function QuizComponent({ questions, domainId }: QuizComponentProp
                       if (showCorrect) { return 'var(--accent-sage)' }
                       if (showIncorrect) { return 'var(--accent-coral)' }
                       if (showMissed) { return 'var(--accent-sage)' }
+                      if (showHint) { return 'var(--warning)' }
                       if (isSelected) { return 'var(--accent-primary)' }
                       return 'var(--border-medium)'
                     })()}`,
@@ -369,6 +426,7 @@ export default function QuizComponent({ questions, domainId }: QuizComponentProp
                     if (showCorrect) { return <Check size={14} /> }
                     if (showIncorrect) { return <X size={14} /> }
                     if (showMissed) { return <Check size={14} /> }
+                    if (showHint) { return <Eye size={14} /> }
                     if (isSelected) {
                       return isMulti ? <CheckSquare size={14} /> : <Check size={14} />;
                     }
@@ -376,11 +434,14 @@ export default function QuizComponent({ questions, domainId }: QuizComponentProp
                   })()}
                 </div>
                 <span
-                  className="text-sm leading-relaxed"
+                  className="text-sm leading-relaxed flex-1"
                   style={{ color: 'var(--text-primary)' }}
                 >
                   {option}
                 </span>
+                {!submitted && !isMulti && index < 4 && (
+                  <KeyBadge>{index + 1}</KeyBadge>
+                )}
               </button>
             );
           })}
