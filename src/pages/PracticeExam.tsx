@@ -600,9 +600,9 @@ function ExamInProgress({
 
         {/* Sidebar Navigation */}
         <div
-          className={`hidden lg:flex flex-col border-l overflow-y-auto transition-all duration-300 ${sidebarCollapsed ? 'w-0 p-0 opacity-0 overflow-hidden' : 'w-[280px] p-4'}`}
+          className={`hidden lg:block border-l overflow-y-auto transition-all duration-300 ${sidebarCollapsed ? 'w-0 p-0 min-w-0 opacity-0 overflow-hidden' : 'w-[280px] p-4'}`}
           style={{
-            backgroundColor: 'var(--surface-base)',
+            backgroundColor: sidebarCollapsed ? 'transparent' : 'var(--surface-base)',
             borderColor: sidebarCollapsed ? 'transparent' : 'var(--border-subtle)',
             maxHeight: 'calc(100dvh - 112px)',
           }}
